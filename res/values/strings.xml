@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mp3_Online_01</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+	<string name="net_err_title">网络异常</string>
+	<string name="net_err_info">你断开了网络连接</string>
+	<string name="exit_app">推出</string>
+	<string name="text_main_tab_online">在线音乐</string>
+</resources>

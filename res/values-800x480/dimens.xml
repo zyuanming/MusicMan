@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="lyrics_font_size">15.0sp</dimen>
+    <dimen name="recomend_list_height">377.0dip</dimen>
+    <dimen name="alum_pictrue_width">215.0dip</dimen>
+    <dimen name="alum_pictrue_height">216.0dip</dimen>
+    <dimen name="tab_padding">32.0dip</dimen>
+    <dimen name="main_column_lable_width">75.0dip</dimen>
+    <dimen name="auth_code_size">12.0sp</dimen>
+    <dimen name="music_online_tab_width">76.0dip</dimen>
+</resources>

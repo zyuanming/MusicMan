@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recomend_list_height">492.0dip</dimen>
+    <dimen name="alum_pictrue_width">215.0dip</dimen>
+    <dimen name="alum_pictrue_height">216.0dip</dimen>
+    <dimen name="tab_padding">20.0dip</dimen>
+    <dimen name="main_column_lable_width">98.0dip</dimen>
+    <dimen name="auth_code_size">14.0sp</dimen>
+    <dimen name="music_online_tab_width">98.0dip</dimen>
+</resources>
