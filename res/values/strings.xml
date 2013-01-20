@@ -8,4 +8,8 @@
 	<string name="net_err_info">你断开了网络连接</string>
 	<string name="exit_app">推出</string>
 	<string name="text_main_tab_online">在线音乐</string>
+	<string name="foot_view_create_play_list_playlist_activity">新建列表</string>
+	<string name="title_cancel_online_music_atdcontroller">在线包月退订</string>
+	<string name="title_business_order_activity">音乐特权</string>
+	<string name="title_music_management_activity">音乐管理</string>
 </resources>

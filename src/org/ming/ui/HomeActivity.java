@@ -1,10 +1,8 @@
+
 package org.ming.ui;
 
+import org.ming.R;
 import org.ming.logic.IMusicActivity;
-import org.ming.mp3_online_01.R;
-
-import cmccwm.mobilemusic.ui.activity.local.LocalMusicActivity;
-import cmccwm.mobilemusic.ui.activity.mymigu.MyMiGuActivity;
 
 import android.app.TabActivity;
 import android.content.Intent;
@@ -14,65 +12,59 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.widget.TabHost;
 
-public class HomeActivity extends TabActivity implements IMusicActivity
-{
-	private Handler handler;
-	private LayoutInflater mInflater;
-	private TabHost mTabHost;
+public class HomeActivity extends TabActivity implements IMusicActivity {
+    private Handler handler;
 
-	@Override
-	public void init()
-	{
+    private LayoutInflater mInflater;
 
-	}
+    private TabHost mTabHost;
 
-	@Override
-	public void refresh(Object... param)
-	{
-		// TODO Auto-generated method stub
+    @Override
+    public void init() {
 
-	}
+    }
 
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(1);
-		setContentView(R.layout.home);
-		this.handler = new Handler()
-		{
-			public void handleMessage(Message paramAnonymousMessage)
-			{
+    @Override
+    public void refresh(Object... param) {
+        // TODO Auto-generated method stub
 
-			}
-		};
-		initTab();
-	}
+    }
 
-	public void initTab()
-	{
-		this.mInflater = LayoutInflater.from(this);
-		this.mTabHost = (TabHost) findViewById(R.id.tabhost);
-		this.mTabHost.setup(getLocalActivityManager());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(1);
+        setContentView(R.layout.home);
+        this.handler = new Handler() {
+            public void handleMessage(Message paramAnonymousMessage) {
 
-		Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
-		this.mTabHost.addTab(createTabSpec("TAB_ONLINE",
-				R.layout.tab_online_music_layout, localIntent1));
+            }
+        };
+        initTab();
+    }
 
-		Intent localIntent2 = new Intent(this, LocalMusicActivity.class);
-		this.mTabHost.addTab(createTabSpec("TAB_LOCAL",
-				R.layout.tab_local_music_layout, localIntent2));
+    public void initTab() {
+        this.mInflater = LayoutInflater.from(this);
+        this.mTabHost = (TabHost) findViewById(android.R.id.tabhost);
+        this.mTabHost.setup(getLocalActivityManager());
 
-		Intent localIntent3 = new Intent(this, MyMiGuActivity.class);
-		this.mTabHost.addTab(createTabSpec("TAB_MIGU",
-				R.layout.tab_mine_music_layout, localIntent3));
-		this.mTabHost.setCurrentTab(0);
-	}
-	
-	private TabHost.TabSpec createTabSpec(String paramString, int paramInt, Intent	paramIntent)
-	{
-		TabHost.TabSpec localTabSpec = this.mTabHost.newTabSpec(paramString);
-		localTabSpec.setIndicator(this.mInflater.inflate(paramInt, null));
-		localTabSpec.setContent(paramIntent);
-		return localTabSpec;
-	}
+        Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
+        this.mTabHost.addTab(createTabSpec("TAB_ONLINE", R.layout.tab_online_music_layout,
+                localIntent1));
+
+        Intent localIntent2 = new Intent(this, LocalMusicActivity.class);
+        this.mTabHost.addTab(createTabSpec("TAB_LOCAL", R.layout.tab_local_music_layout,
+                localIntent2));
+
+        Intent localIntent3 = new Intent(this, MyMiGuActivity.class);
+        this.mTabHost
+                .addTab(createTabSpec("TAB_MIGU", R.layout.tab_mine_music_layout, localIntent3));
+        this.mTabHost.setCurrentTab(0);
+    }
+
+    private TabHost.TabSpec createTabSpec(String paramString, int paramInt, Intent paramIntent) {
+        TabHost.TabSpec localTabSpec = this.mTabHost.newTabSpec(paramString);
+        localTabSpec.setIndicator(this.mInflater.inflate(paramInt, null));
+        localTabSpec.setContent(paramIntent);
+        return localTabSpec;
+    }
 }

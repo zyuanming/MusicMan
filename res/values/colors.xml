@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="transparent_background">#50000000</color>
+    <color name="lyric_current_line_color">#ffffffff</color>
+    <color name="lyric_other_line_color">#ffcccccc</color>
+    <color name="migu_red_color">#ffe7158d</color>
+    <color name="white_color">#fffcfcfc</color>
+    <color name="black_color">#ff000000</color>
+    <color name="hint_color">#ff8f897f</color>
+    <color name="blue_color">#ff00f6ff</color>
+    <color name="gray_eighty_percent">#ff4d4d4d</color>
+    <color name="gray_thirty_percent">#ffb3b3b3</color>
+    <color name="gray_fifty_percent">#ff808080</color>
+    <color name="roseo">#ffe7158d</color>
+    <color name="colunm_title_nor_color">#ff808080</color>
+    <color name="colunm_title_focus_color">#ffffffff</color>
+    <color name="search_word_color_1">#ffa3213e</color>
+    <color name="search_word_color_2">#ffa22b56</color>
+    <color name="search_word_color_3">#ffe5307e</color>
+    <color name="search_word_color_4">#ff999999</color>
+    <color name="search_word_color_5">#ff666666</color>
+    <color name="transparent">#00000000</color>
+    <color name="gold">#ffb89766</color>
+</resources>

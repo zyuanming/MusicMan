@@ -1,8 +1,6 @@
 package org.ming.logic;
 
-import java.util.ArrayList;
-
-import org.ming.mp3_online_01.R;
+import org.ming.R;
 import org.ming.util.NetUtil;
 
 import android.app.Activity;
@@ -15,6 +13,8 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+
+import java.util.ArrayList;
 
 public class MainService extends Service implements Runnable
 {

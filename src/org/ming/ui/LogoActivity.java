@@ -1,12 +1,11 @@
 package org.ming.ui;
 
+import org.ming.R;
+import org.ming.R.layout;
 import org.ming.logic.MainService;
-import org.ming.logic.Task;
-import org.ming.mp3_online_01.R;
 import org.ming.util.NetUtil;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +34,8 @@ public class LogoActivity extends Activity
 
 		AlphaAnimation aa = new AlphaAnimation(0.1f, 1.0f);
 		aa.setDuration(3000);
-		this.findViewById(R.id.ImageView01).startAnimation(aa);
+		//???????????????????????
+		//startAnimation(aa);
 		aa.setAnimationListener(new AnimationListener()
 		{
 

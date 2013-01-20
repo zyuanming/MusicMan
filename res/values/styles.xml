@@ -16,5 +16,14 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+    
+	<style name="listview" parent="@android:style/Widget.AbsListView">
+        <item name="android:windowBackground">@null</item>
+        <item name="android:fadingEdge">none</item>
+        <item name="android:fadingEdgeLength">0.0dip</item>
+        <item name="android:drawingCacheQuality">high</item>
+        <item name="android:listSelector">@drawable/list_cell_selector</item>
+        <item name="android:scrollingCache">true</item>
+        <item name="android:cacheColorHint">#00000000</item>
+    </style>
 </resources>
