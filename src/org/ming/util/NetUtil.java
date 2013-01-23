@@ -1,61 +1,106 @@
 package org.ming.util;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 
-public class NetUtil extends BroadcastReceiver
+public class NetUtil
 {
-	@Override
-	// 侦听网络状态的变化
-	public void onReceive(Context context, Intent intent)
-	{
-		ConnectivityManager connectivityManager = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+	public static final int NET_STATE_WLAN = 1;
+	public static final int NET_STATE_WLAN_UNAVAILABLE = 2;
+	public static final int NET_STATE_CMWAP = 3;
+	public static final int NET_STATE_CMWAP_UNAVAILABLE = 5;
+	public static final int NET_STATE_NET = 6;
+	public static final int NET_STATE_NET_UNAVAILABLE = 7;
+	public static final int NET_STATE_UNAVAILABLE = 8;
+	public static final int NETWORK_DOWNLOAD_RETRY_TIMES = 6;
+	public static int netState = -1;
 
-		NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-		if (info != null && info.isConnected())
+	public static int getDownLoadNetType()
+	{
+		int i = 3;
+		if ((netState == i) || (netState == 5))
+			;
+		while (true)
 		{
-			if (info.getState() == NetworkInfo.State.CONNECTED)
-			{
-				Toast.makeText(context, "ok", Toast.LENGTH_SHORT).show();
-			} else
-			{
-				Toast.makeText(context, "err", Toast.LENGTH_SHORT).show();
-			}
-		} else
-		{
-			Toast.makeText(context, "err", Toast.LENGTH_SHORT).show();
+			if ((netState == 1) || (netState == 2) || (netState == 6)
+					|| (netState == 7))
+				i = 1;
 		}
 	}
 
-	public static boolean checkNet(Context context)
+	public static int getNetWorkState(Context paramContext)
 	{
-		//获取手机所有连接管理对象(包括对wifi，net等连接的管理)
-		try
+		int i = 3;
+		WifiManager localWifiManager = (WifiManager) MobileMusicApplication
+				.getInstance().getSystemService("wifi");
+		NetworkInfo localNetworkInfo;
+		NetworkInfo.State localState;
+		// 如果Wifi不可用
+		if (!localWifiManager.isWifiEnabled())
 		{
-			ConnectivityManager connectivity = (ConnectivityManager)context
-					.getSystemService(Context.CONNECTIVITY_SERVICE);
-			if(connectivity != null)
+			localNetworkInfo = ((ConnectivityManager) paramContext
+					.getSystemService("connectivity")).getNetworkInfo(0);
+			localState = localNetworkInfo.getState();
+			if ((localNetworkInfo != null)
+					&& (localNetworkInfo.getExtraInfo() != null))
 			{
-				//获取网络连接管理的对象
-				NetworkInfo info = connectivity.getActiveNetworkInfo();
-				if(info != null && info.isConnected())
+				if (localNetworkInfo.getExtraInfo().equalsIgnoreCase("cmwap"))
 				{
-					//判断当前网络是否已经连接
-					if(info.getState() == NetworkInfo.State.CONNECTED)
-					{
-						return true;
-					}
+					i = (NetworkInfo.State.CONNECTED != localState) ? 5 : 3;
+				} else if (localNetworkInfo.getExtraInfo().equalsIgnoreCase(
+						"cmnet"))
+				{
+					i = (NetworkInfo.State.CONNECTED == localState) ? 6 : 7;
 				}
 			}
-		}
-		catch(Exception e)
+		} else
 		{
-			e.printStackTrace();
+			WifiInfo localWifiInfo = localWifiManager.getConnectionInfo();
+			if (localWifiInfo != null)
+			{
+				i = (localWifiInfo.getIpAddress() != 0) ? 1 : 2;
+			}
+		}
+		return i;
+	}
+
+	public static boolean isConnection()
+	{
+		int i = 1;
+		if ((netState == 3) || (netState == i) || (netState == 6))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isNetStateNet()
+	{
+		if ((netState == 6) || (netState == 7))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isNetStateWLAN()
+	{
+		int i = 1;
+		if (netState == i)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isNetStateWap()
+	{
+		if ((netState == 3) || (netState == 5))
+		{
+			return true;
 		}
 		return false;
 	}

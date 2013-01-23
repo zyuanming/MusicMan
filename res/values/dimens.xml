@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="lyrics_font_size">18.0sp</dimen>
+    <dimen name="text_title_size">14.0sp</dimen>
+    <dimen name="text_content_size">12.0sp</dimen>
+    <dimen name="eighteen_sp">18.0sp</dimen>
+    <dimen name="fifteen_sp">15.0sp</dimen>
+    <dimen name="twelve_sp">12.0sp</dimen>
+    <dimen name="recomend_list_height">270.0dip</dimen>
+    <dimen name="playerXoffset">83.0dip</dimen>
+    <dimen name="playerYoffset">234.0dip</dimen>
+    <dimen name="ratingwindowY">120.0dip</dimen>
+    <dimen name="point_width">10.0dip</dimen>
+    <dimen name="point_height">10.0dip</dimen>
+    <dimen name="alum_pictrue_width">215.0dip</dimen>
+    <dimen name="alum_pictrue_height">216.0dip</dimen>
+    <dimen name="alum_pictrue_margin_top">20.0dip</dimen>
+    <dimen name="tab_padding">20.0dip</dimen>
+    <dimen name="return_order_info_layout_margin">20.0dip</dimen>
+    <dimen name="dialog_left_margin">5.0dip</dimen>
+    <dimen name="dialog_top_margin">10.0dip</dimen>
+    <dimen name="dialog_right_margin">5.0dip</dimen>
+    <dimen name="dialog_bottom_margin">15.0dip</dimen>
+    <dimen name="dialog_btn_close_right_margin">10.0dip</dimen>
+    <dimen name="dialog_btn_close_top_margin">10.0dip</dimen>
+    <dimen name="dialog_title_logo_left_margin">5.0dip</dimen>
+    <dimen name="dialog_title_height">30.0dip</dimen>
+    <dimen name="dialog_piliang_download_margin_left">20.0dip</dimen>
+    <dimen name="dialog_piliang_line_margin_top">10.0dip</dimen>
+    <dimen name="dialog_piliang_line_width">270.0dip</dimen>
+    <dimen name="dialog_piliang_recommand_margin_left">20.0dip</dimen>
+    <dimen name="main_column_lable_width">90.0dip</dimen>
+    <dimen name="auth_code_size">12.0sp</dimen>
+    <dimen name="music_online_tab_width">80.0dip</dimen>
+</resources>
