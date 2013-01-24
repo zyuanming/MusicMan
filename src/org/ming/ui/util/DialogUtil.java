@@ -155,13 +155,19 @@ public class DialogUtil
 		{
 			localTextView2.setText(paramCharSequence2);
 		}
-		localButton1.setOnClickListener(paramOnClickListener1);
-		localButton2.setOnClickListener(paramOnClickListener2);
+		if (paramOnClickListener1 != null)
+		{
+			localButton1.setOnClickListener(paramOnClickListener1);
+		}
+		if (paramOnClickListener2 != null)
+		{
+			localButton2.setOnClickListener(paramOnClickListener2);
+		}
 		localDialog.setContentView(localView);
 		localDialog.setCancelable(true);
 		localDialog.show();
 		logger.v("show2BtnDialogWithIconTitleMsg() ---> Exit");
-		localTextView1.setVisibility(8);
+		localTextView1.setVisibility(View.GONE);
 		return localDialog;
 	}
 
@@ -171,38 +177,47 @@ public class DialogUtil
 			View.OnClickListener paramOnClickListener2)
 	{
 		logger.v("show2BtnDialogWithIconTitleView() ---> Enter");
-		Dialog localDialog = new Dialog(paramContext, 2131296261);
-		View localView = LayoutInflater.from(paramContext).inflate(2130903108,
-				null);
+		Dialog localDialog = new Dialog(paramContext, R.style.CustomDialogTheme);
+		View localView = LayoutInflater.from(paramContext).inflate(
+				R.layout.dialog_title_text_view_two_button, null);
 		ImageView localImageView = (ImageView) localView
-				.findViewById(2131034357);
-		TextView localTextView1 = (TextView) localView.findViewById(2131034354);
-		TextView localTextView2 = (TextView) localView.findViewById(2131034194);
+				.findViewById(R.id.line);
+		TextView localTextView1 = (TextView) localView
+				.findViewById(R.id.nw_title);
+		TextView localTextView2 = (TextView) localView.findViewById(R.id.msg);
 		LinearLayout localLinearLayout = (LinearLayout) localView
-				.findViewById(2131034358);
-		Button localButton1 = (Button) localView.findViewById(2131034340);
-		Button localButton2 = (Button) localView.findViewById(2131034338);
+				.findViewById(R.id.add_view);
+		Button localButton1 = (Button) localView.findViewById(R.id.button1);
+		Button localButton2 = (Button) localView.findViewById(R.id.button2);
 		if (paramCharSequence1 != null)
 		{
 			localTextView1.setText(paramCharSequence1);
-			if (paramCharSequence2 == null)
-				localTextView2.setText(paramCharSequence2);
-			if (paramView == null)
-				localLinearLayout.addView(paramView);
-			if (paramOnClickListener1 == null)
-				localButton1.setOnClickListener(paramOnClickListener1);
-			if (paramOnClickListener2 == null)
-				localButton2.setOnClickListener(paramOnClickListener2);
+		}
+		if (paramCharSequence2 != null)
+		{
+			localTextView2.setText(paramCharSequence2);
+		}
+		if (paramOnClickListener1 == null)
+		{
+			localButton1.setOnClickListener(paramOnClickListener1);
+		}
+		if (paramOnClickListener2 == null)
+		{
+			localButton2.setOnClickListener(paramOnClickListener2);
+		}
+		if (paramView == null)
+		{
+			localLinearLayout.addView(paramView);
 		}
 		localDialog.setContentView(localView);
 		localDialog.show();
 		logger.v("show2BtnDialogWithIconTitleView() ---> Exit");
-		localImageView.setVisibility(8);
-		localTextView1.setVisibility(8);
-		localTextView2.setVisibility(8);
-		localLinearLayout.setVisibility(8);
-		localButton1.setVisibility(8);
-		localButton2.setVisibility(8);
+		localImageView.setVisibility(View.VISIBLE);
+		localTextView1.setVisibility(View.VISIBLE);
+		localTextView2.setVisibility(View.VISIBLE);
+		localLinearLayout.setVisibility(View.VISIBLE);
+		localButton1.setVisibility(View.VISIBLE);
+		localButton2.setVisibility(View.VISIBLE);
 		return localDialog;
 	}
 

@@ -7,17 +7,21 @@ import org.ming.util.MyLogger;
 import org.ming.util.Util;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
-public class UserLeadActivity extends Activity
+public class UserLeadActivity extends Activity implements
+		MyViewGroup.ScrollToScreenCallback
 {
 	private static final MyLogger logger = MyLogger
 			.getLogger("UserLeadActivity");
 	private MyViewGroup viewGroup;
 	private PageControlView pageControl;
+	private static int callBackcount = 1;
 
+	@Override
 	protected void onCreate(Bundle paramBundle)
 	{
 		logger.v("onCreate() ---> Enter");
@@ -45,11 +49,13 @@ public class UserLeadActivity extends Activity
 		viewGroup.addView(imageView);
 
 		pageControl = (PageControlView) findViewById(R.id.lead_dot);
-		pageControl.setCount(viewGroup.getChildCount());
+
 		pageControl.generatePageControl(0);
-		viewGroup.setScrollToScreenCallback(pageControl);
+		viewGroup.addScrollToScreenCallback(pageControl);
+		viewGroup.addScrollToScreenCallback(UserLeadActivity.this);
 	}
 
+	@Override
 	public boolean onKeyDown(int paramInt, KeyEvent paramKeyEvent)
 	{
 		logger.v("onKeyDown() ---> Enter");
@@ -60,5 +66,26 @@ public class UserLeadActivity extends Activity
 		}
 		logger.v("onKeyDown() ---> Exit");
 		return super.onKeyDown(paramInt, paramKeyEvent);
+	}
+
+	@Override
+	public void callback(int currentIndex)
+	{
+		if (currentIndex == 2)
+		{
+			if (UserLeadActivity.callBackcount == 1)
+			{
+				UserLeadActivity.callBackcount++;
+			} else if (UserLeadActivity.callBackcount > 1)
+			{
+				Intent localIntent = new Intent(
+						UserLeadActivity.this.getBaseContext(),
+						MobileMusicMainActivity.class);
+				localIntent.putExtra("TABINDEX", 0);
+				UserLeadActivity.this.startActivity(localIntent);
+				UserLeadActivity.this.finish();
+			}
+
+		}
 	}
 }

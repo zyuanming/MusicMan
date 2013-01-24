@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_sina_consumer_key">3253877454</string>
     <string name="app_sina_consumer_secret">05cfd90737ccf8373a668e4e0cf48b47</string>
     <string name="request_token_endpoin_url">http://api.t.sina.com.cn/oauth/request_token</string>
     <string name="access_token_endpoint_url">http://api.t.sina.com.cn/oauth/access_token</string>
     <string name="authorization_web_site_url">http://api.t.sina.com.cn/oauth/authorize</string>
-    <string name="app_name">Mobile Music</string>
+    <string name="app_name">Music Man</string>
     <string name="check_apk_activity">正在检查更新，请稍候...</string>
     <string name="update_package_download_update_activity">安装包下载</string>
     <string name="update_optional_title_entry_list_activity">软件更新</string>
@@ -519,4 +520,5 @@
     <string name="dobly_song_number">杜比音乐</string>
     <string name="cancel_order_color_ring">您已成功退订彩铃功能</string>
     <string name="you_can_enjoy_dobly_music">您是特级会员（高级会员/在线听用户），可享受杜比音质歌曲</string>
+
 </resources>

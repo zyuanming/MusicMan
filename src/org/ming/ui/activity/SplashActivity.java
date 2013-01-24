@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 public class SplashActivity extends Activity
 {
 	private static final MyLogger logger = MyLogger.getLogger("SplashActivity");
+	private int mTabIndex = 0;
 	private final Handler mSplashHandler = new Handler()
 	{
 		// 处理匿名信息
@@ -51,11 +52,10 @@ public class SplashActivity extends Activity
 			Util.setNoNeedUserLead(this);
 		} else
 		{
-			startActivity(new Intent(this, UserLeadActivity.class));
-			// Intent localIntent = new Intent(getBaseContext(),
-			// MobileMusicMainActivity.class);
-			// localIntent.putExtra("TABINDEX", this.mTabIndex);
-			// startActivity(localIntent);
+			Intent localIntent = new Intent(getBaseContext(),
+					MobileMusicMainActivity.class);
+			localIntent.putExtra("TABINDEX", this.mTabIndex);
+			startActivity(localIntent);
 		}
 		logger.v("turnToMainActivity() ---> Exit");
 	}

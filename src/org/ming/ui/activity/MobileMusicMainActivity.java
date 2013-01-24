@@ -1,37 +1,29 @@
 package org.ming.ui.activity;
 
-import java.util.List;
-
 import org.ming.R;
+import org.ming.ui.activity.local.LocalMusicActivity;
+import org.ming.ui.activity.mymigu.MyMiGuActivity;
+import org.ming.ui.activity.online.OnlineMusicActivity;
 import org.ming.ui.util.DialogUtil;
 import org.ming.util.MyLogger;
-import org.ming.util.NetUtil;
-import org.ming.util.Util;
 
-import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TabActivity;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -80,24 +72,29 @@ public class MobileMusicMainActivity extends TabActivity
 	{
 		Intent localIntent = new Intent(
 				"com.android.launcher.action.INSTALL_SHORTCUT");
+		// 设置名字
 		localIntent.putExtra("android.intent.extra.shortcut.NAME",
 				getString(R.string.app_name));
+		// 不允许重建
 		localIntent.putExtra("duplicate", false);
-		ComponentName localComponentName = new ComponentName(
-				"cmccwm.mobilemusic",
-				"cmccwm.mobilemusic.ui.activity.PreSplashActivity");
+		// 使一个Activity与当前的桌面快捷方式绑定
+		ComponentName localComponentName = new ComponentName("org.ming",
+				"org.ming.ui.activity.PreSplashActivity");
 		localIntent.putExtra("android.intent.extra.shortcut.INTENT",
 				new Intent("android.intent.action.MAIN")
 						.setComponent(localComponentName));
 		localIntent.putExtra("android.intent.extra.shortcut.ICON_RESOURCE",
 				Intent.ShortcutIconResource.fromContext(this, R.drawable.icon));
+		// 发送广播
 		sendBroadcast(localIntent);
 	}
 
 	private void createLaunchShortcut()
 	{
-		if (hasShortCut(this))
+		if (!hasShortCut(this))
+		{
 			addShortcut();
+		}
 	}
 
 	private TabHost.TabSpec createTabSpec(String paramString, int paramInt,
@@ -118,20 +115,19 @@ public class MobileMusicMainActivity extends TabActivity
 
 	private void initTab()
 	{
-		// logger.v("initTab() ---> Enter");
-		// this.mInflater = LayoutInflater.from(this);
-		// this.mTabHost = ((TabHost) findViewById(android.R.id.tabhost));
-		// this.mTabHost.setup(getLocalActivityManager());
-		// Intent localIntent1 = new Intent(this,
-		// MusicOnlineMusicActivity.class);
-		// this.mTabHost.addTab(createTabSpec("TAB_ONLINE",
-		// R.layout.tab_online_music_layout, localIntent1));
-		// Intent localIntent2 = new Intent(this, LocalMusicActivity.class);
-		// this.mTabHost.addTab(createTabSpec("TAB_LOCAL",
-		// R.layout.tab_local_music_layout, localIntent2));
-		// Intent localIntent3 = new Intent(this, MyMiGuActivity.class);
-		// this.mTabHost.addTab(createTabSpec("TAB_MIGU",
-		// R.layout.tab_my_migu_layout, localIntent3));
+		logger.v("initTab() ---> Enter");
+		this.mInflater = LayoutInflater.from(this);
+		this.mTabHost = ((TabHost) findViewById(android.R.id.tabhost));
+		this.mTabHost.setup(getLocalActivityManager());
+		Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
+		this.mTabHost.addTab(createTabSpec("TAB_ONLINE",
+				R.layout.tab_online_music_layout, localIntent1));
+		Intent localIntent2 = new Intent(this, LocalMusicActivity.class);
+		this.mTabHost.addTab(createTabSpec("TAB_LOCAL",
+				R.layout.tab_local_music_layout, localIntent2));
+		Intent localIntent3 = new Intent(this, MyMiGuActivity.class);
+		this.mTabHost.addTab(createTabSpec("TAB_MIGU",
+				R.layout.tab_my_migu_layout, localIntent3));
 		this.mTabHost.setCurrentTab(0);
 
 		this.mTabHost.getTabWidget().setOnClickListener(
@@ -163,42 +159,51 @@ public class MobileMusicMainActivity extends TabActivity
 			this.ShortCutDialog = null;
 		}
 		this.shortCutSharedPreferences.edit()
-				.putBoolean("appcation_first_start", true).commit();
+				.putBoolean("appcation_first_start", false).commit();
 	}
 
 	private void showDilaogForShortCutInLaunch()
 	{
-		this.shortCutSharedPreferences = getSharedPreferences("shortcut", 0);
+		logger.v("showDialogForShortCutInLaunch()------>enter");
+		this.shortCutSharedPreferences = getSharedPreferences("shortcut",
+				MODE_WORLD_WRITEABLE);
 		if (this.shortCutSharedPreferences.getBoolean("appcation_first_start",
-				false))
-			;
-		if (!hasShortCut(this))
-			this.ShortCutDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(
-					this,
-					getResources().getText(R.string.title_information_common),
-					getResources().getText(R.string.create_shoutcat_inlaunch),
-					new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
-							MobileMusicMainActivity.this
-									.shortcutDialogDismiss();
-							MobileMusicMainActivity.this.createLaunchShortcut();
-						}
-					}, new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
-							MobileMusicMainActivity.this
-									.shortcutDialogDismiss();
-						}
-					});
+				true))
+		{
+			logger.v("appcation_first_start");
+			if (!hasShortCut(MobileMusicMainActivity.this))
+				this.ShortCutDialog = DialogUtil
+						.show2BtnDialogWithIconTitleMsg(
+								this,
+								getResources().getText(
+										R.string.title_information_common),
+								getResources().getText(
+										R.string.create_shoutcat_inlaunch),
+								new View.OnClickListener()
+								{
+									public void onClick(View paramAnonymousView)
+									{
+										MobileMusicMainActivity.this
+												.shortcutDialogDismiss();
+										MobileMusicMainActivity.this
+												.createLaunchShortcut();
+									}
+								}, new View.OnClickListener()
+								{
+									public void onClick(View paramAnonymousView)
+									{
+										MobileMusicMainActivity.this
+												.shortcutDialogDismiss();
+									}
+								});
+		}
 	}
 
 	public boolean hasShortCut(Context paramContext)
 	{
+		logger.v("hasShortCut()------->call");
 		String str;
-		boolean flag;
+		boolean isInstallShortcut;
 		if (getSystemVersion() < 8)
 		{
 			str = "content://com.android.launcher.settings/favorites?notify=true";
@@ -211,17 +216,20 @@ public class MobileMusicMainActivity extends TabActivity
 		Uri localUri = Uri.parse(str);
 		String[] arrayOfString = new String[1];
 		arrayOfString[0] = paramContext.getString(R.string.app_name);
+		logger.v("getTheCursor------->before");
 		Cursor localCursor = localContentResolver.query(localUri, null,
 				"title=?", arrayOfString, null);
-		if ((localCursor == null) || (!localCursor.moveToFirst()))
+
+		if (localCursor != null && localCursor.moveToFirst())
 		{
-			flag = false;
+			isInstallShortcut = true;
+			localCursor.close();
 		} else
 		{
-			flag = true;
+			isInstallShortcut = false;
+			logger.v("localCursor--->null");
 		}
-		localCursor.close();
-		return flag;
+		return isInstallShortcut;
 	}
 
 	public void onCreate(Bundle paramBundle)

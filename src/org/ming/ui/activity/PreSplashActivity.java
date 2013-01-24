@@ -13,7 +13,8 @@ import android.view.KeyEvent;
 public class PreSplashActivity extends Activity
 {
 	static boolean islog = true;
-	private static final MyLogger logger = MyLogger.getLogger("PreSplashActivity");
+	private static final MyLogger logger = MyLogger
+			.getLogger("PreSplashActivity");
 
 	protected void onCreate(Bundle paramBundle)
 	{
@@ -42,7 +43,7 @@ public class PreSplashActivity extends Activity
 
 	protected void onResume()
 	{
-		List localList = ((ActivityManager) getSystemService("activity"))
+		List<ActivityManager.RunningTaskInfo> localList = ((ActivityManager) getSystemService("activity"))
 				.getRunningTasks(1);
 		if ((localList.size() > 0) && (!islog))
 		{

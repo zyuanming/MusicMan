@@ -1,10 +1,12 @@
 ﻿package org.ming.ui.view;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.ming.util.MyLogger;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -24,12 +26,14 @@ public class MyViewGroup extends ViewGroup
 
 	private GestureDetector gestureDetector;
 
-	private ScrollToScreenCallback scrollToScreenCallback;
+	private ArrayList<ScrollToScreenCallback> scrollToScreenCallbackList = new ArrayList<ScrollToScreenCallback>();
 
-	public void setScrollToScreenCallback(
+	public void addScrollToScreenCallback(
 			ScrollToScreenCallback scrollToScreenCallback)
 	{
-		this.scrollToScreenCallback = scrollToScreenCallback;
+		logger.v("call----->addscrollToScreenCallback----enter");
+		this.scrollToScreenCallbackList.add(scrollToScreenCallback);
+		logger.v("call----->addscrollToScreenCallback----out");
 	}
 
 	// 设置一个标志位，防止底层的onTouch事件重复处理UP事件
@@ -209,9 +213,13 @@ public class MyViewGroup extends ViewGroup
 		invalidate();
 
 		currentScreenIndex = whichScreen;
-		if (scrollToScreenCallback != null)
+		if (scrollToScreenCallbackList != null)
 		{
-			scrollToScreenCallback.callback(currentScreenIndex);
+			for (Iterator<ScrollToScreenCallback> iterator = scrollToScreenCallbackList
+					.iterator(); iterator.hasNext();)
+			{
+				iterator.next().callback(currentScreenIndex);
+			}
 		}
 	}
 
@@ -224,7 +232,7 @@ public class MyViewGroup extends ViewGroup
 		scrollToScreen((getScrollX() + (getWidth() / 2)) / getWidth());
 	}
 
-	interface ScrollToScreenCallback
+	public interface ScrollToScreenCallback
 	{
 		public void callback(int currentIndex);
 	}

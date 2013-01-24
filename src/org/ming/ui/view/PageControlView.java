@@ -14,14 +14,8 @@ public class PageControlView extends LinearLayout implements
 {
 
 	private MyLogger logger = MyLogger.getLogger("PageControlView");
-	private int count;
 
 	private Context context;
-
-	public void setCount(int count)
-	{
-		this.count = count;
-	}
 
 	public PageControlView(Context context, AttributeSet attrs)
 	{
