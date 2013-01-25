@@ -6,8 +6,7 @@ import java.util.Set;
 import android.database.Cursor;
 import android.net.Uri;
 
-public abstract interface DBController
-{
+public abstract interface DBController {
 	public abstract long addCacheData(String paramString1, String paramString2,
 			String paramString3, String paramString4);
 
@@ -59,6 +58,9 @@ public abstract interface DBController
 	public abstract int deleteUpdatePackage(String paramString);
 
 	public abstract boolean get51CHStatus();
+
+	public abstract List<Song> getSongsFromCursor(Cursor paramCursor,
+			int paramInt);
 
 	public abstract Cursor getAllSongs(Uri paramUri, String[] paramArrayOfString);
 
@@ -190,6 +192,8 @@ public abstract interface DBController
 	public abstract void setDownLoad_AutoRecover(Boolean paramBoolean);
 
 	public abstract void setEQMode(int paramInt);
+
+	public abstract List<Song> getSongsFromPlaylist(long paramLong, int paramInt);
 
 	public abstract void setLocalFolder(String paramString);
 

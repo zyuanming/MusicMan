@@ -1,4 +1,4 @@
-package org.ming.ui.activity.local;
+﻿package org.ming.ui.activity.local;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,8 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class LocalScanMusicActivity extends ListActivity implements
-		View.OnClickListener, SystemEventListener
-{
+		View.OnClickListener, SystemEventListener {
 	public static final MyLogger logger = MyLogger
 			.getLogger("LocalScanMusicActivity");
 	private List<String> mAllFolders = new ArrayList();
@@ -50,148 +49,111 @@ public class LocalScanMusicActivity extends ListActivity implements
 	private List<String> mSelectFolders = new ArrayList();
 	private TitleBarView mTitleBar;
 
-	private void refreshUI(File paramFile)
-	{
+	private void refreshUI(File paramFile) {
 		logger.v("refreshUI() ---> Enter");
 		this.mAllFolders.clear();
-		Iterator localIterator1 = this.mDBController.getSongFolder().iterator();
-		Iterator localIterator2;
-		if (!localIterator1.hasNext())
-			if (this.mAllFolders != null)
-			{
-				this.mMobileMusicScanMusicListItemAdapter = new MobileMusicScanMusicListItemAdapter(
-						this, this.mAllFolders);
-				if (UIGlobalSettingParameter.localmusic_folder_names != null)
-					break;
-				localIterator2 = this.mAllFolders.iterator();
-				if (localIterator2.hasNext())
-					break;
-				if (this.mSelectFolders.size() != this.mAllFolders.size())
-					break;
-				this.mSelectAll.setVisibility(8);
-				this.mCancel.setVisibility(0);
+
+		for (Iterator iterator1 = this.mDBController.getSongFolder().iterator(); iterator1
+				.hasNext();) {
+			String str1 = (String) iterator1.next();
+
+			this.mAllFolders.add(str1);
+
+		}
+		if (this.mAllFolders != null) {
+			for (Iterator iterator2 = this.mAllFolders.iterator(); iterator2
+					.hasNext();) {
+				String str2 = (String) iterator2.next();
+				this.mSelectFolders.add(str2);
 			}
+
+		}
+		if (UIGlobalSettingParameter.localmusic_folder_names != null) {
+			for (String str3 : UIGlobalSettingParameter.localmusic_folder_names)
+				this.mSelectFolders.add(str3);
+		}
+		if (this.mSelectFolders.size() == this.mAllFolders.size()) {
+			this.mSelectAll.setVisibility(View.GONE);
+			this.mCancel.setVisibility(View.VISIBLE);
+		} else {
+			this.mSelectAll.setVisibility(View.VISIBLE);
+			this.mCancel.setVisibility(View.GONE);
+		}
+		this.mMobileMusicScanMusicListItemAdapter = new MobileMusicScanMusicListItemAdapter(
+				this, this.mAllFolders);
 		setListAdapter(this.mMobileMusicScanMusicListItemAdapter);
 		logger.v("refreshUI() ---> Exit");
-		return;
-		String str1 = (String) localIterator1.next();
-		this.mAllFolders.add(str1);
-		break;
-		String str3 = (String) localIterator2.next();
-		this.mSelectFolders.add(str3);
-		break;
-		for (String str2 : UIGlobalSettingParameter.localmusic_folder_names)
-			this.mSelectFolders.add(str2);
-		break;
-		this.mSelectAll.setVisibility(0);
-		this.mCancel.setVisibility(8);
-		
-		
-		
-		for(Iterator iterator1 = this.mDBController.getSongFolder().iterator(); iterator1.hasNext();)
-		{
-			String str1 = (String) iterator1.next();
-			if (this.mAllFolders != null)
-			{
-				for(Iterator iterator2 = this.mAllFolders.iterator(); iterator2.hasNext();)
-				{
-					String str3 = (String) localIterator2.next();
-				}
-				this.mMobileMusicScanMusicListItemAdapter = new MobileMusicScanMusicListItemAdapter(
-						this, this.mAllFolders);
-				if (UIGlobalSettingParameter.localmusic_folder_names != null)
-				{
-					for (String str2 : UIGlobalSettingParameter.localmusic_folder_names)
-						this.mSelectFolders.add(str2);
-				}
-				this.mAllFolders.add(str1);
-				this.mSelectAll.setVisibility(8);
-				this.mCancel.setVisibility(0);
-			}
-		}
-		
 	}
 
-	public void handleSystemEvent(Message paramMessage)
-	{
+	public void handleSystemEvent(Message paramMessage) {
 		logger.v("handleSystemEvent() ---> Enter");
-		switch (paramMessage.what)
-		{
+		switch (paramMessage.what) {
 		default:
 		case 4:
+			finish();
 		}
 		logger.v("handleSystemEvent() ---> Exit");
-		finish();
-		return;
+
 	}
 
-	public void onClick(View paramView)
-	{
+	// 开始扫描指定目录里的音乐文件
+	public void onClick(View paramView) {
 		logger.v("onClick() ---> Enter");
-		switch (paramView.getId())
-		{
+		switch (paramView.getId()) {
 		default:
+			break;
 		case R.id.local_scan_music_ok_button:
+		{
+			if (this.mSelectFolders.size() > 0) {
+				String[] arrayOfString1 = new String[this.mSelectFolders.size()];
+				String[] arrayOfString2 = (String[]) this.mSelectFolders
+						.toArray(arrayOfString1);
+				String str1 = new String();
+				int i = arrayOfString2.length;
+				for (int j = 0;; j++) {
+					if (j >= i) {
+						UIGlobalSettingParameter.localmusic_folder_names = arrayOfString2;
+						UIGlobalSettingParameter.localmusic_scan_warningdlg = false;
+						boolean bool = this.mSelectCheckBoxForSmallSong.isChecked();
+						if (bool != UIGlobalSettingParameter.localmusic_scan_smallfile) {
+							UIGlobalSettingParameter.localmusic_scan_smallfile = bool;
+							this.mDBController.setScanSmallSongFile(Boolean
+									.valueOf(bool));
+						}
+						this.mDBController.setLocalFolder(str1);
+						if (this.mIsFromMusicPlayPage) {
+							Intent localIntent = new Intent(this,
+									MobileMusicMainActivity.class);
+							localIntent.putExtra("isFromLocalScan", true);
+							startActivity(localIntent);
+							finish();
+						}
+
+					}
+					String str2 = arrayOfString2[j];
+					str1 = new StringBuilder(String.valueOf(str1)).append(str2)
+							.toString() + ";";
+				}
+			} else {
+				this.mCurrentDialog = DialogUtil.show1BtnDialogWithTitleMsg(this,
+						getText(R.string.title_information_common),
+						getText(R.string.local_music_select_folder_warning),
+						new View.OnClickListener() {
+							public void onClick(View paramAnonymousView) {
+								if (LocalScanMusicActivity.this.mCurrentDialog != null) {
+									LocalScanMusicActivity.this.mCurrentDialog
+											.dismiss();
+									LocalScanMusicActivity.this.mCurrentDialog = null;
+								}
+							}
+						});
+			}
+		}
 		}
 		logger.v("onClick() ---> Exit");
-
-		if (this.mSelectFolders.size() > 0)
-		{
-			String[] arrayOfString1 = new String[this.mSelectFolders.size()];
-			String[] arrayOfString2 = (String[]) this.mSelectFolders
-					.toArray(arrayOfString1);
-			String str1 = new String();
-			int i = arrayOfString2.length;
-			for (int j = 0;; j++)
-			{
-				if (j >= i)
-				{
-					UIGlobalSettingParameter.localmusic_folder_names = arrayOfString2;
-					UIGlobalSettingParameter.localmusic_scan_warningdlg = false;
-					boolean bool = this.mSelectCheckBoxForSmallSong.isChecked();
-					if (bool != UIGlobalSettingParameter.localmusic_scan_smallfile)
-					{
-						UIGlobalSettingParameter.localmusic_scan_smallfile = bool;
-						this.mDBController.setScanSmallSongFile(Boolean
-								.valueOf(bool));
-					}
-					this.mDBController.setLocalFolder(str1);
-					if (!this.mIsFromMusicPlayPage)
-						break;
-					Intent localIntent = new Intent(this,
-							MobileMusicMainActivity.class);
-					localIntent.putExtra("isFromLocalScan", true);
-					startActivity(localIntent);
-					finish();
-					break;
-				}
-				String str2 = arrayOfString2[j];
-				str1 = new StringBuilder(String.valueOf(str1)).append(str2)
-						.toString() + ";";
-			}
-			finish();
-		} else
-		{
-			this.mCurrentDialog = DialogUtil.show1BtnDialogWithTitleMsg(this,
-					getText(2131165249), getText(2131165360),
-					new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
-							if (LocalScanMusicActivity.this.mCurrentDialog != null)
-							{
-								LocalScanMusicActivity.this.mCurrentDialog
-										.dismiss();
-								LocalScanMusicActivity.this.mCurrentDialog = null;
-							}
-						}
-					});
-		}
-		return;
 	}
 
-	protected void onCreate(Bundle paramBundle)
-	{
+	protected void onCreate(Bundle paramBundle) {
 		logger.v("onCreate() ---> Enter");
 		super.onCreate(paramBundle);
 		requestWindowFeature(1);
@@ -201,10 +163,8 @@ public class LocalScanMusicActivity extends ListActivity implements
 		this.mDBController = this.mController.getDBController();
 		this.mTitleBar = ((TitleBarView) findViewById(R.id.title_view));
 		this.mSelectAll = ((Button) findViewById(R.id.local_scan_all_music_checkall));
-		this.mSelectAll.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View paramAnonymousView)
-			{
+		this.mSelectAll.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View paramAnonymousView) {
 				LocalScanMusicActivity.this.mIsSelectAll = true;
 				LocalScanMusicActivity.this.mSelectFolders.clear();
 				LocalScanMusicActivity.this.mSelectFolders
@@ -216,10 +176,8 @@ public class LocalScanMusicActivity extends ListActivity implements
 			}
 		});
 		this.mCancel = ((Button) findViewById(R.id.local_scan_music_cancel));
-		this.mCancel.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View paramAnonymousView)
-			{
+		this.mCancel.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View paramAnonymousView) {
 				LocalScanMusicActivity.this.mIsSelectAll = false;
 				LocalScanMusicActivity.this.mSelectFolders.clear();
 				LocalScanMusicActivity.this.mMobileMusicScanMusicListItemAdapter
@@ -237,18 +195,16 @@ public class LocalScanMusicActivity extends ListActivity implements
 		this.mButton_OK.setOnClickListener(this);
 		this.mController.addSystemEventListener(4, this);
 
-		// 检查是否是从播放音乐的页面启动这个Activity
+		// 妫�煡鏄惁鏄粠鎾斁闊充箰鐨勯〉闈㈠惎鍔ㄨ繖涓狝ctivity
 		Bundle localBundle = getIntent().getExtras();
-		if (localBundle != null)
-		{
+		if (localBundle != null) {
 			this.mIsFromMusicPlayPage = localBundle.getBoolean(
 					"isFromMusicPlayPage", false);
 		}
 		logger.v("onCreate() ---> Enter");
 	}
 
-	protected void onDestroy()
-	{
+	protected void onDestroy() {
 		logger.v("onDestroy() ---> Enter");
 		this.mController.removeSystemEventListener(4, this);
 		super.onDestroy();
@@ -256,36 +212,31 @@ public class LocalScanMusicActivity extends ListActivity implements
 	}
 
 	protected void onListItemClick(ListView paramListView, View paramView,
-			int paramInt, long paramLong)
-	{
+			int paramInt, long paramLong) {
 		logger.v("onListItemClick() ---> Enter");
 		super.onListItemClick(paramListView, paramView, paramInt, paramLong);
 	}
 
-	protected void onPause()
-	{
+	protected void onPause() {
 		logger.v("onPause() ---> Enter");
 		super.onPause();
 		logger.v("onPause() ---> Exit");
 	}
 
-	protected void onResume()
-	{
+	protected void onResume() {
 		logger.v("onResume() ---> Enter");
 		super.onResume();
 		refreshUI(null);
 		logger.v("onResume() ---> Exit");
 	}
 
-	private class MobileMusicScanMusicListItemAdapter extends BaseAdapter
-	{
+	private class MobileMusicScanMusicListItemAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private List<String> mList;
 		final LocalScanMusicActivity localScanMusicActivity;
 
 		public MobileMusicScanMusicListItemAdapter(
-				LocalScanMusicActivity localscanmusicactivity1, List list)
-		{
+				LocalScanMusicActivity localscanmusicactivity1, List list) {
 			super();
 			localScanMusicActivity = LocalScanMusicActivity.this;
 
@@ -293,27 +244,22 @@ public class LocalScanMusicActivity extends ListActivity implements
 			mList = list;
 		}
 
-		public int getCount()
-		{
+		public int getCount() {
 			return this.mList.size();
 		}
 
-		public Object getItem(int paramInt)
-		{
+		public Object getItem(int paramInt) {
 			return this.mList.get(paramInt);
 		}
 
-		public long getItemId(int paramInt)
-		{
+		public long getItemId(int paramInt) {
 			return paramInt;
 		}
 
 		public View getView(int paramInt, View paramView,
-				ViewGroup paramViewGroup)
-		{
+				ViewGroup paramViewGroup) {
 			ViewHolder localViewHolder;
-			if (paramView == null)
-			{
+			if (paramView == null) {
 				localViewHolder = new ViewHolder();
 				paramView = this.mInflater.inflate(
 						R.layout.local_scan_music_list_cell, null);
@@ -323,8 +269,7 @@ public class LocalScanMusicActivity extends ListActivity implements
 						.findViewById(android.R.id.checkbox));
 				paramView.setTag(localViewHolder);
 
-			} else
-			{
+			} else {
 				localViewHolder = (ViewHolder) paramView.getTag();
 			}
 
@@ -332,35 +277,27 @@ public class LocalScanMusicActivity extends ListActivity implements
 					.get(paramInt));
 			if ((!LocalScanMusicActivity.this.mIsSelectAll)
 					&& (!LocalScanMusicActivity.this.mSelectFolders
-							.contains(this.mList.get(paramInt))))
-			{
+							.contains(this.mList.get(paramInt)))) {
 				localViewHolder.mCheckBox.setChecked(false);
-			} else
-			{
+			} else {
 				localViewHolder.mCheckBox.setChecked(true);
 			}
 
 			localViewHolder.mCheckBox.setTag(this.mList.get(paramInt));
 			localViewHolder.mCheckBox
-					.setOnClickListener(new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
+					.setOnClickListener(new View.OnClickListener() {
+						public void onClick(View paramAnonymousView) {
 							String str = (String) paramAnonymousView.getTag();
-							if (mSelectFolders.contains(str))
-							{
+							if (mSelectFolders.contains(str)) {
 								mSelectFolders.remove(str);
 								mIsSelectAll = false;
-							} else
-							{
+							} else {
 								mSelectFolders.add(str);
-								if (mList.size() == mSelectFolders.size())
-								{
+								if (mList.size() == mSelectFolders.size()) {
 									mIsSelectAll = true;
 									mSelectAll.setVisibility(View.GONE);
 									mCancel.setVisibility(View.VISIBLE);
-								} else
-								{
+								} else {
 									mSelectAll.setVisibility(View.VISIBLE);
 									mCancel.setVisibility(View.GONE);
 								}
@@ -370,13 +307,11 @@ public class LocalScanMusicActivity extends ListActivity implements
 			return paramView;
 		}
 
-		public final class ViewHolder
-		{
+		public final class ViewHolder {
 			public CheckBox mCheckBox;
 			public TextView mScanDirectory;
 
-			public ViewHolder()
-			{
+			public ViewHolder() {
 			}
 		}
 	}

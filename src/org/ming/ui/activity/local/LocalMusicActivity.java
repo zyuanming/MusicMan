@@ -39,21 +39,20 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class LocalMusicActivity extends ListActivity implements
-		SystemEventListener
-{
+		SystemEventListener {
 	private static final MyLogger logger = MyLogger
 			.getLogger("LocalMusicActivity");
-	private static final int LIST_ITEM_ID_ALL_SONG = 0;
-	private static final int LIST_ITEM_ID_BROWSE_BY_CATALOG = 2;
-	private static final int LIST_ITEM_ID_BROWSE_BY_SINGER = 1;
-	private static final int LIST_ITEM_ID_DOWNLOAD_DOLBY_MUSIC = 4;
-	private static final int LIST_ITEM_ID_DWONLOAD_MUSIC = 3;
-	private final int CONTEXT_MENU_DELETE = 0;
-	private final int CONTEXT_MENU_RENAME = 1;
-	private final int MENU_ITEM_EXIT = 1;
-	private final int MENU_ITEM_SCAN_MUSIC = 0;
-	private final int MENU_ITEM_SET = 2;
-	private final int MENU_ITEM_TIME_CLOSE = 3;
+	private static final int LIST_ITEM_ID_ALL_SONG = 0; // 所有的音乐
+	private static final int LIST_ITEM_ID_BROWSE_BY_CATALOG = 2; // 分类音乐
+	private static final int LIST_ITEM_ID_BROWSE_BY_SINGER = 1; // 歌手分类
+	private static final int LIST_ITEM_ID_DOWNLOAD_DOLBY_MUSIC = 4; // 杜比音乐
+	private static final int LIST_ITEM_ID_DWONLOAD_MUSIC = 3; // 已下载的音乐
+	private final int CONTEXT_MENU_DELETE = 0; // 删除
+	private final int CONTEXT_MENU_RENAME = 1; // 重命名
+	private final int MENU_ITEM_EXIT = 1; // 退出
+	private final int MENU_ITEM_SCAN_MUSIC = 0; // 扫描音乐
+	private final int MENU_ITEM_SET = 2; // 设置
+	private final int MENU_ITEM_TIME_CLOSE = 3; // 定时关闭应用
 	Intent intent = null;
 	long itemId;
 	private SimpleAdapter mAdapter = null;
@@ -71,22 +70,19 @@ public class LocalMusicActivity extends ListActivity implements
 	private List<Playlist> mLocalPlayList = null;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		logger.v("onCreate() ---> Enter");
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_local_music_layout);
-		this.mController = ((MobileMusicApplication) getApplication())
-				.getController();
+		logger.v("--------------------");
+		this.mController = ((MobileMusicApplication) getApplication()).getController();
 		this.mDBController = this.mController.getDBController();
 		UIGlobalSettingParameter.localmusic_scan_smallfile = this.mDBController
 				.getScanSmallSongFile();
-		if (UIGlobalSettingParameter.localmusic_folder_names == null)
-		{
+		if (UIGlobalSettingParameter.localmusic_folder_names == null) {
 			String str = this.mDBController.getLocalFolder();
-			if (str != null)
-			{
+			if (str != null) {
 				UIGlobalSettingParameter.localmusic_folder_names = str
 						.split(";");
 			}
@@ -96,20 +92,16 @@ public class LocalMusicActivity extends ListActivity implements
 				R.layout.activity_local_music_layout_header, null);
 		this.mSearchBtn = (Button) localView
 				.findViewById(R.id.search_local_music);
-		this.mSearchBtn.setOnClickListener(new View.OnClickListener()
-		{
+		this.mSearchBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				if (!Environment.MEDIA_MOUNTED.equals(Environment
-						.getExternalStorageState()))
-				{
+						.getExternalStorageState())) {
 					Toast.makeText(LocalMusicActivity.this,
 							R.string.sdcard_missing_message_common,
 							Toast.LENGTH_SHORT).show();
-				} else
-				{
+				} else {
 					Intent localIntent = new Intent(LocalMusicActivity.this,
 							LocalMusicSearchActivity.class);
 					LocalMusicActivity.this.startActivity(localIntent);
@@ -120,16 +112,13 @@ public class LocalMusicActivity extends ListActivity implements
 		getListView().addHeaderView(localView);
 		this.mBtnCreatePlayList = (Button) findViewById(R.id.button_create_playlist);
 		getListView().setOnCreateContextMenuListener(
-				new View.OnCreateContextMenuListener()
-				{
+				new View.OnCreateContextMenuListener() {
 
 					@Override
 					public void onCreateContextMenu(ContextMenu menu, View v,
-							ContextMenuInfo menuInfo)
-					{
+							ContextMenuInfo menuInfo) {
 						AdapterContextMenuInfo localAdapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
-						if ((int) localAdapterContextMenuInfo.id > 4)
-						{
+						if ((int) localAdapterContextMenuInfo.id > 4) {
 							LocalMusicActivity.this.mCurLongPressSelectedItem = ((int) localAdapterContextMenuInfo.id) - 4;
 							menu.add(0, 0, 0,
 									R.string.local_music_delete_songlist);
@@ -145,33 +134,27 @@ public class LocalMusicActivity extends ListActivity implements
 		logger.v("onCreate() ---> Exit");
 	}
 
-	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener()
-	{
-		public void onClick(View paramAnonymousView)
-		{
+	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener() {
+		public void onClick(View paramAnonymousView) {
 			LocalMusicActivity.logger.v("mLoadMoreOnClickListener() ---> Exit");
 			LocalMusicActivity.this.CreatePlayList();
 			LocalMusicActivity.logger.v("mLoadMoreOnClickListener() ---> Exit");
 		}
 	};
 
-	public boolean onPrepareOptionsMenu(Menu menu)
-	{
+	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem localMenuItem = menu.findItem(0);
 		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState()))
-		{
+				.getExternalStorageState())) {
 			localMenuItem.setEnabled(true);
-		} else
-		{
+		} else {
 			localMenuItem.setEnabled(false);
 		}
 
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 0, 0, "").setIcon(R.drawable.menu_item_scan_selector);
 		menu.add(2, 2, 0, "").setIcon(R.drawable.menu_item_set_selector);
 		menu.add(3, 3, 0, "").setIcon(R.drawable.menu_item_time_close_selector);
@@ -179,17 +162,14 @@ public class LocalMusicActivity extends ListActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	protected void onResume()
-	{
+	protected void onResume() {
 		logger.v("onResume() ----> Enter");
 		super.onResume();
 		if ((UIGlobalSettingParameter.localmusic_folder_names == null)
 				&& (UIGlobalSettingParameter.localmusic_scan_warningdlg)
 				&& (Environment.MEDIA_MOUNTED.equals(Environment
-						.getExternalStorageState())))
-		{
-			if (this.mCurrentDialog != null)
-			{
+						.getExternalStorageState()))) {
+			if (this.mCurrentDialog != null) {
 				this.mCurrentDialog.dismiss();
 				this.mCurrentDialog = null;
 			}
@@ -197,36 +177,29 @@ public class LocalMusicActivity extends ListActivity implements
 			this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(
 					this, getText(R.string.title_information_common),
 					getText(R.string.local_music_add_common),
-					new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
+					new View.OnClickListener() {
+						public void onClick(View paramAnonymousView) {
 							Intent localIntent = new Intent(
 									LocalMusicActivity.this,
 									LocalScanMusicActivity.class);
 							LocalMusicActivity.this.startActivity(localIntent);
 							UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE = true;
-							if (LocalMusicActivity.this.mCurrentDialog != null)
-							{
+							if (LocalMusicActivity.this.mCurrentDialog != null) {
 								LocalMusicActivity.this.mCurrentDialog
 										.dismiss();
 								LocalMusicActivity.this.mCurrentDialog = null;
 							}
 						}
-					}, new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
-							if (LocalMusicActivity.this.mCurrentDialog != null)
-							{
+					}, new View.OnClickListener() {
+						public void onClick(View paramAnonymousView) {
+							if (LocalMusicActivity.this.mCurrentDialog != null) {
 								LocalMusicActivity.this.mCurrentDialog
 										.dismiss();
 								LocalMusicActivity.this.mCurrentDialog = null;
 							}
 						}
 					});
-		} else if (UIGlobalSettingParameter.localmusic_folder_names != null)
-		{
+		} else if (UIGlobalSettingParameter.localmusic_folder_names != null) {
 			this.mAllSongsNumber = this.mDBController.getAllSongsCountByFolder(
 					UIGlobalSettingParameter.localmusic_folder_names,
 					UIGlobalSettingParameter.localmusic_scan_smallfile);
@@ -234,17 +207,14 @@ public class LocalMusicActivity extends ListActivity implements
 					UIGlobalSettingParameter.localmusic_folder_names,
 					UIGlobalSettingParameter.localmusic_scan_smallfile);
 			if (!Environment.MEDIA_MOUNTED.equals(Environment
-					.getExternalStorageState()))
-			{
+					.getExternalStorageState())) {
 				Toast.makeText(LocalMusicActivity.this,
 						R.string.sdcard_missing_message_common,
 						Toast.LENGTH_SHORT).show();
 			}
 
-			for (this.mFolderNumber = UIGlobalSettingParameter.localmusic_folder_names.length;; this.mFolderNumber = 0)
-			{
-				if (UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE)
-				{
+			for (this.mFolderNumber = UIGlobalSettingParameter.localmusic_folder_names.length;; this.mFolderNumber = 0) {
+				if (UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE) {
 					Object[] arrayOfObject = new Object[1];
 					arrayOfObject[0] = Integer.valueOf(this.mAllSongsNumber);
 					Toast.makeText(
@@ -272,24 +242,21 @@ public class LocalMusicActivity extends ListActivity implements
 				logger.v("onResume() ---> Exit");
 			}
 		} else if (!Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState()))
-		{
+				.getExternalStorageState())) {
 			Toast.makeText(LocalMusicActivity.this,
 					R.string.sdcard_missing_message_common, Toast.LENGTH_SHORT)
 					.show();
 		}
 	}
 
-	protected void onDestroy()
-	{
+	protected void onDestroy() {
 		logger.v("onDestroy() ---> Enter");
 		this.mController.removeSystemEventListener(22, this);
 		super.onDestroy();
 		logger.v("onDestroy() ---> Exit");
 	}
 
-	private void refreshUI()
-	{
+	private void refreshUI() {
 		ArrayList localArrayList1 = new ArrayList(4);
 		String[] arrayOfString = { "title", "num", "icon" };
 		int[] arrayOfInt = { R.id.text1, R.id.text2, R.id.listicon1 };
@@ -330,20 +297,17 @@ public class LocalMusicActivity extends ListActivity implements
 		Object localObject = null;
 
 		for (Iterator localIterator = this.mLocalPlayList.iterator(); localIterator
-				.hasNext();)
-		{
+				.hasNext();) {
 			Playlist localPlaylist = (Playlist) localIterator.next();
 			if (!localPlaylist.mName
-					.equals("cmccwm.mobilemusic.database.default.local.playlist.recent.download"))
-			{
+					.equals("cmccwm.mobilemusic.database.default.local.playlist.recent.download")) {
 				ArrayList localArrayList2 = (ArrayList) this.mDBController
 						.getSongsFromPlaylist(localPlaylist.mExternalId, 1);
 				String str5 = localPlaylist.mName;
 				Object[] arrayOfObject5 = new Object[1];
 				if (localArrayList2 == null)
 					;
-				for (int i = 0;; i = localArrayList2.size())
-				{
+				for (int i = 0;; i = localArrayList2.size()) {
 					arrayOfObject5[0] = Integer.valueOf(i);
 					addRow(localArrayList1,
 							str5,
@@ -362,8 +326,7 @@ public class LocalMusicActivity extends ListActivity implements
 	}
 
 	private void addRow(List<Map<String, Object>> list, String string1,
-			String string2, int paramInt)
-	{
+			String string2, int paramInt) {
 		HashMap localHashMap = new HashMap();
 		localHashMap.put("title", string1);
 		localHashMap.put("num", string2);
@@ -371,8 +334,7 @@ public class LocalMusicActivity extends ListActivity implements
 		list.add(localHashMap);
 	}
 
-	private void CreatePlayList()
-	{
+	private void CreatePlayList() {
 		View localView = getLayoutInflater().inflate(
 				R.layout.activity_my_migu_music_create_playlist_layout, null);
 		final EditText localEditText = (EditText) localView
@@ -384,10 +346,8 @@ public class LocalMusicActivity extends ListActivity implements
 		this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleView(
 				getParent(),
 				getText(R.string.create_play_list_playlist_activity), null,
-				localView, new View.OnClickListener()
-				{
-					public void onClick(View paramAnonymousView)
-					{
+				localView, new View.OnClickListener() {
+					public void onClick(View paramAnonymousView) {
 						String str = localEditText.getText().toString();
 						((ListView) LocalMusicActivity.this
 								.findViewById(android.R.id.list))
@@ -410,26 +370,22 @@ public class LocalMusicActivity extends ListActivity implements
 								|| (str.equals(LocalMusicActivity.this
 										.getString(R.string.local_music_download_music)))
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.dobly_song_number))))
-						{
+										.getString(R.string.dobly_song_number)))) {
 							Toast.makeText(
 									LocalMusicActivity.this,
 									R.string.duplicate_playlist_edit_playlist_activity,
 									1).show();
 						} else if (LocalMusicActivity.this.mDBController
-								.getPlaylistByName(str, 1) != null)
-						{
+								.getPlaylistByName(str, 1) != null) {
 							Toast.makeText(
 									LocalMusicActivity.this,
 									R.string.duplicate_playlist_edit_playlist_activity,
 									1).show();
-						} else
-						{
+						} else {
 							LocalMusicActivity.this.mDBController
 									.createPlaylist(str, 1);
 							LocalMusicActivity.this.refreshUI();
-							if (LocalMusicActivity.this.mCurrentDialog != null)
-							{
+							if (LocalMusicActivity.this.mCurrentDialog != null) {
 								LocalMusicActivity.this.mCurrentDialog
 										.dismiss();
 								LocalMusicActivity.this.mCurrentDialog = null;
@@ -443,15 +399,12 @@ public class LocalMusicActivity extends ListActivity implements
 									.show();
 						}
 					}
-				}, new View.OnClickListener()
-				{
-					public void onClick(View paramAnonymousView)
-					{
+				}, new View.OnClickListener() {
+					public void onClick(View paramAnonymousView) {
 						((ListView) LocalMusicActivity.this
 								.findViewById(android.R.id.list))
 								.setVerticalScrollBarEnabled(true);
-						if (LocalMusicActivity.this.mCurrentDialog != null)
-						{
+						if (LocalMusicActivity.this.mCurrentDialog != null) {
 							LocalMusicActivity.this.mCurrentDialog.dismiss();
 							LocalMusicActivity.this.mCurrentDialog = null;
 						}
@@ -460,28 +413,25 @@ public class LocalMusicActivity extends ListActivity implements
 	}
 
 	@Override
-	public void handleSystemEvent(Message paramMessage)
-	{
+	public void handleSystemEvent(Message paramMessage) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem paramMenuItem)
-	{
+	public boolean onOptionsItemSelected(MenuItem paramMenuItem) {
 		boolean bool = true;
-		switch (paramMenuItem.getItemId())
-		{
+		switch (paramMenuItem.getItemId()) {
 		default:
 			bool = super.onOptionsItemSelected(paramMenuItem);
 		case 0:
 			startActivity(new Intent(this, LocalScanMusicActivity.class));
 			break;
 		case 1:
-			//startActivity(new Intent(this, MobileMusicMoreActivity.class));
+			// startActivity(new Intent(this, MobileMusicMoreActivity.class));
 			break;
 		case 2:
-			//startActivity(new Intent(this, TimingClosureActivity.class));
+			// startActivity(new Intent(this, TimingClosureActivity.class));
 			break;
 		case 3:
 			exitApplication();
@@ -493,28 +443,21 @@ public class LocalMusicActivity extends ListActivity implements
 		return bool;
 	}
 
-	private void exitApplication()
-	{
+	private void exitApplication() {
 		this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(this,
 				getText(R.string.quit_app_dialog_title),
 				getText(R.string.quit_app_dialog_message),
-				new View.OnClickListener()
-				{
-					public void onClick(View paramAnonymousView)
-					{
-						if (LocalMusicActivity.this.mCurrentDialog != null)
-						{
+				new View.OnClickListener() {
+					public void onClick(View paramAnonymousView) {
+						if (LocalMusicActivity.this.mCurrentDialog != null) {
 							LocalMusicActivity.this.mCurrentDialog.dismiss();
 							LocalMusicActivity.this.mCurrentDialog = null;
 						}
 						Util.exitMobileMusicApp(false);
 					}
-				}, new View.OnClickListener()
-				{
-					public void onClick(View paramAnonymousView)
-					{
-						if (LocalMusicActivity.this.mCurrentDialog != null)
-						{
+				}, new View.OnClickListener() {
+					public void onClick(View paramAnonymousView) {
+						if (LocalMusicActivity.this.mCurrentDialog != null) {
 							LocalMusicActivity.this.mCurrentDialog.dismiss();
 							LocalMusicActivity.this.mCurrentDialog = null;
 						}

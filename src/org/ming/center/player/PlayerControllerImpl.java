@@ -1,18 +1,21 @@
 package org.ming.center.player;
 
+import java.util.List;
+
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.database.DBController;
+import org.ming.center.database.Song;
 import org.ming.center.http.MMHttpEventListener;
 import org.ming.center.system.SystemEventListener;
 import org.ming.dispatcher.Dispatcher;
 import org.ming.util.MyLogger;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Message;
 
 public class PlayerControllerImpl implements PlayerController,
-		PlayerEventListener, SystemEventListener, MMHttpEventListener
-{
+		PlayerEventListener, SystemEventListener, MMHttpEventListener {
 	public static final int MAX_PLAYER_ERROR_COUNT = 5;
 	public static final int MEDIA_ERROR_DATA_SOURCE = -102;
 	public static final int MEDIA_ERROR_LICENSE_REQUIRED = 300;
@@ -43,14 +46,12 @@ public class PlayerControllerImpl implements PlayerController,
 	private int mTransId = -1;
 	private long time_lastPress;
 
-	static
-	{
+	static {
 		mIsplayEnd = false;
 	}
 
 	private PlayerControllerImpl(
-			MobileMusicApplication paramMobileMusicApplication)
-	{
+			MobileMusicApplication paramMobileMusicApplication) {
 		logger.v("PlayerControllerImpl() ---> Enter");
 		this.mApp = paramMobileMusicApplication;
 		this.mDBController = paramMobileMusicApplication.getController()
@@ -93,8 +94,7 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	public static PlayerControllerImpl getInstance(
-			MobileMusicApplication paramMobileMusicApplication)
-	{
+			MobileMusicApplication paramMobileMusicApplication) {
 		logger.v("getInstance() ---> Enter");
 		if (sInstance == null)
 			sInstance = new PlayerControllerImpl(paramMobileMusicApplication);
@@ -103,290 +103,332 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void handleMMHttpEvent(Message paramMessage)
-	{
+	public void handleMMHttpEvent(Message paramMessage) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handleSystemEvent(Message paramMessage)
-	{
+	public void handleSystemEvent(Message paramMessage) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handlePlayerEvent(Message paramMessage)
-	{
+	public void handlePlayerEvent(Message paramMessage) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void cancelPlaybackStatusBar()
-	{
+	public void cancelPlaybackStatusBar() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void clearNowPlayingList()
-	{
+	public void clearNowPlayingList() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean get51CHStatus()
-	{
+	public boolean get51CHStatus() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int getDuration()
-	{
+	public int getDuration() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getEQMode()
-	{
+	public int getEQMode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean getIsLoadingData()
-	{
+	public boolean getIsLoadingData() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int getNowPlayingItemPosition()
-	{
+	public int getNowPlayingItemPosition() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getNowPlayingNextItem()
-	{
+	public int getNowPlayingNextItem() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getPosition()
-	{
+	public int getPosition() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getProgressDownloadPercent()
-	{
+	public int getProgressDownloadPercent() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getRepeatMode()
-	{
+	public int getRepeatMode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getShuffleMode()
-	{
+	public int getShuffleMode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getTransId()
-	{
+	public int getTransId() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean isFileOnExternalStorage()
-	{
+	public boolean isFileOnExternalStorage() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isInitialized()
-	{
+	public boolean isInitialized() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isInteruptByCall()
-	{
+	public boolean isInteruptByCall() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPause()
-	{
+	public boolean isPause() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPlayEnd()
-	{
+	public boolean isPlayEnd() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPlayRecommendSong()
-	{
+	public boolean isPlayRecommendSong() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPlaying()
-	{
+	public boolean isPlaying() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void loadAllLocalTracks2NowPlayingList()
-	{
+	public void loadAllLocalTracks2NowPlayingList() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void next()
-	{
+	public void next() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean open(int paramInt)
-	{
+	public boolean open(int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean openRecommendSong(int paramInt)
-	{
+	public boolean openRecommendSong(int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void pause()
-	{
+	public void pause() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void playOnlineSong(String paramString)
-	{
+	public void playOnlineSong(String paramString) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void prev()
-	{
+	public void prev() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean renewOnlinePlay(int paramInt)
-	{
+	public boolean renewOnlinePlay(int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void seek(long paramLong)
-	{
+	public void seek(long paramLong) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void set51CHStatus(boolean paramBoolean)
-	{
+	public void set51CHStatus(boolean paramBoolean) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setEQMode(int paramInt)
-	{
+	public void setEQMode(int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean setNextItem()
-	{
+	public boolean setNextItem() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void setNowPlayingItemPosition(int paramInt)
-	{
+	public void setNowPlayingItemPosition(int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int setRepeatMode(int paramInt)
-	{
+	public int setRepeatMode(int paramInt) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int setShuffleMode(int paramInt)
-	{
+	public int setShuffleMode(int paramInt) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void setTransId(int paramInt)
-	{
+	public void setTransId(int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void start()
-	{
+	public void start() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void stop()
-	{
+	public void stop() {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
+	public int add2NowPlayingList(Song paramSong) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int add2NowPlayingList(Song paramSong, boolean paramBoolean) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int add2NowPlayingList(List<Song> paramList) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void addRecommendSongList(List<Song> paramList) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int checkSongInNowPlayingList(Song paramSong) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void delDownloadSong(Song paramSong) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void delOnlineSong(Song paramSong) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void delRadioSong(Song paramSong) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Song getCurrentPlayingItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Song> getNowPlayingList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Song> getRecommendPlayList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Song makeOnlineSong(String paramString, Context paramContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void playOnlineSong(Song paramSong) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setNowPlayingList(List<Song> paramList, boolean paramBoolean) {
+		// TODO Auto-generated method stub
+
+	}
 }
