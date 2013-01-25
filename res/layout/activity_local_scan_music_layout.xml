@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <cmccwm.mobilemusic.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@id/list_view_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5.0dip"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10.0dip"
+                android:text="@string/local_music_scan_directory"
+                android:textColor="@color/black_color"
+                android:textSize="14.0sp" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@android:id/list"
+            style="@style/listview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:divider="#ffffcc00"
+            android:dividerHeight="-1.0dip"
+            android:fadingEdge="none"
+            android:scrollingCache="false" />
+
+        <ImageView
+            android:id="@android:id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:src="@drawable/image_nothing" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15.0dip"
+        android:background="@drawable/bg_scan_than_ten_sec"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10.0dip"
+            android:text="@string/local_music_scan_than_ten_sec"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+
+        <CheckBox
+            android:id="@id/local_scan_music_checkall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20.0dip"
+            android:button="@drawable/common_check_selector"
+            android:gravity="center_vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_btn_layout_nor"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@id/local_scan_music_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_download_cancel_selector"
+            android:gravity="center_vertical"
+            android:paddingLeft="70.0dip"
+            android:text="@string/download_unselect_all"
+            android:textColor="@drawable/text_red_selector"
+            android:textSize="14.0sp" />
+
+        <Button
+            android:id="@id/local_scan_all_music_checkall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_download_selectall_selector"
+            android:gravity="center_vertical"
+            android:paddingLeft="70.0dip"
+            android:text="@string/download_select_all"
+            android:textColor="@drawable/text_red_selector"
+            android:textSize="14.0sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@id/local_scan_music_ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_download_sure_selector"
+            android:gravity="center_vertical"
+            android:paddingLeft="70.0dip"
+            android:text="@string/reset_common"
+            android:textColor="@drawable/text_red_selector"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+</LinearLayout>

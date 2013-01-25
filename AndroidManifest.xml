@@ -74,7 +74,7 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.mymigu.MyMiGuActivity"
+            android:name="org.ming.ui.activity.mymigu.MyMiGuActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
     </application>

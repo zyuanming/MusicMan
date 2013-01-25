@@ -279,12 +279,6 @@ public class MobileMusicMainActivity extends TabActivity
 	}
 
 	@Override
-	protected void onPause()
-	{
-		super.onPause();
-	}
-
-	@Override
 	protected void onResume()
 	{
 		logger.v("onResume() ---> Enter");

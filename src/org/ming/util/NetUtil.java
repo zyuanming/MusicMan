@@ -1,5 +1,7 @@
 package org.ming.util;
 
+import org.ming.center.MobileMusicApplication;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;

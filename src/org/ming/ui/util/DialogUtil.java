@@ -197,15 +197,15 @@ public class DialogUtil
 		{
 			localTextView2.setText(paramCharSequence2);
 		}
-		if (paramOnClickListener1 == null)
+		if (paramOnClickListener1 != null)
 		{
 			localButton1.setOnClickListener(paramOnClickListener1);
 		}
-		if (paramOnClickListener2 == null)
+		if (paramOnClickListener2 != null)
 		{
 			localButton2.setOnClickListener(paramOnClickListener2);
 		}
-		if (paramView == null)
+		if (paramView != null)
 		{
 			localLinearLayout.addView(paramView);
 		}

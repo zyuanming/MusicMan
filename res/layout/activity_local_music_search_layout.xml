@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <cmccwm.mobilemusic.ui.view.TitleBarView
+        android:id="@id/local_music_search_title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@id/local_music_edit_text_box_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_view"
+        android:background="@drawable/bg_main_column_navigation" >
+
+        <EditText
+            android:id="@id/local_music_search_edit_text"
+            style="@style/search_edittext_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3.0dip"
+            android:layout_weight="1.0"
+            android:maxLength="20"
+            android:paddingLeft="10.0dip"
+            android:paddingRight="10.0dip"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@id/local_music_btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3.0dip"
+            android:background="@drawable/btn_word_search_selector"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@id/local_music_search_no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="10.0dip"
+            android:src="@drawable/image_local_plaese_in_put_thing" />
+
+        <cmccwm.mobilemusic.ui.view.LocalSongListView
+            android:id="@id/local_music_search_playerlist_songlistview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

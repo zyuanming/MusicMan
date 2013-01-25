@@ -28,4 +28,8 @@
         <item name="android:cacheColorHint">#00000000</item>
     </style>
 
+    <style name="search_edittext_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/serch_edittext_selector</item>
+    </style>
+
 </resources>

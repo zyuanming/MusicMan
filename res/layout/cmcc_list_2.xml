@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:listPreferredItemHeight"
+    android:background="@drawable/list_cell_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingRight="7.0dip" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15.0dip"
+        android:layout_marginRight="20.0dip"
+        android:layout_weight="1.0" >
+
+        <TextView
+            android:id="@id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20.0dip"
+            android:layout_weight="1.0"
+            android:singleLine="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="16.0sp" />
+
+        <TextView
+            android:id="@id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:ellipsize="end"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@id/listicon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:ellipsize="end"
+        android:paddingLeft="5.0dip"
+        android:scrollHorizontally="true" />
+
+</LinearLayout>

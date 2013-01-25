@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/widget30"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent" >
+
+    <EditText
+        android:id="@id/new_playlist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        android:background="@drawable/login_edittext_input_selector"
+        android:clickable="true"
+        android:maxLength="20"
+        android:paddingLeft="5.0dip"
+        android:paddingRight="5.0dip"
+        android:singleLine="true"
+        android:text="@string/new_playlist_edit_playlist_activity"
+        android:textSize="14.0sp" />
+
+</LinearLayout>

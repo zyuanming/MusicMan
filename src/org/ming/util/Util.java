@@ -38,4 +38,9 @@ public class Util
 	{
 
 	}
+
+	public static boolean getDefaultSettings()
+	{
+		return true;
+	}
 }
