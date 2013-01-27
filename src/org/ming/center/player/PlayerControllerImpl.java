@@ -223,9 +223,11 @@ public class PlayerControllerImpl implements PlayerController,
 	public boolean isInteruptByCall() {
 		try {
 			boolean bool = this.wrapper.isInteruptByCall();
+			return bool;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
 	@Override
@@ -363,21 +365,21 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	private void askSongInfo(Song paramSong) {
-//		if (paramSong.mGroupCode == "<unknown>")
-//			paramSong.mGroupCode = "null";
-//		if (paramSong.mContentId == "<unknown>")
-//			paramSong.mContentId = "null";
-//		if (NetUtil.isNetStateWap())
-//			;
-//		for (int i = 1002;; i = 5005) {
-//			MMHttpRequest localMMHttpRequest = MMHttpRequestBuilder
-//					.buildRequest(i);
-//			localMMHttpRequest.addUrlParams("contentid", paramSong.mContentId);
-//			localMMHttpRequest.addUrlParams("groupcode", paramSong.mGroupCode);
-//			this.mCurrentTask = this.mHttpController
-//					.sendRequest(localMMHttpRequest);
-//			return;
-//		}
+		// if (paramSong.mGroupCode == "<unknown>")
+		// paramSong.mGroupCode = "null";
+		// if (paramSong.mContentId == "<unknown>")
+		// paramSong.mContentId = "null";
+		// if (NetUtil.isNetStateWap())
+		// ;
+		// for (int i = 1002;; i = 5005) {
+		// MMHttpRequest localMMHttpRequest = MMHttpRequestBuilder
+		// .buildRequest(i);
+		// localMMHttpRequest.addUrlParams("contentid", paramSong.mContentId);
+		// localMMHttpRequest.addUrlParams("groupcode", paramSong.mGroupCode);
+		// this.mCurrentTask = this.mHttpController
+		// .sendRequest(localMMHttpRequest);
+		// return;
+		// }
 	}
 
 	@Override
@@ -478,6 +480,7 @@ public class PlayerControllerImpl implements PlayerController,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return 0;
 	}
 
 	@Override
@@ -533,7 +536,6 @@ public class PlayerControllerImpl implements PlayerController,
 		}
 		this.mNowPlayingList.add(1 + this.mPlayingItemPosition, paramSong);
 		this.mBackUpList.add(1 + this.mPlayingItemPosition, paramSong);
-		continue;
 		if ((this.mNowPlayingList.size() == 0)
 				|| (this.mPlayingItemPosition == -1
 						+ this.mNowPlayingList.size())) {
@@ -569,7 +571,7 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public int checkSongInNowPlayingList(Song paramSong) {
 		logger.v("checkSongInNowPlayingList() ---> Enter");
-		int ii;
+		int ii = 0;
 		if (paramSong == null) {
 			ii = -1;
 		} else {
