@@ -3,11 +3,11 @@ package org.ming.center.player;
 import java.util.List;
 
 import org.ming.center.database.Song;
+import org.ming.center.http.item.SongListItem;
 
 import android.content.Context;
 
-public abstract interface PlayerController
-{
+public abstract interface PlayerController {
 	public static final String CMCCWM_MOBILEMUSIC_ACTION_PLAYER_START = "cmccwm.mobilemusic.action.PLAYER_START";
 
 	public abstract int add2NowPlayingList(Song paramSong);
@@ -16,11 +16,11 @@ public abstract interface PlayerController
 
 	public abstract int add2NowPlayingList(List<Song> paramList);
 
-//	public abstract long addCurrentTrack2OnlineMusicTable(
-//			SongListItem paramSongListItem);
-//
-//	public abstract void addCurrentTrack2RecentPlaylist(
-//			SongListItem paramSongListItem, long paramLong);
+	public abstract long addCurrentTrack2OnlineMusicTable(
+			SongListItem paramSongListItem);
+
+	public abstract void addCurrentTrack2RecentPlaylist(
+			SongListItem paramSongListItem, long paramLong);
 
 	public abstract void addRecommendSongList(List<Song> paramList);
 

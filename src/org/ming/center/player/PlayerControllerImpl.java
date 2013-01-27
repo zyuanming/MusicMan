@@ -4,15 +4,21 @@ import java.util.List;
 
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.database.DBController;
+import org.ming.center.database.Playlist;
 import org.ming.center.database.Song;
 import org.ming.center.http.MMHttpEventListener;
+import org.ming.center.http.item.SongListItem;
+import org.ming.center.system.SystemControllerImpl;
 import org.ming.center.system.SystemEventListener;
 import org.ming.dispatcher.Dispatcher;
 import org.ming.util.MyLogger;
+import org.ming.util.NetUtil;
+import org.ming.util.Util;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Message;
+import android.util.Log;
 
 public class PlayerControllerImpl implements PlayerController,
 		PlayerEventListener, SystemEventListener, MMHttpEventListener {
@@ -37,6 +43,9 @@ public class PlayerControllerImpl implements PlayerController,
 	private int mEQMode = 1;
 	private boolean mIsLoadingData = false;
 	private boolean mIsRadio = false;
+	private List<Song> mNowPlayingList;
+	private List<Song> mRecommendPlayList = null;
+	private List<Song> mBackUpList;
 	private int mPayingNextItem = 0;
 	private int mPlayerErrCount = 0;
 	private int mPlayingItemPosition = 0;
@@ -45,7 +54,7 @@ public class PlayerControllerImpl implements PlayerController,
 	private int mShuffleMode = 0;
 	private int mTransId = -1;
 	private long time_lastPress;
-
+	private MusicPlayerWrapper wrapper;
 	static {
 		mIsplayEnd = false;
 	}
@@ -212,8 +221,11 @@ public class PlayerControllerImpl implements PlayerController,
 
 	@Override
 	public boolean isInteruptByCall() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			boolean bool = this.wrapper.isInteruptByCall();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -254,8 +266,118 @@ public class PlayerControllerImpl implements PlayerController,
 
 	@Override
 	public boolean open(int paramInt) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			logger.v("open(position) ---> Enter");
+			boolean bool1 = doHandOpen(paramInt);
+			this.ISOPENLOCALMUSIC = true;
+			bool1 = false;
+			if (paramInt == -1)
+				return bool1;
+			if (Util.checkWapStatus())
+				break;
+			if ((this.mNowPlayingList == null)
+					|| (this.mNowPlayingList.get(paramInt) == null)
+					|| (((Song) this.mNowPlayingList.get(paramInt)).mUrl == null)
+					|| ("<unknown>".equals(((Song) this.mNowPlayingList
+							.get(paramInt)).mUrl))
+					|| ("".equals(((Song) this.mNowPlayingList.get(paramInt)).mUrl)))
+				break;
+			if (((Song) this.mNowPlayingList.get(paramInt)).mUrl
+					.contains("218.200.160.30")) {
+				if (this.mRecommendPlayList != null) {
+					this.mRecommendPlayList.clear();
+					this.mRecommendPlayList = null;
+					this.mPlayingItemPosition = 0;
+				}
+				this.wrapper.stopInternal();
+				mIsCmwapToWlan = true;
+				if ((CacheSongData.getInstance().getCacheSong() != null)
+						&& (CacheSongData.getInstance().getCacheSong().mContentId
+								.equals(((Song) this.mNowPlayingList
+										.get(paramInt)).mContentId))) {
+					playOnlineSong(CacheSongData.getInstance().getCacheXml());
+					Log.v("cache", "begin playing cache db");
+				} else {
+					doHandOpen(paramInt);
+				}
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	private boolean doHandOpen(int i) {
+		boolean flag = false;
+		if (mNowPlayingList != null && !mNowPlayingList.isEmpty()) {
+			if (i < 0 || i > -1 + mNowPlayingList.size()) {
+				logger.e("open(position), position is invalid");
+				flag = false;
+			} else {
+				if (mRecommendPlayList != null) {
+					mRecommendPlayList.clear();
+					mRecommendPlayList = null;
+					mPlayingItemPosition = 0;
+				}
+				setIsLoadingData(true);
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(4008));
+				Song song = (Song) mNowPlayingList.get(i);
+				flag = false;
+				if (song != null) {
+					mDispatcher.sendMessage(mDispatcher.obtainMessage(4010));
+					if (mCurrentTask != null) {
+						mHttpController.cancelTask(mCurrentTask);
+						mCurrentTask = null;
+					}
+					if (song.mUrl == null
+							|| song.mUrl.equalsIgnoreCase("<unknown>")) {
+						mPlayingItemPosition = i;
+						wrapper.stop();
+						if (CacheSongData.getInstance().getCacheSong() != null
+								&& CacheSongData.getInstance().getCacheSong().mContentId
+										.equals(song.mContentId)) {
+							if (NetUtil.netState == 3
+									&& !SystemControllerImpl.getInstance(mApp)
+											.checkWapStatus()
+									|| !NetUtil.isConnection())
+								mApp.getEventDispatcher().sendMessage(
+										mApp.getEventDispatcher()
+												.obtainMessage(1014));
+							else
+								playOnlineSong(CacheSongData.getInstance()
+										.getCacheXml());
+							Log.v("cache", "begin playing cache db");
+						} else {
+							askSongInfo(song);
+						}
+					} else {
+						wrapper.start((Song) mNowPlayingList.get(i));
+						mPlayingItemPosition = i;
+						logger.v("open(position) ---> Exit");
+					}
+					flag = true;
+				}
+			}
+		} else {
+			logger.e("open(position), now playing list is empty");
+		}
+		return flag;
+	}
+
+	private void askSongInfo(Song paramSong) {
+//		if (paramSong.mGroupCode == "<unknown>")
+//			paramSong.mGroupCode = "null";
+//		if (paramSong.mContentId == "<unknown>")
+//			paramSong.mContentId = "null";
+//		if (NetUtil.isNetStateWap())
+//			;
+//		for (int i = 1002;; i = 5005) {
+//			MMHttpRequest localMMHttpRequest = MMHttpRequestBuilder
+//					.buildRequest(i);
+//			localMMHttpRequest.addUrlParams("contentid", paramSong.mContentId);
+//			localMMHttpRequest.addUrlParams("groupcode", paramSong.mGroupCode);
+//			this.mCurrentTask = this.mHttpController
+//					.sendRequest(localMMHttpRequest);
+//			return;
+//		}
 	}
 
 	@Override
@@ -350,14 +472,86 @@ public class PlayerControllerImpl implements PlayerController,
 
 	@Override
 	public int add2NowPlayingList(Song paramSong) {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			int i = add2NowPlayingList(paramSong, false);
+			return i;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public int add2NowPlayingList(Song paramSong, boolean paramBoolean) {
-		// TODO Auto-generated method stub
-		return 0;
+		int i = -1;
+		try {
+			logger.v("add2NowPlayingList() ---> Enter");
+			if (paramSong == null)
+				return i;
+			if (this.mIsRadio) {
+				this.mNowPlayingList.clear();
+				this.mBackUpList.clear();
+				Playlist localPlaylist = this.mDBController
+						.getPlaylistByName(
+								"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
+								2);
+				List localList = this.mDBController
+						.getSongsFromMixPlaylist(localPlaylist.mExternalId);
+				if (localList != null) {
+					this.mNowPlayingList.addAll(localList);
+					this.mBackUpList.addAll(localList);
+				}
+				this.mPlayingItemPosition = 0;
+				this.mIsRadio = false;
+			}
+			if ((this.mRecommendPlayList != null)
+					&& (this.mRecommendPlayList.size() > 0))
+				paramBoolean = true;
+			int j = this.mNowPlayingList.indexOf(paramSong);
+			if (paramBoolean) {
+				if (i == j) {
+					this.mNowPlayingList.add(paramSong);
+					this.mBackUpList.add(paramSong);
+				} else {
+					this.mNowPlayingList.remove(paramSong);
+					this.mBackUpList.remove(paramSong);
+				}
+				this.mDispatcher.sendMessage(this.mDispatcher
+						.obtainMessage(1023));
+			}
+			if (j <= this.mPlayingItemPosition) {
+				int n = 1 + this.mPlayingItemPosition;
+				int i1 = 1 + this.mPlayingItemPosition;
+				if (this.mNowPlayingList.size() < 1 + this.mPlayingItemPosition)
+					n = this.mNowPlayingList.size();
+				this.mNowPlayingList.add(n, paramSong);
+				if (this.mBackUpList.size() < 1 + this.mPlayingItemPosition)
+					i1 = this.mBackUpList.size();
+				this.mBackUpList.add(i1, paramSong);
+				this.mPlayingItemPosition = (-1 + this.mPlayingItemPosition);
+			}
+		} finally {
+		}
+		this.mNowPlayingList.add(1 + this.mPlayingItemPosition, paramSong);
+		this.mBackUpList.add(1 + this.mPlayingItemPosition, paramSong);
+		continue;
+		if ((this.mNowPlayingList.size() == 0)
+				|| (this.mPlayingItemPosition == -1
+						+ this.mNowPlayingList.size())) {
+			this.mNowPlayingList.add(paramSong);
+			this.mBackUpList.add(paramSong);
+		} else {
+			int k = 1 + this.mPlayingItemPosition;
+			int m = 1 + this.mPlayingItemPosition;
+			if (this.mNowPlayingList.size() < 1 + this.mPlayingItemPosition)
+				k = this.mNowPlayingList.size();
+			this.mNowPlayingList.add(k, paramSong);
+			if (this.mBackUpList.size() < 1 + this.mPlayingItemPosition)
+				m = this.mBackUpList.size();
+			this.mBackUpList.add(m, paramSong);
+		}
+		logger.v("add2NowPlayingList() ---> Exit");
+		i = this.mNowPlayingList.indexOf(paramSong);
+		return i;
 	}
 
 	@Override
@@ -374,8 +568,20 @@ public class PlayerControllerImpl implements PlayerController,
 
 	@Override
 	public int checkSongInNowPlayingList(Song paramSong) {
-		// TODO Auto-generated method stub
-		return 0;
+		logger.v("checkSongInNowPlayingList() ---> Enter");
+		int ii;
+		if (paramSong == null) {
+			ii = -1;
+		} else {
+			for (int i = 0; i < this.mNowPlayingList.size(); i++) {
+				if (paramSong.equals((Song) this.mNowPlayingList.get(i))) {
+					logger.d("Got the position is " + i);
+					return i;
+				}
+			}
+		}
+		logger.v("checkSongInNowPlayingList() ---> Exit");
+		return ii;
 	}
 
 	@Override
@@ -428,6 +634,19 @@ public class PlayerControllerImpl implements PlayerController,
 
 	@Override
 	public void setNowPlayingList(List<Song> paramList, boolean paramBoolean) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public long addCurrentTrack2OnlineMusicTable(SongListItem paramSongListItem) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void addCurrentTrack2RecentPlaylist(SongListItem paramSongListItem,
+			long paramLong) {
 		// TODO Auto-generated method stub
 
 	}

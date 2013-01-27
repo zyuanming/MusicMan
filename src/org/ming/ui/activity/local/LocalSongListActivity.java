@@ -35,8 +35,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 public class LocalSongListActivity extends Activity implements UIEventListener,
-		SystemEventListener
-{
+		SystemEventListener {
 	public static final int CURSOR_ALL_SONG = 0;
 	private static final int CURSOR_REQUERY_AFTER_DELETE = 1;
 	public static final int CURSOR_SONG_BY_FOLDERPATH = 3;
@@ -61,10 +60,8 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 	private Song mSong;
 	private TitleBarView mTitleBar;
 	private long[] songids;
-	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener()
-	{
-		public void onClick(View paramAnonymousView)
-		{
+	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener() {
+		public void onClick(View paramAnonymousView) {
 			// LocalSongListActivity.logger
 			// .v("mCreatePlayListOnClickListener----onclick() ---> in");
 			// Intent localIntent = new Intent(LocalSongListActivity.this,
@@ -79,33 +76,32 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		}
 	};
 
-	private void queryHandlerQueryComplete(Cursor paramCursor)
-	{
+	private void queryHandlerQueryComplete(Cursor paramCursor) {
 		logger.v("queryHandlerQueryComplete() ---> Enter");
 		this.mLocalSongListView.setCursor(paramCursor);
 		this.mLocalSongListView
-				.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener()
-				{
+				.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
 					public void onCreateContextMenu(ContextMenu contextMenu,
 							View paramAnonymousView,
-							ContextMenu.ContextMenuInfo contextMenuInfo)
-					{
+							ContextMenu.ContextMenuInfo contextMenuInfo) {
 						AdapterView.AdapterContextMenuInfo localAdapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) contextMenuInfo;
 						mSong = mLocalSongListView
 								.getSongbyPosition(localAdapterContextMenuInfo.position);
 						contextMenu.setHeaderTitle(mSong.mTrack);
-						if (mPlaylistId > 0)
+						if (mPlaylistId > 0) {
 							contextMenu.add(0, 2, 0,
 									R.string.local_music_remove);
-						contextMenu.add(0, 0, 0, R.string.delete_common);
-						contextMenu.add(1, 1, 0, R.string.local_music_rename);
+						} else {
+							contextMenu.add(0, 0, 0, R.string.delete_common);
+							contextMenu.add(1, 1, 0,
+									R.string.local_music_rename);
+						}
 					}
 				});
 		logger.v("queryHandlerQueryComplete() ---> Exit");
 	}
 
-	private void refreshUI()
-	{
+	private void refreshUI() {
 		logger.v("refreshUI() ---> Enter");
 		Intent localIntent = getIntent();
 		this.mLaunchType = getIntent().getIntExtra("type", 0);
@@ -119,8 +115,7 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		this.mPlaylistId = localIntent.getIntExtra(PLAYLISTID, 0);
 		if (localIntent.getStringExtra("title") != null)
 			this.mTitleBar.setTitle(localIntent.getStringExtra("title"));
-		if (this.mPlaylistId > 0)
-		{
+		if (this.mPlaylistId > 0) {
 			this.mTitleBar.setButtons(2);
 			ImageView localImageView = (ImageView) this.mTitleBar
 					.findViewById(R.id.btn_rightbutton);
@@ -128,15 +123,15 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 					.setRightBtnImage(R.drawable.btn_titlebar_add_music_selector);
 			localImageView
 					.setOnClickListener(this.mCreatePlayListOnClickListener);
+		} else {
+			this.mTitleBar.setButtons(0);
 		}
-		this.mTitleBar.setButtons(0);
 		logger.v("refreshUI() ---> Exit");
 
 	}
 
 	// 重命名歌曲
-	private void show2BtnDialogWithEditTextView()
-	{
+	private void show2BtnDialogWithEditTextView() {
 		logger.v("show2BtnDialogWithIconTitleView() ---> Enter");
 		final Dialog localDialog = new Dialog(this, R.style.CustomDialogTheme);
 		View localView = LayoutInflater.from(this).inflate(
@@ -145,10 +140,8 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 				.findViewById(R.id.new_name);
 		Button localButton1 = (Button) localView.findViewById(R.id.button1);
 		Button localButton2 = (Button) localView.findViewById(R.id.button2);
-		localButton1.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View paramAnonymousView)
-			{
+		localButton1.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View paramAnonymousView) {
 				new File(LocalSongListActivity.this.mSong.mUrl)
 						.renameTo(new File(""));
 				String str = localEditText.getText().toString();
@@ -171,10 +164,8 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 				localDialog.dismiss();
 			}
 		});
-		localButton2.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View paramAnonymousView)
-			{
+		localButton2.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View paramAnonymousView) {
 				localDialog.dismiss();
 			}
 		});
@@ -183,11 +174,9 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		logger.v("show2BtnDialogWithIconTitleView() ---> Exit");
 	}
 
-	public void handleSystemEvent(Message paramMessage)
-	{
+	public void handleSystemEvent(Message paramMessage) {
 		logger.v("handleSystemEvent() ---> Enter");
-		switch (paramMessage.what)
-		{
+		switch (paramMessage.what) {
 		case 4:
 			finish();
 			break;
@@ -201,24 +190,19 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		logger.v("handleSystemEvent() ---> Exit");
 	}
 
-	public void handleUIEvent(Message paramMessage)
-	{
+	public void handleUIEvent(Message paramMessage) {
 		logger.v("handleUIEvent() ---> Enter");
 		logger.v("handleUIEvent() ---> Exit");
 	}
 
-	public boolean onContextItemSelected(MenuItem paramMenuItem)
-	{
+	public boolean onContextItemSelected(MenuItem paramMenuItem) {
 		if ((this.mPlayerController.getCurrentPlayingItem() == null)
-				|| (this.mPlayerController.getCurrentPlayingItem().mId != this.mSong.mId))
-		{
+				|| (this.mPlayerController.getCurrentPlayingItem().mId != this.mSong.mId)) {
 			this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(
 					this, getText(R.string.local_music_delete),
 					getText(R.string.local_music_delete_content),
-					new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
+					new View.OnClickListener() {
+						public void onClick(View paramAnonymousView) {
 							new File(LocalSongListActivity.this.mSong.mUrl)
 									.delete();
 							LocalSongListActivity.this.mDBController
@@ -229,8 +213,7 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 									.getSongIdByPath(LocalSongListActivity.this.mSong.mUrl) != -1L)
 								LocalSongListActivity.this.mDBController
 										.deleteDBDlItemByPath(LocalSongListActivity.this.mSong.mUrl);
-							if (LocalSongListActivity.this.mCurrentDialog != null)
-							{
+							if (LocalSongListActivity.this.mCurrentDialog != null) {
 								LocalSongListActivity.this.mCurrentDialog
 										.dismiss();
 								LocalSongListActivity.this.mCurrentDialog = null;
@@ -239,36 +222,28 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 									.delOnlineSong(LocalSongListActivity.this.mSong);
 							LocalSongListActivity.this.refreshUI();
 						}
-					}, new View.OnClickListener()
-					{
-						public void onClick(View paramAnonymousView)
-						{
-							if (LocalSongListActivity.this.mCurrentDialog != null)
-							{
+					}, new View.OnClickListener() {
+						public void onClick(View paramAnonymousView) {
+							if (LocalSongListActivity.this.mCurrentDialog != null) {
 								LocalSongListActivity.this.mCurrentDialog
 										.dismiss();
 								LocalSongListActivity.this.mCurrentDialog = null;
 							}
 						}
 					});
-		} else
-		{
+		} else {
 			Toast.makeText(this, R.string.local_music_undo, 1).show();
 			if ((this.mPlayerController.getCurrentPlayingItem() == null)
-					|| (this.mPlayerController.getCurrentPlayingItem().mId != this.mSong.mId))
-			{
+					|| (this.mPlayerController.getCurrentPlayingItem().mId != this.mSong.mId)) {
 				show2BtnDialogWithEditTextView();
-			} else
-			{
+			} else {
 				Toast.makeText(this, R.string.local_music_undo, 1).show();
 				if ((this.mPlayerController.getCurrentPlayingItem() == null)
-						|| (this.mPlayerController.getCurrentPlayingItem().mId != this.mSong.mId))
-				{
+						|| (this.mPlayerController.getCurrentPlayingItem().mId != this.mSong.mId)) {
 					this.mDBController.deleteSongFromPlaylist(this.mPlaylistId,
 							this.mSong.mId, 1);
 					refreshUI();
-				} else
-				{
+				} else {
 					Toast.makeText(this, R.string.local_music_undo, 1).show();
 				}
 			}
@@ -277,8 +252,7 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		return super.onContextItemSelected(paramMenuItem);
 	}
 
-	protected void onCreate(Bundle paramBundle)
-	{
+	protected void onCreate(Bundle paramBundle) {
 		logger.v("onCreate() ---> Enter");
 		super.onCreate(paramBundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -297,8 +271,7 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		logger.v("onCreate() ---> Exit");
 	}
 
-	protected void onDestroy()
-	{
+	protected void onDestroy() {
 		logger.v("onDestroy() ---> Enter");
 		this.mController.removeUIEventListener(4012, this);
 		this.mController.removeSystemEventListener(22, this);
@@ -307,8 +280,7 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		logger.v("onDestroy() ---> Exit");
 	}
 
-	protected void onPause()
-	{
+	protected void onPause() {
 		logger.v("onPause() ---> Enter");
 		this.mLocalSongListView.removeEventListner();
 		this.mController.removeSystemEventListener(5, this);
@@ -316,19 +288,16 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		logger.v("onPause() ---> Exit");
 	}
 
-	protected void onResume()
-	{
+	protected void onResume() {
 		logger.v("onResume() ---> Enter");
 		this.mLocalSongListView.addEventListner();
 		refreshUI();
 		this.mController.addSystemEventListener(5, this);
 		this.mLocalSongListView
-				.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener()
-				{
+				.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
 					public void onCreateContextMenu(ContextMenu contextMenu,
 							View paramAnonymousView,
-							ContextMenu.ContextMenuInfo contextMenuInfo)
-					{
+							ContextMenu.ContextMenuInfo contextMenuInfo) {
 						AdapterView.AdapterContextMenuInfo localAdapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) contextMenuInfo;
 						mSong = mLocalSongListView
 								.getSongbyPosition(localAdapterContextMenuInfo.position);
@@ -344,35 +313,42 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 		logger.v("onResume() ---> Exit");
 	}
 
-	class asyncGetCursor extends AsyncTask<Integer, Void, Cursor>
-	{
+	class asyncGetCursor extends AsyncTask<Integer, Void, Cursor> {
 		int type = 0;
 
-		asyncGetCursor()
-		{}
+		asyncGetCursor() {
+		}
 
-		protected Cursor doInBackground(Integer[] paramArrayOfInteger)
-		{
+		protected Cursor doInBackground(Integer[] ai) {
 			logger.d("asyncGetCursor.doInBackground() ----> enter");
-			asyncGetCursor.this.type = paramArrayOfInteger[0].intValue();
+			asyncGetCursor.this.type = ai[0].intValue();
 			int i = asyncGetCursor.this.type;
 			logger.d("asyncGetCursor.type --->" + i);
 			Cursor localCursor = null;
 			localCursor = mDBController.getSongsCursorByFolder(
 					UIGlobalSettingParameter.localmusic_folder_names,
 					UIGlobalSettingParameter.localmusic_scan_smallfile);
-			switch (i)
-			{
+			switch (i) {
 			default:
-			case CURSOR_ALL_SONG:
+			case CURSOR_ALL_SONG: { // 全部歌曲
+				// songids = new long[localCursor.getCount()];
+				//
+				// int j = 0;
+				// int k = localCursor.getColumnIndex("_id");
+				// if (!localCursor.moveToNext()) {
+				// localCursor.moveToPosition(-1);
+				// }
+				// long[] arrayOfLong1 = songids;
+				// int m = j + 1;
+				// arrayOfLong1[j] = localCursor.getInt(k);
+				// j = m;
+			}
 				break;
-			case CURSOR_REQUERY_AFTER_DELETE:
-			{
+			case CURSOR_REQUERY_AFTER_DELETE: {
 				songids = new long[localCursor.getCount()];
 				int i6 = 0;
 				int i7 = localCursor.getColumnIndex("_id");
-				if (!localCursor.moveToNext())
-				{
+				if (!localCursor.moveToNext()) {
 					localCursor.moveToPosition(-1);
 				}
 				long[] arrayOfLong4 = songids;
@@ -383,29 +359,26 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 				mDBController.deleteSongFromDB(mSong.mId);
 				boolean bool = mDBController.getSongIdByPath(mSong.mUrl) < -1L;
 				localCursor = null;
-				if (bool)
-				{
+				if (bool) {
 					mDBController.deleteDBDlItemByPath(mSong.mUrl);
 					localCursor = null;
 				}
+
+				break;
+			}
+			case CURSOR_SONG_BY_SINGERID: { // 按歌手浏览
 				localCursor = mDBController.getSongsCursorByFolderAndSinger(
 						UIGlobalSettingParameter.localmusic_folder_names,
 						getIntent().getIntExtra("songid", 0),
 						UIGlobalSettingParameter.localmusic_scan_smallfile);
 				break;
 			}
-			case CURSOR_SONG_BY_SINGERID:
-			{
-
-			}
-			case CURSOR_SONG_BY_FOLDERPATH:
-			{
+			case CURSOR_SONG_BY_FOLDERPATH: { // 按目录浏览
 				songids = new long[localCursor.getCount()];
 
 				int i3 = 0;
 				int i4 = localCursor.getColumnIndex("_id");
-				if (!localCursor.moveToNext())
-				{
+				if (!localCursor.moveToNext()) {
 					localCursor.moveToPosition(-1);
 				}
 				long[] arrayOfLong3 = songids;
@@ -418,14 +391,12 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 						arrayOfString,
 						UIGlobalSettingParameter.localmusic_scan_smallfile);
 			}
-			case CURSOR_SONG_BY_PLAYLIST:
-			{
+			case CURSOR_SONG_BY_PLAYLIST: { // 根据播放列表查看
 				songids = new long[localCursor.getCount()];
 
 				int n = 0;
 				int i1 = localCursor.getColumnIndex("_id");
-				if (!localCursor.moveToNext())
-				{
+				if (!localCursor.moveToNext()) {
 					localCursor.moveToPosition(-1);
 				}
 				long[] arrayOfLong2 = songids;
@@ -435,31 +406,15 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 				localCursor = mDBController.getCursorFromPlaylist(getIntent()
 						.getIntExtra("playlistid", 0), 1);
 			}
-
 			}
-
-			songids = new long[localCursor.getCount()];
-
-			int j = 0;
-			int k = localCursor.getColumnIndex("_id");
-			if (!localCursor.moveToNext())
-			{
-				localCursor.moveToPosition(-1);
-			}
-			long[] arrayOfLong1 = songids;
-			int m = j + 1;
-			arrayOfLong1[j] = localCursor.getInt(k);
-			j = m;
 			logger.d("asyncGetCursor.doInBackground() ----> exit");
 			return localCursor;
 		}
 
 		@Override
-		protected void onPostExecute(Cursor paramCursor)
-		{
+		protected void onPostExecute(Cursor paramCursor) {
 			queryHandlerQueryComplete(paramCursor);
-			if (mCurrentDialog != null)
-			{
+			if (mCurrentDialog != null) {
 				mCurrentDialog.dismiss();
 				mCurrentDialog = null;
 			}

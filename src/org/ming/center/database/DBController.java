@@ -6,8 +6,7 @@ import java.util.Set;
 import android.database.Cursor;
 import android.net.Uri;
 
-public abstract interface DBController
-{
+public abstract interface DBController {
 	public abstract long addCacheData(String paramString1, String paramString2,
 			String paramString3, String paramString4);
 
@@ -64,6 +63,8 @@ public abstract interface DBController
 
 	public abstract List<Song> getSongsFromCursor(Cursor paramCursor,
 			int paramInt);
+
+	public abstract List<Song> getSongsFromMixPlaylist(long paramLong);
 
 	public abstract Cursor getAllSongs(Uri paramUri, String[] paramArrayOfString);
 

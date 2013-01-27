@@ -19,8 +19,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-public class DBControllerImpl implements DBController
-{
+public class DBControllerImpl implements DBController {
 	private static final String CACHEDATA_COLUMNS[] = { "CONTENT_KEY",
 			"GROUP_CODE", "TIME_STAMP", "DATA" };
 	public static final String CHECK_OLDERVERSION = "cmccwm.mobilemusic.database.checkolderversion";
@@ -104,8 +103,7 @@ public class DBControllerImpl implements DBController
 	private SQLiteDatabase mDb;
 	private DatabaseHelper mOpenHelper;
 
-	private DBControllerImpl(MobileMusicApplication mobilemusicapplication)
-	{
+	private DBControllerImpl(MobileMusicApplication mobilemusicapplication) {
 		mApp = null;
 		mDb = null;
 		mApp = mobilemusicapplication;
@@ -114,26 +112,22 @@ public class DBControllerImpl implements DBController
 	}
 
 	public static DBControllerImpl getInstance(
-			MobileMusicApplication mobilemusicapplication)
-	{
+			MobileMusicApplication mobilemusicapplication) {
 		if (sInstance == null)
 			sInstance = new DBControllerImpl(mobilemusicapplication);
 		return sInstance;
 	}
 
-	private class DatabaseHelper extends SQLiteOpenHelper
-	{
+	private class DatabaseHelper extends SQLiteOpenHelper {
 
 		final DBControllerImpl dbControllerImpl;
 
-		DatabaseHelper(Context context)
-		{
+		DatabaseHelper(Context context) {
 			super(context, "mobile_music", null, 7);
 			dbControllerImpl = DBControllerImpl.this;
 		}
 
-		public void onCreate(SQLiteDatabase sqlitedatabase)
-		{
+		public void onCreate(SQLiteDatabase sqlitedatabase) {
 			DBControllerImpl.logger.v("DatabaseHelper.onCreate() ---> Enter");
 			// 创建必要的表
 			sqlitedatabase
@@ -176,13 +170,10 @@ public class DBControllerImpl implements DBController
 			DBControllerImpl.logger.v("DatabaseHelper.onCreate() ---> Exit");
 		}
 
-		public void onUpgrade(SQLiteDatabase sqlitedatabase, int i, int j)
-		{
+		public void onUpgrade(SQLiteDatabase sqlitedatabase, int i, int j) {
 			DBControllerImpl.logger.v("DatabaseHelper.onUpgrade() ---> Enter");
-			if (i < 7)
-			{
-				try
-				{
+			if (i < 7) {
+				try {
 					sqlitedatabase.execSQL("drop TABLE downloadlist");
 					sqlitedatabase.execSQL("drop TABLE cotentidmap");
 					sqlitedatabase
@@ -193,12 +184,10 @@ public class DBControllerImpl implements DBController
 					sqlitedatabase.execSQL("drop TABLE local_music_playlist");
 					sqlitedatabase
 							.execSQL("drop TABLE local_music_playlist_map");
-				} catch (SQLException sqlexception)
-				{
+				} catch (SQLException sqlexception) {
 					DBControllerImpl.logger.e("Fail to remove table!!");
 				}
-				try
-				{
+				try {
 					sqlitedatabase.execSQL("drop TABLE music_playlist");
 					sqlitedatabase.execSQL("drop TABLE music_playlist_map");
 					sqlitedatabase.execSQL("drop TABLE T_CACHEDATA");
@@ -206,8 +195,7 @@ public class DBControllerImpl implements DBController
 					sqlitedatabase.execSQL("drop TABLE ratelist");
 					sqlitedatabase.execSQL("drop TABLE radiogarbagelist");
 					sqlitedatabase.execSQL("drop TABLE T_APPINFO");
-				} catch (SQLException sqlexception1)
-				{
+				} catch (SQLException sqlexception1) {
 					DBControllerImpl.logger.e("Fail to remove table!!");
 				}
 				sqlitedatabase
@@ -236,8 +224,7 @@ public class DBControllerImpl implements DBController
 						.execSQL("create table ratelist( _id integer primary key autoincrement, user_id integer not null, contentid integer not null, point integer not null)");
 				sqlitedatabase
 						.execSQL("create table radiogarbagelist( _id integer primary key autoincrement, user_id integer not null, contentid integer not null, groupconde integer not null)");
-				if (i < 7)
-				{
+				if (i < 7) {
 					sqlitedatabase.execSQL("drop TABLE T_APPINFO");
 					sqlitedatabase
 							.execSQL("create table T_APPINFO( CHANNELID text not null,SUBCHANNELID text not null)");
@@ -245,8 +232,7 @@ public class DBControllerImpl implements DBController
 					writeChannelId(
 							ConfigSettingParameter.CONSTANT_CHANNEL_VALUE,
 							ConfigSettingParameter.CONSTANT_SUBCHANNEL_VALUE);
-				} else
-				{
+				} else {
 					mDb = sqlitedatabase;
 				}
 				createPlaylist(
@@ -260,8 +246,7 @@ public class DBControllerImpl implements DBController
 		}
 	}
 
-	public long writeChannelId(String s, String s1)
-	{
+	public long writeChannelId(String s, String s1) {
 		logger.v("writeChannelId() ---> Enter");
 		ContentValues contentvalues = new ContentValues();
 		contentvalues.put("CHANNELID", s);
@@ -272,70 +257,75 @@ public class DBControllerImpl implements DBController
 
 	@Override
 	public long addCacheData(String paramString1, String paramString2,
-			String paramString3, String paramString4)
-	{
+			String paramString3, String paramString4) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long addContentId(String paramString1, String paramString2)
-	{
+	public long addContentId(String paramString1, String paramString2) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long addMusicRadioGarbage(String paramString1, String paramString2)
-	{
+	public long addMusicRadioGarbage(String paramString1, String paramString2) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long addMusicRate(String paramString, int paramInt)
-	{
+	public long addMusicRate(String paramString, int paramInt) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public boolean addSongs2MixPlaylist(long paramLong,
-			long[] paramArrayOfLong, boolean paramBoolean)
-	{
+			long[] paramArrayOfLong, boolean paramBoolean) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean addSongs2Playlist(long paramLong, long[] paramArrayOfLong,
-			int paramInt)
-	{
+			int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void closeDB()
-	{
+	public void closeDB() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int countSongNumInPlaylist(long paramLong, int paramInt)
-	{
-		// TODO Auto-generated method stub
-		return 0;
+	public int countSongNumInPlaylist(long l, int i) {
+		logger.v("countSongNumInPlaylist() ---> Enter");
+		Cursor cursor = mDb.query(getPlaylistMapDB(i),
+				new String[] { "count(*)" },
+				(new StringBuilder("playlist_id=")).append(l).toString(), null,
+				null, null, null);
+		int j = 0;
+		if (cursor != null) {
+			int k = cursor.getCount();
+			j = 0;
+			if (k > 0) {
+				cursor.moveToFirst();
+				j = cursor.getInt(cursor.getColumnIndexOrThrow("count(*)"));
+				cursor.close();
+			}
+		}
+		logger.v("countSongNumInPlaylist() ---> Exit");
+		return j;
 	}
 
 	@Override
-	public long createPlaylist(String paramString, int paramInt)
-	{
+	public long createPlaylist(String paramString, int paramInt) {
 		logger.v("createPlaylist() ---> Enter");
 		long l;
-		if (getPlaylistByName(paramString, paramInt) == null)
-		{
+		if (getPlaylistByName(paramString, paramInt) == null) {
 			ContentValues contentvalues;
 			contentvalues = new ContentValues();
 			contentvalues.put("name", paramString);
@@ -345,24 +335,20 @@ public class DBControllerImpl implements DBController
 			contentvalues.put("date_modified",
 					Long.valueOf(System.currentTimeMillis()));
 			if (paramString
-					.equals("cmccwm.mobilemusic.database.default.online.playlist.recent.play"))
-			{
+					.equals("cmccwm.mobilemusic.database.default.online.playlist.recent.play")) {
 				contentvalues.put("user_id", Integer.valueOf(-1));
 			}
-			if (paramInt == 1 || paramInt == 2)
-			{
+			if (paramInt == 1 || paramInt == 2) {
 				logger.v("createOnlinePlaylist() ---> Exit");
 				l = mDb.insert(getPlaylistDB(paramInt), null, contentvalues);
 				logger.v(String.valueOf(l) + "---------------------------");
-			} else
-			{
+			} else {
 				contentvalues.put("user_id",
 						Long.valueOf(GlobalSettingParameter.useraccount.mId));
 				logger.v("createOnlinePlaylist() ---> Exit");
 				l = mDb.insert(getPlaylistDB(paramInt), null, contentvalues);
 			}
-		} else
-		{
+		} else {
 			logger.e("Create duplicate default playlist!!");
 			l = -1L;
 		}
@@ -370,43 +356,37 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public void delAllLcSongsFromPlaylist(long paramLong)
-	{
+	public void delAllLcSongsFromPlaylist(long paramLong) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean deleteAllSongsFromMixPlaylist(long paramLong, int paramInt)
-	{
+	public boolean deleteAllSongsFromMixPlaylist(long paramLong, int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int deleteCacheDataByGroupCode(String paramString)
-	{
+	public int deleteCacheDataByGroupCode(String paramString) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void deleteDBDlItemById(long paramLong)
-	{
+	public void deleteDBDlItemById(long paramLong) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void deleteDBDlItemByPath(String paramString)
-	{
+	public void deleteDBDlItemByPath(String paramString) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void deletePlaylist(long l, int i)
-	{
+	public void deletePlaylist(long l, int i) {
 		logger.v("deletePlaylist() ---> Enter");
 		mDb.delete(getPlaylistMapDB(i), (new StringBuilder("playlist_id="))
 				.append(l).toString(), null);
@@ -416,73 +396,77 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public void deleteSongFromDB(long paramLong)
-	{
+	public void deleteSongFromDB(long paramLong) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void deleteSongFromPlaylist(long paramLong1, long paramLong2,
-			int paramInt)
-	{
+			int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean deleteSongsFromMixPlaylist(long paramLong,
-			long[] paramArrayOfLong, int paramInt)
-	{
-		// TODO Auto-generated method stub
-		return false;
+	public boolean deleteSongsFromMixPlaylist(long l, long[] al, int i) {
+		logger.v("deleteSongsFromPlaylist() ---> Enter");
+		boolean flag = false;
+		if (l >= 0L && al != null && al.length != 0) {
+			for (int j = 0; j < al.length; j++) {
+				mDb.delete(
+						getPlaylistMapDB(i),
+						(new StringBuilder("playlist_id=")).append(l)
+								.append(" AND ").append("audio_id").append("=")
+								.append(al[j]).toString(), null);
+				logger.v("deleteSongsFromPlaylist() ---> Exit");
+				flag = true;
+			}
+		} else {
+			logger.d("illegal arguments from deleteSongsToPlaylist");
+		}
+		return flag;
+
 	}
 
 	@Override
 	public boolean deleteSongsFromPlaylist(long paramLong,
-			long[] paramArrayOfLong, int paramInt)
-	{
+			long[] paramArrayOfLong, int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int deleteUpdatePackage(String paramString)
-	{
+	public int deleteUpdatePackage(String paramString) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean get51CHStatus()
-	{
+	public boolean get51CHStatus() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Cursor getAllSongs(Uri paramUri, String[] paramArrayOfString)
-	{
+	public Cursor getAllSongs(Uri paramUri, String[] paramArrayOfString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int getAllSongsCountByFolder(String[] as, boolean flag)
-	{
+	public int getAllSongsCountByFolder(String[] as, boolean flag) {
 		String s = "";
 		int i = as.length;
 		int k = 0;
-		for (int j = 0; j < i; j++)
-		{
+		for (int j = 0; j < i; j++) {
 			String s1 = editTheFolder(as[j]);
 			s = (new StringBuilder(String.valueOf(s))).append("_data like '")
 					.append(s1).append("%' and ").append("_data")
 					.append(" not like '").append(s1).append("/%/%' or ")
 					.toString();
 		}
-		if (s.length() > 0)
-		{
+		if (s.length() > 0) {
 			String s3 = (new StringBuilder(String.valueOf(s.substring(0,
 					s.lastIndexOf("or"))))).append(")").toString();
 			s = (new StringBuilder(String.valueOf("("))).append(s3).toString();
@@ -495,8 +479,7 @@ public class DBControllerImpl implements DBController
 		Cursor cursor = query(
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				null, s2, null, null);
-		if (cursor != null)
-		{
+		if (cursor != null) {
 			k = cursor.getCount();
 			cursor.close();
 		}
@@ -504,8 +487,7 @@ public class DBControllerImpl implements DBController
 		return k;
 	}
 
-	public String editTheFolder(String s)
-	{
+	public String editTheFolder(String s) {
 		if (s.contains("'"))
 			s = s.replace("'", "''");
 		return s;
@@ -513,37 +495,32 @@ public class DBControllerImpl implements DBController
 
 	@Override
 	public int getAllSongsCountByFolderAndSinger(String[] paramArrayOfString,
-			int paramInt, boolean paramBoolean)
-	{
+			int paramInt, boolean paramBoolean) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getArtistCountByFolder(String[] as, boolean flag)
-	{
+	public int getArtistCountByFolder(String[] as, boolean flag) {
 		logger.v("getArtistCountByFolder() ---> Enter");
 		String s = "";
 		HashSet hashset;
 		int i = as.length;
 
 		hashset = new HashSet();
-		for (int j = 0; j < i; j++)
-		{
+		for (int j = 0; j < i; j++) {
 			String s1 = editTheFolder(as[j]);
 			s = (new StringBuilder(String.valueOf(s))).append("_data like '")
 					.append(s1).append("%' and ").append("_data")
 					.append(" not like '").append(s1).append("/%/%' or ")
 					.toString();
 		}
-		if (s.length() > 0)
-		{
+		if (s.length() > 0) {
 			String s3 = (new StringBuilder(String.valueOf(s.substring(0,
 					s.lastIndexOf("or"))))).append(")").toString();
 			s = (new StringBuilder(String.valueOf("("))).append(s3).toString();
 		}
-		if (flag)
-		{
+		if (flag) {
 			s = (new StringBuilder(String.valueOf(s))).append(
 					" and duration > 10000").toString();
 		}
@@ -553,16 +530,16 @@ public class DBControllerImpl implements DBController
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				new String[] { "artist_id" }, s2, null, "title_key");
 
-		if (cursor == null || cursor.getCount() <= 0)
-		{
+		if (cursor == null || cursor.getCount() <= 0) {
 			if (cursor != null && !cursor.isClosed())
 				cursor.close();
-		} else
-		{
+		} else {
 			logger.d((new StringBuilder("There are "))
 					.append(cursor.getCount()).append(" songs in external DB!")
 					.toString());
 			cursor.moveToFirst();
+		}
+		while (cursor.moveToNext()) {
 			int k = cursor.getInt(cursor.getColumnIndexOrThrow("artist_id"));
 			if (!hashset.contains(Integer.valueOf(k)))
 				hashset.add(Integer.valueOf(k));
@@ -573,28 +550,24 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public Cursor getArtistsByCursor(String[] paramArrayOfString)
-	{
+	public Cursor getArtistsByCursor(String[] paramArrayOfString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getChannelId()
-	{
+	public String getChannelId() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean getCheckOlderVersion()
-	{
+	public boolean getCheckOlderVersion() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	private String getPlaylistMapDB(int i)
-	{
+	private String getPlaylistMapDB(int i) {
 		String s;
 		if (i == FLAG_OPERATE_ONLINE)
 			s = "onine_music_playlist_map";
@@ -606,8 +579,7 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public Cursor getCursorFromPlaylist(long l, int i)
-	{
+	public Cursor getCursorFromPlaylist(long l, int i) {
 		logger.v("getCursorFromPlaylist() ---> Enter");
 		Cursor cursor1;
 		Cursor tempCursor = null;
@@ -615,21 +587,17 @@ public class DBControllerImpl implements DBController
 		boolean flag = true;
 		cursor1 = mDb.query(getPlaylistMapDB(i), null, (new StringBuilder(
 				"playlist_id=")).append(l).toString(), null, null, null, null);
-		if (cursor1 != null && cursor1.getCount() > 0)
-		{
-			while (cursor1.moveToNext())
-			{
+		if (cursor1 != null && cursor1.getCount() > 0) {
+			while (cursor1.moveToNext()) {
 
-				if (flag)
-				{
+				if (flag) {
 					s = (new StringBuilder(String.valueOf(s)))
 							.append("_id=")
 							.append(cursor1.getInt(cursor1
 									.getColumnIndexOrThrow("audio_id")))
 							.toString();
 					flag = false;
-				} else
-				{
+				} else {
 					s = (new StringBuilder(String.valueOf(s)))
 							.append(" OR _id=")
 							.append(cursor1.getInt(cursor1
@@ -639,12 +607,10 @@ public class DBControllerImpl implements DBController
 			}
 			logger.d((new StringBuilder("WHERE is: ")).append(s).toString());
 			Cursor cursor2;
-			if (i == 0)
-			{
+			if (i == 0) {
 				cursor2 = mDb.query("online_music_audio_info", null, s, null,
 						null, null, null);
-			} else
-			{
+			} else {
 				String as[] = { "_id", "album", "album_id", "artist", "title",
 						"_data", "duration", "_size" };
 				cursor2 = query(
@@ -653,10 +619,8 @@ public class DBControllerImpl implements DBController
 			}
 			tempCursor = cursor2;
 			cursor1.close();
-		} else
-		{
-			if (cursor1 != null)
-			{
+		} else {
+			if (cursor1 != null) {
 				cursor1.close();
 			}
 			logger.d("Do not find any music record in music map.");
@@ -666,94 +630,91 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public List<String> getDataByGroupcode(String paramString)
-	{
+	public List<String> getDataByGroupcode(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getDisplayedAlbumName(String paramString)
-	{
+	public String getDisplayedAlbumName(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getDisplayedArtistName(String paramString)
-	{
+	public String getDisplayedArtistName(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean getDownLoad_AutoRecover()
-	{
+	public boolean getDownLoad_AutoRecover() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int getEQMode()
-	{
+	public int getEQMode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long getFirstSongInPlaylist(long paramLong, int paramInt)
-	{
-		// TODO Auto-generated method stub
-		return 0;
+	public long getFirstSongInPlaylist(long l, int i) {
+		logger.v("getFirstSongInPlaylist() ---> Enter");
+		int j = -1;
+		Cursor cursor = mDb.query(getPlaylistMapDB(i), null,
+				(new StringBuilder("playlist_id=")).append(l).toString(), null,
+				null, null, "_id asc");
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			j = cursor.getInt(cursor.getColumnIndexOrThrow("audio_id"));
+			cursor.close();
+		}
+		logger.v("getFirstSongInPlaylist() ---> Exit");
+		return (long) j;
 	}
 
 	@Override
-	public String getLocalFolder()
-	{
+	public String getLocalFolder() {
 		return mApp.getSharedPreferences(
 				"cmccwm.mobilemusic.database.peference", 0).getString(
 				"cmccwm.mobilemusic.database.foldername", null);
 	}
 
 	@Override
-	public int getMusicRate(String paramString)
-	{
+	public int getMusicRate(String paramString) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getRepeatMode()
-	{
+	public int getRepeatMode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean getScanSmallSongFile()
-	{
+	public boolean getScanSmallSongFile() {
 		return mApp.getSharedPreferences(
 				"cmccwm.mobilemusic.database.peference", Context.MODE_PRIVATE)
 				.getBoolean("cmccwm.mobilemusic.database.scansmallfile", false);
 	}
 
 	@Override
-	public int getShuffleMode()
-	{
+	public int getShuffleMode() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public String getSkinStyleName()
-	{
+	public String getSkinStyleName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<String> getSongFolder()
-	{
+	public Set<String> getSongFolder() {
 		logger.v("getSongFolder()  ----> enter");
 		HashSet hashset;
 		Cursor cursor;
@@ -762,18 +723,15 @@ public class DBControllerImpl implements DBController
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				new String[] { "_data" }, "is_music = 1", null, null);
 
-		if (cursor != null)
-		{
+		if (cursor != null) {
 			logger.v("cursor.getColumnCount() ---->" + cursor.getColumnCount());
-			while (cursor.moveToNext())
-			{
+			while (cursor.moveToNext()) {
 				String s;
 				int i;
 				if ((s = cursor
 						.getString(cursor.getColumnIndexOrThrow("_data")))
 						.length() > 0
-						&& (i = s.lastIndexOf("/")) > 0)
-				{
+						&& (i = s.lastIndexOf("/")) > 0) {
 					hashset.add(s.substring(0, i));
 				}
 			}
@@ -783,35 +741,29 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public long getSongIdByContentId(String paramString1, String paramString2)
-	{
+	public long getSongIdByContentId(String paramString1, String paramString2) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long getSongIdByPath(String paramString)
-	{
+	public long getSongIdByPath(String paramString) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public Cursor getSongsCursorByFolder(String[] as, boolean flag)
-	{
+	public Cursor getSongsCursorByFolder(String[] as, boolean flag) {
 		logger.v("getSongsCursorByFolder(Projection) ---> Enter");
 		Cursor cursor = null;
-		if (as != null)
-		{
+		if (as != null) {
 			int i;
 			i = as.length;
-			if (i != 0)
-			{
+			if (i != 0) {
 				String s = "";
 				int j = as.length;
 
-				for (int k = 0; k < j; k++)
-				{
+				for (int k = 0; k < j; k++) {
 					String s1 = editTheFolder(as[k]);
 					s = (new StringBuilder(String.valueOf(s)))
 							.append("_data like '").append(s1)
@@ -819,8 +771,7 @@ public class DBControllerImpl implements DBController
 							.append(" not like '").append(s1)
 							.append("/%/%' or ").toString();
 				}
-				if (s.length() > 0)
-				{
+				if (s.length() > 0) {
 					String s3 = (new StringBuilder(String.valueOf(s.substring(
 							0, s.lastIndexOf("or"))))).append(")").toString();
 					s = (new StringBuilder(String.valueOf("("))).append(s3)
@@ -842,127 +793,127 @@ public class DBControllerImpl implements DBController
 
 	@Override
 	public Cursor getSongsCursorByFolderAndSinger(String[] paramArrayOfString,
-			int paramInt, boolean paramBoolean)
-	{
+			int paramInt, boolean paramBoolean) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Cursor getSongsFromAlbum(Uri paramUri, long paramLong,
-			String[] paramArrayOfString)
-	{
+			String[] paramArrayOfString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Cursor getSongsFromArtist(Uri paramUri, long paramLong,
-			String[] paramArrayOfString)
-	{
+			String[] paramArrayOfString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Cursor getSongsFromGenre(String paramString, long paramLong,
-			String[] paramArrayOfString)
-	{
+			String[] paramArrayOfString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public long[] getSongsIdFromFilePath(String paramString)
-	{
+	public long[] getSongsIdFromFilePath(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getSubChannelId()
-	{
+	public String getSubChannelId() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean getTensileShows()
-	{
+	public boolean getTensileShows() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isCacheDataExist(String paramString)
-	{
+	public boolean isCacheDataExist(String paramString) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isDefaultLocalPlaylist(String paramString)
-	{
+	public boolean isDefaultLocalPlaylist(String paramString) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isInMusicRadioGarbage(String paramString1,
-			String paramString2)
-	{
+			String paramString2) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isProtectedLocalPlaylist(String paramString)
-	{
+	public boolean isProtectedLocalPlaylist(String paramString) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isProtectedOnlinePlaylist(String paramString)
-	{
+	public boolean isProtectedOnlinePlaylist(String paramString) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isRingTone(String paramString)
-	{
+	public boolean isRingTone(String paramString) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isSongInMixPlaylist(long paramLong1, long paramLong2,
-			boolean paramBoolean)
-	{
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isSongInMixPlaylist(long l, long l1, boolean flag) {
+		logger.v("isSongInPlaylist() ---> Enter");
+		boolean flag1 = true;
+		SQLiteDatabase sqlitedatabase = mDb;
+		String s = getPlaylistMapDB(2);
+		StringBuilder stringbuilder = (new StringBuilder("audio_id="))
+				.append(l1).append(" AND ").append("playlist_id").append("=")
+				.append(l).append(" AND ISONLINEMUSIC = ");
+		int i;
+		Cursor cursor;
+		if (flag)
+			i = 1;
+		else
+			i = 0;
+		cursor = sqlitedatabase.query(s, null, stringbuilder.append(i)
+				.toString(), null, null, null, null);
+		if (cursor.getCount() == 0)
+			flag1 = false;
+		cursor.close();
+		logger.v("isSongInPlaylist() ---> Exit");
+		return flag1;
 	}
 
 	@Override
 	public boolean isSongInPlaylist(long paramLong1, long paramLong2,
-			int paramInt)
-	{
+			int paramInt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public long[] isSongInPlaylist(long paramLong, int paramInt)
-	{
+	public long[] isSongInPlaylist(long paramLong, int paramInt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Cursor query(Uri uri, String[] as1, String s1, String[] as2,
-			String s2)
-	{
+			String s2) {
 		ContentResolver contentresolver = mApp.getContentResolver();
 		Cursor cursor;
 		if (contentresolver == null)
@@ -973,79 +924,68 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public String queryCacheData(String paramString)
-	{
+	public String queryCacheData(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String queryContentId(String paramString)
-	{
+	public String queryContentId(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Cursor queryDBDownloadList(Integer paramInteger)
-	{
+	public Cursor queryDBDownloadList(Integer paramInteger) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String queryDateByGroupCode(String paramString)
-	{
+	public String queryDateByGroupCode(String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int querySongIdByContentId(String paramString)
-	{
+	public int querySongIdByContentId(String paramString) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public Cursor querySongs(Uri paramUri, String paramString,
-			String[] paramArrayOfString)
-	{
+			String[] paramArrayOfString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int removeAllCacheData()
-	{
+	public int removeAllCacheData() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void removeCacheData(String paramString)
-	{
+	public void removeCacheData(String paramString) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public long renameDownloadMusic(String paramString1, String paramString2)
-	{
+	public long renameDownloadMusic(String paramString1, String paramString2) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void renameLocalSong(long paramLong, String paramString)
-	{
+	public void renameLocalSong(long paramLong, String paramString) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void renamePlaylist(long l, int i, String s)
-	{
+	public void renamePlaylist(long l, int i, String s) {
 		ContentValues contentvalues = new ContentValues();
 		contentvalues.put("name", s);
 		mDb.update(getPlaylistDB(i), contentvalues, (new StringBuilder("_id="))
@@ -1053,36 +993,31 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public void set51CHStatus(boolean paramBoolean)
-	{
+	public void set51CHStatus(boolean paramBoolean) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setCheckOlderVersion(boolean paramBoolean)
-	{
+	public void setCheckOlderVersion(boolean paramBoolean) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setDownLoad_AutoRecover(Boolean paramBoolean)
-	{
+	public void setDownLoad_AutoRecover(Boolean paramBoolean) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setEQMode(int paramInt)
-	{
+	public void setEQMode(int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setLocalFolder(String paramString)
-	{
+	public void setLocalFolder(String paramString) {
 		android.content.SharedPreferences.Editor editor = mApp
 				.getSharedPreferences("cmccwm.mobilemusic.database.peference",
 						0).edit();
@@ -1091,15 +1026,13 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public void setRepeatMode(int paramInt)
-	{
+	public void setRepeatMode(int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setScanSmallSongFile(Boolean paramBoolean)
-	{
+	public void setScanSmallSongFile(Boolean paramBoolean) {
 		android.content.SharedPreferences.Editor editor = mApp
 				.getSharedPreferences("cmccwm.mobilemusic.database.peference",
 						0).edit();
@@ -1109,43 +1042,37 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public void setShuffleMode(int paramInt)
-	{
+	public void setShuffleMode(int paramInt) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSkinStyleName(String paramString)
-	{
+	public void setSkinStyleName(String paramString) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setTensileShows(Boolean paramBoolean)
-	{
+	public void setTensileShows(Boolean paramBoolean) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public int updateCacheData(String paramString1, String paramString2,
-			String paramString3)
-	{
+			String paramString3) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int updateContentId(String paramString1, String paramString2)
-	{
+	public int updateContentId(String paramString1, String paramString2) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	public List getAllPlaylists(int i)
-	{
+	public List getAllPlaylists(int i) {
 		logger.v("getPlaylists() ---> Enter");
 		ArrayList arraylist;
 		String s = null;
@@ -1153,20 +1080,16 @@ public class DBControllerImpl implements DBController
 		arraylist.clear();
 		ArrayList temp = null;
 		UserAccount useraccount = GlobalSettingParameter.useraccount;
-		if (useraccount != null)
-		{
+		if (useraccount != null) {
 			s = (new StringBuilder("user_id ='")).append(useraccount.mId)
 					.append("'").toString();
 		}
-		if (1 == i)
-		{
+		if (1 == i) {
 			Cursor cursor = mDb.query(getPlaylistDB(i), null, s, null, null,
 					null, "date_added asc");
-			if (cursor != null && cursor.getCount() > 0)
-			{
+			if (cursor != null && cursor.getCount() > 0) {
 				cursor.moveToFirst();
-				while (cursor.moveToNext())
-				{
+				while (cursor.moveToNext()) {
 					Playlist playlist = new Playlist();
 					playlist.mExternalId = cursor.getInt(cursor
 							.getColumnIndexOrThrow("_id"));
@@ -1192,8 +1115,7 @@ public class DBControllerImpl implements DBController
 		return temp;
 	}
 
-	private String getPlaylistDB(int i)
-	{
+	private String getPlaylistDB(int i) {
 		String s;
 		if (i == 0)
 			s = "online_music_playlist";
@@ -1205,26 +1127,22 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public Playlist getPlaylistByName(String s, int i)
-	{
+	public Playlist getPlaylistByName(String s, int i) {
 		String s1;
 		Playlist playlist = null;
 		logger.v("getPlaylistByName(name) ---> Enter");
 		s1 = s.replaceAll("'", "''");
 		if (i != 1
 				&& !s1.equals("cmccwm.mobilemusic.database.default.online.playlist.recent.play")
-				&& !s1.equals("cmccwm.mobilemusic.database.default.mix.playlist.recent.play"))
-		{
+				&& !s1.equals("cmccwm.mobilemusic.database.default.mix.playlist.recent.play")) {
 			UserAccount useraccount;
 			useraccount = GlobalSettingParameter.useraccount;
 			String s2;
-			if (useraccount == null)
-			{
+			if (useraccount == null) {
 				s2 = (new StringBuilder("name='")).append(s1).append("'")
 						.toString();
 
-			} else
-			{
+			} else {
 				s2 = (new StringBuilder("name='")).append(s1)
 						.append("' and user_id ='").append(useraccount.mId)
 						.append("'").toString();
@@ -1234,13 +1152,11 @@ public class DBControllerImpl implements DBController
 					null);
 			if (cursor == null)
 				return playlist;
-			if (!cursor.moveToFirst())
-			{
+			if (!cursor.moveToFirst()) {
 				cursor.close();
 				logger.v("getPlaylistByName(name) ---> Exit");
 				playlist = null;
-			} else
-			{
+			} else {
 				Playlist playlist1 = new Playlist();
 				playlist1.mExternalId = cursor.getInt(cursor
 						.getColumnIndexOrThrow("_id"));
@@ -1261,17 +1177,14 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public List<Song> getSongsFromPlaylist(long l, int i)
-	{
+	public List<Song> getSongsFromPlaylist(long l, int i) {
 		logger.v("getSongsFromPlaylist() ----> Enter");
 		Cursor cursor = getCursorFromPlaylist(l, i);
 		List list;
-		if (cursor == null)
-		{
+		if (cursor == null) {
 			logger.d("Do not find any music");
 			list = null;
-		} else
-		{
+		} else {
 			list = getSongsFromCursor(cursor, i);
 			cursor.close();
 			logger.v("getSongsFromPlaylist() ---> Exit");
@@ -1280,22 +1193,19 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public List<Song> getSongsFromCursor(Cursor paramCursor, int paramInt)
-	{
+	public List<Song> getSongsFromCursor(Cursor paramCursor, int paramInt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Song getSongById(long l)
-	{
+	public Song getSongById(long l) {
 		String s = (new StringBuilder("_id=")).append(l).toString();
 		Cursor cursor = query(
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				null, s, null, null);
 		Song song;
-		if (cursor != null && cursor.getCount() > 0)
-		{
+		if (cursor != null && cursor.getCount() > 0) {
 			song = new Song();
 			cursor.moveToFirst();
 			song.mAlbum = cursor.getString(cursor
@@ -1317,12 +1227,17 @@ public class DBControllerImpl implements DBController
 			if (song.mUrl.toLowerCase().endsWith(".mp4"))
 				song.isDolby = true;
 			cursor.close();
-		} else
-		{
+		} else {
 			if (cursor != null && !cursor.isClosed())
 				cursor.close();
 			song = null;
 		}
 		return song;
+	}
+
+	@Override
+	public List<Song> getSongsFromMixPlaylist(long paramLong) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

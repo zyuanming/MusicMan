@@ -76,7 +76,7 @@ public class TitleBarView extends RelativeLayout
 				this.mImgBtnLeft.setOnClickListener(this.mLeftOnclick);
 			break;
 		case 0:
-			this.mImgBtnRight.setVisibility(4);
+			this.mImgBtnRight.setVisibility(View.INVISIBLE);
 			break;
 		case 1:
 			if (this.mRightOnclick != null)

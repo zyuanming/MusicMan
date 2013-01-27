@@ -29,8 +29,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-public class MobileMusicMainActivity extends TabActivity
-{
+public class MobileMusicMainActivity extends TabActivity {
 	private static final MyLogger logger = MyLogger
 			.getLogger("MobileMusicMainActivity");
 	private Dialog ShortCutDialog;
@@ -41,29 +40,21 @@ public class MobileMusicMainActivity extends TabActivity
 	private Intent newIntent;
 	private boolean mTurnMiGu = false;
 	private boolean mStartFromNotification = false;
-	private TabHost.OnTabChangeListener mOnTabChangeListener = new TabHost.OnTabChangeListener()
-	{
-		public void onTabChanged(String paramAnonymousString)
-		{
+	private TabHost.OnTabChangeListener mOnTabChangeListener = new TabHost.OnTabChangeListener() {
+		public void onTabChanged(String paramAnonymousString) {
 			MobileMusicMainActivity.logger.v("onTabChanged() ---> Enter");
-			MobileMusicMainActivity.this.requestRoot = true;
-			if (paramAnonymousString.equalsIgnoreCase("TAB_MIGU"))
-			{
+			requestRoot = true;
+			if (paramAnonymousString.equalsIgnoreCase("TAB_MIGU")) {
 				MobileMusicMainActivity.logger.v("onTabChanged() ---> Exit");
-				MobileMusicMainActivity.this.mLastCurrentTab = MobileMusicMainActivity.this.mTabHost
-						.getCurrentTab();
-				Intent localIntent2 = MobileMusicMainActivity.this.getIntent();
-				localIntent2.putExtra("TABINDEX",
-						MobileMusicMainActivity.this.mTabHost.getCurrentTab());
-				MobileMusicMainActivity.this.setIntent(localIntent2);
-			} else if ((paramAnonymousString.equalsIgnoreCase("TAB_LOCAL")))
-			{
-				MobileMusicMainActivity.this.mLastCurrentTab = MobileMusicMainActivity.this.mTabHost
-						.getCurrentTab();
-				Intent localIntent1 = MobileMusicMainActivity.this.getIntent();
-				localIntent1.putExtra("TABINDEX",
-						MobileMusicMainActivity.this.mTabHost.getCurrentTab());
-				MobileMusicMainActivity.this.setIntent(localIntent1);
+				mLastCurrentTab = mTabHost.getCurrentTab();
+				Intent localIntent2 = getIntent();
+				localIntent2.putExtra("TABINDEX", mTabHost.getCurrentTab());
+				setIntent(localIntent2);
+			} else if ((paramAnonymousString.equalsIgnoreCase("TAB_LOCAL"))) {
+				mLastCurrentTab = mTabHost.getCurrentTab();
+				Intent localIntent1 = getIntent();
+				localIntent1.putExtra("TABINDEX", mTabHost.getCurrentTab());
+				setIntent(localIntent1);
 			}
 
 		}
@@ -73,8 +64,7 @@ public class MobileMusicMainActivity extends TabActivity
 	boolean requestRoot = true;
 	private SharedPreferences shortCutSharedPreferences;
 
-	private void addShortcut()
-	{
+	private void addShortcut() {
 		Intent localIntent = new Intent(
 				"com.android.launcher.action.INSTALL_SHORTCUT");
 		// 设置名字
@@ -94,17 +84,14 @@ public class MobileMusicMainActivity extends TabActivity
 		sendBroadcast(localIntent);
 	}
 
-	private void createLaunchShortcut()
-	{
-		if (!hasShortCut(this))
-		{
+	private void createLaunchShortcut() {
+		if (!hasShortCut(this)) {
 			addShortcut();
 		}
 	}
 
 	private TabHost.TabSpec createTabSpec(String paramString, int paramInt,
-			Intent paramIntent)
-	{
+			Intent paramIntent) {
 		logger.v("createTabSpec() ---> Enter");
 		TabHost.TabSpec localTabSpec = this.mTabHost.newTabSpec(paramString);
 		localTabSpec.setIndicator(this.mInflater.inflate(paramInt, null));
@@ -113,13 +100,11 @@ public class MobileMusicMainActivity extends TabActivity
 		return localTabSpec;
 	}
 
-	private static int getSystemVersion()
-	{
+	private static int getSystemVersion() {
 		return Build.VERSION.SDK_INT;
 	}
 
-	private void initTab()
-	{
+	private void initTab() {
 		logger.v("initTab() ---> Enter");
 		this.mInflater = LayoutInflater.from(this);
 		this.mTabHost = ((TabHost) findViewById(android.R.id.tabhost));
@@ -136,10 +121,8 @@ public class MobileMusicMainActivity extends TabActivity
 		this.mTabHost.setCurrentTab(0);
 
 		this.mTabHost.getTabWidget().setOnClickListener(
-				new View.OnClickListener()
-				{
-					public void onClick(View paramAnonymousView)
-					{
+				new View.OnClickListener() {
+					public void onClick(View paramAnonymousView) {
 						Toast.makeText(
 								MobileMusicMainActivity.this
 										.getApplicationContext(), "click",
@@ -151,14 +134,12 @@ public class MobileMusicMainActivity extends TabActivity
 		logger.v("initTab() ---> Exit");
 	}
 
-	private void refreshUI()
-	{
+	private void refreshUI() {
 		ImageView localImageView = (ImageView) this.mTabHost.getTabWidget()
 				.getChildAt(2).findViewById(R.id.tab_image);
 		if (GlobalSettingParameter.SERVER_INIT_PARAM_MEMBER != null)
 			switch (Integer
-					.parseInt(GlobalSettingParameter.SERVER_INIT_PARAM_MEMBER))
-			{
+					.parseInt(GlobalSettingParameter.SERVER_INIT_PARAM_MEMBER)) {
 			default:
 			case 0:
 				localImageView.setBackgroundDrawable(getResources()
@@ -182,10 +163,8 @@ public class MobileMusicMainActivity extends TabActivity
 			}
 	}
 
-	private void shortcutDialogDismiss()
-	{
-		if (this.ShortCutDialog != null)
-		{
+	private void shortcutDialogDismiss() {
+		if (this.ShortCutDialog != null) {
 			this.ShortCutDialog.dismiss();
 			this.ShortCutDialog = null;
 		}
@@ -193,14 +172,12 @@ public class MobileMusicMainActivity extends TabActivity
 				.putBoolean("appcation_first_start", false).commit();
 	}
 
-	private void showDilaogForShortCutInLaunch()
-	{
+	private void showDilaogForShortCutInLaunch() {
 		logger.v("showDialogForShortCutInLaunch()------>enter");
 		this.shortCutSharedPreferences = getSharedPreferences("shortcut",
 				MODE_WORLD_WRITEABLE);
 		if (this.shortCutSharedPreferences.getBoolean("appcation_first_start",
-				true))
-		{
+				true)) {
 			logger.v("appcation_first_start");
 			if (!hasShortCut(MobileMusicMainActivity.this))
 				this.ShortCutDialog = DialogUtil
@@ -210,19 +187,15 @@ public class MobileMusicMainActivity extends TabActivity
 										R.string.title_information_common),
 								getResources().getText(
 										R.string.create_shoutcat_inlaunch),
-								new View.OnClickListener()
-								{
-									public void onClick(View paramAnonymousView)
-									{
+								new View.OnClickListener() {
+									public void onClick(View paramAnonymousView) {
 										MobileMusicMainActivity.this
 												.shortcutDialogDismiss();
 										MobileMusicMainActivity.this
 												.createLaunchShortcut();
 									}
-								}, new View.OnClickListener()
-								{
-									public void onClick(View paramAnonymousView)
-									{
+								}, new View.OnClickListener() {
+									public void onClick(View paramAnonymousView) {
 										MobileMusicMainActivity.this
 												.shortcutDialogDismiss();
 									}
@@ -230,16 +203,13 @@ public class MobileMusicMainActivity extends TabActivity
 		}
 	}
 
-	public boolean hasShortCut(Context paramContext)
-	{
+	public boolean hasShortCut(Context paramContext) {
 		logger.v("hasShortCut()------->call");
 		String str;
 		boolean isInstallShortcut;
-		if (getSystemVersion() < 8)
-		{
+		if (getSystemVersion() < 8) {
 			str = "content://com.android.launcher.settings/favorites?notify=true";
-		} else
-		{
+		} else {
 			str = "content://com.android.launcher2.settings/favorites";
 		}
 		ContentResolver localContentResolver = paramContext
@@ -251,20 +221,17 @@ public class MobileMusicMainActivity extends TabActivity
 		Cursor localCursor = localContentResolver.query(localUri, null,
 				"title=?", arrayOfString, null);
 
-		if (localCursor != null && localCursor.moveToFirst())
-		{
+		if (localCursor != null && localCursor.moveToFirst()) {
 			isInstallShortcut = true;
 			localCursor.close();
-		} else
-		{
+		} else {
 			isInstallShortcut = false;
 			logger.v("localCursor--->null");
 		}
 		return isInstallShortcut;
 	}
 
-	public void onCreate(Bundle paramBundle)
-	{
+	public void onCreate(Bundle paramBundle) {
 		logger.v("onCreate() ---> Enter");
 		super.onCreate(paramBundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -275,8 +242,7 @@ public class MobileMusicMainActivity extends TabActivity
 
 		this.newIntent = getIntent();
 		Bundle localBundle = this.newIntent.getExtras();
-		if (localBundle != null)
-		{
+		if (localBundle != null) {
 			this.mTurnMiGu = localBundle.getBoolean("hasLogin", false);
 			this.mStartFromNotification = localBundle.getBoolean(
 					"startFromNotification", false);
@@ -289,8 +255,7 @@ public class MobileMusicMainActivity extends TabActivity
 
 	@Override
 	public void onCreateContextMenu(ContextMenu paramContextMenu,
-			View paramView, ContextMenu.ContextMenuInfo paramContextMenuInfo)
-	{
+			View paramView, ContextMenu.ContextMenuInfo paramContextMenuInfo) {
 		logger.v("onCreateContextMenu() ---> Enter");
 		super.onCreateContextMenu(paramContextMenu, paramView,
 				paramContextMenuInfo);
@@ -298,20 +263,17 @@ public class MobileMusicMainActivity extends TabActivity
 	}
 
 	@Override
-	public void onDestroy()
-	{
+	public void onDestroy() {
 		super.onDestroy();
 	}
 
 	@Override
-	protected void onNewIntent(Intent paramIntent)
-	{
+	protected void onNewIntent(Intent paramIntent) {
 		logger.v("onNewIntent() ---> Enter");
 		Bundle localBundle = paramIntent.getExtras();
 		this.mIsFromLocalScan = localBundle
 				.getBoolean("isFromLocalScan", false);
-		if (this.mIsFromLocalScan)
-		{
+		if (this.mIsFromLocalScan) {
 			this.mTabHost.setCurrentTab(1);
 			this.mIsFromLocalScan = false;
 		}
@@ -320,8 +282,7 @@ public class MobileMusicMainActivity extends TabActivity
 	}
 
 	@Override
-	protected void onResume()
-	{
+	protected void onResume() {
 		logger.v("onResume() ---> Enter");
 		this.requestRoot = true;
 		// this.mPlayerStatusBar.registEventListener();
@@ -331,8 +292,7 @@ public class MobileMusicMainActivity extends TabActivity
 		// this.mTurnMiGu = false;
 		// }
 
-		if (this.newIntent != null)
-		{
+		if (this.newIntent != null) {
 			int i = this.newIntent.getIntExtra("TABINDEX", 0);
 			this.mTabHost.setCurrentTab(i);
 			if ((i == 2) && (GlobalSettingParameter.useraccount == null))
