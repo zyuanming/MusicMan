@@ -1,6 +1,7 @@
 package org.ming.ui.activity;
 
 import org.ming.R;
+import org.ming.center.GlobalSettingParameter;
 import org.ming.ui.activity.local.LocalMusicActivity;
 import org.ming.ui.activity.mymigu.MyMiGuActivity;
 import org.ming.ui.activity.online.OnlineMusicActivity;
@@ -24,6 +25,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -36,6 +38,9 @@ public class MobileMusicMainActivity extends TabActivity
 	private LayoutInflater mInflater;
 	private boolean mIsFromLocalScan = false;
 	private int mLastCurrentTab;
+	private Intent newIntent;
+	private boolean mTurnMiGu = false;
+	private boolean mStartFromNotification = false;
 	private TabHost.OnTabChangeListener mOnTabChangeListener = new TabHost.OnTabChangeListener()
 	{
 		public void onTabChanged(String paramAnonymousString)
@@ -148,7 +153,33 @@ public class MobileMusicMainActivity extends TabActivity
 
 	private void refreshUI()
 	{
-
+		ImageView localImageView = (ImageView) this.mTabHost.getTabWidget()
+				.getChildAt(2).findViewById(R.id.tab_image);
+		if (GlobalSettingParameter.SERVER_INIT_PARAM_MEMBER != null)
+			switch (Integer
+					.parseInt(GlobalSettingParameter.SERVER_INIT_PARAM_MEMBER))
+			{
+			default:
+			case 0:
+				localImageView.setBackgroundDrawable(getResources()
+						.getDrawable(R.drawable.tab_my_migu_selector));
+				break;
+			case 1:
+				localImageView
+						.setBackgroundDrawable(getResources().getDrawable(
+								R.drawable.tab_my_migu_selector_normaluser));
+				break;
+			case 2:
+				localImageView.setBackgroundDrawable(getResources()
+						.getDrawable(
+								R.drawable.tab_my_migu_selector_hight_member));
+				break;
+			case 3:
+				localImageView
+						.setBackgroundDrawable(getResources().getDrawable(
+								R.drawable.tab_my_migu_selector_special_member));
+				break;
+			}
 	}
 
 	private void shortcutDialogDismiss()
@@ -241,6 +272,16 @@ public class MobileMusicMainActivity extends TabActivity
 
 		// 初始化主界面的各个TAG页
 		initTab();
+
+		this.newIntent = getIntent();
+		Bundle localBundle = this.newIntent.getExtras();
+		if (localBundle != null)
+		{
+			this.mTurnMiGu = localBundle.getBoolean("hasLogin", false);
+			this.mStartFromNotification = localBundle.getBoolean(
+					"startFromNotification", false);
+		}
+
 		showDilaogForShortCutInLaunch();
 
 		logger.v("onCreate() ---> Exit");
@@ -283,6 +324,20 @@ public class MobileMusicMainActivity extends TabActivity
 	{
 		logger.v("onResume() ---> Enter");
 		this.requestRoot = true;
+		// this.mPlayerStatusBar.registEventListener();
+		// if ((this.mTurnMiGu) && (GlobalSettingParameter.useraccount != null))
+		// {
+		// this.mTabHost.setCurrentTab(2);
+		// this.mTurnMiGu = false;
+		// }
+
+		if (this.newIntent != null)
+		{
+			int i = this.newIntent.getIntExtra("TABINDEX", 0);
+			this.mTabHost.setCurrentTab(i);
+			if ((i == 2) && (GlobalSettingParameter.useraccount == null))
+				this.mTabHost.setCurrentTab(0);
+		}
 		refreshUI();
 		super.onResume();
 		logger.v("onResume() ---> Exit");

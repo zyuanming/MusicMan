@@ -32,4 +32,8 @@
         <item name="android:background">@drawable/serch_edittext_selector</item>
     </style>
 
+    <style name="PopupAnimation" parent="@android:style/Animation">
+        <item name="android:windowExitAnimation">@anim/animation_window_warn</item>
+    </style>
+
 </resources>

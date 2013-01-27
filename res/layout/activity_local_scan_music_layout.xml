@@ -5,7 +5,7 @@
     android:background="@drawable/bg_main"
     android:orientation="vertical" >
 
-    <cmccwm.mobilemusic.ui.view.TitleBarView
+    <org.ming.ui.view.TitleBarView
         android:id="@id/title_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />

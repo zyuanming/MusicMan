@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/CustomDialogTheme"
-    android:layout_width="280.0dip"
+    android:layout_width="270.0dip"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
@@ -9,60 +9,51 @@
         android:id="@id/nw_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="left"
         android:paddingLeft="20.0dip"
         android:paddingRight="20.0dip"
         android:paddingTop="20.0dip"
-        android:text=""
+        android:text="@string/local_music_rename"
         android:textColor="#ffffffff"
         android:textSize="15.0sp"
         android:textStyle="normal" />
 
     <ImageView
-        android:id="@id/line"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10.0dip"
         android:scaleType="fitXY"
         android:src="@drawable/line" />
 
-    <TextView
-        android:id="@id/msg"
+    <EditText
+        android:id="@id/new_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="left"
-        android:paddingLeft="20.0dip"
-        android:paddingRight="20.0dip"
-        android:paddingTop="20.0dip"
-        android:text=""
-        android:textColor="#ffffffff"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="15.0dip"
+        android:gravity="left|center"
+        android:inputType="text"
+        android:maxLength="20"
+        android:textColor="#ff000000"
         android:textSize="15.0sp"
         android:textStyle="normal" />
 
     <LinearLayout
-        android:id="@id/add_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10.0dip"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingLeft="10.0dip"
-        android:paddingRight="5.0dip" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10.0dip"
-        android:gravity="center"
-        android:orientation="horizontal" >
+        android:paddingLeft="20.0dip"
+        android:paddingRight="20.0dip" >
 
         <Button
             android:id="@id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="10.0dip"
+            android:layout_weight="1.0"
             android:background="@drawable/btn_dialog_selector"
             android:gravity="center"
             android:text="@string/cancel"
@@ -74,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="10.0dip"
+            android:layout_weight="1.0"
             android:background="@drawable/btn_dialog_selector"
             android:gravity="center"
             android:text="@string/ok"

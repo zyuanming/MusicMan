@@ -1,20 +1,35 @@
 package org.ming.ui.activity;
 
 import org.ming.R;
+import org.ming.center.ConfigSettingParameter;
+import org.ming.center.Controller;
+import org.ming.center.MobileMusicApplication;
+import org.ming.center.database.DBController;
+import org.ming.center.ui.UIGlobalSettingParameter;
+import org.ming.dispatcher.Dispatcher;
 import org.ming.util.MyLogger;
 import org.ming.util.Util;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.widget.CheckBox;
 
 public class SplashActivity extends Activity
 {
 	private static final MyLogger logger = MyLogger.getLogger("SplashActivity");
 	private int mTabIndex = 0;
+	private Controller mController;
+	private DBController mDBController;
+	private Dispatcher mDispatcher;
+	private SharedPreferences mNotWlanCheckBoxSharedPreferences;
+	private CheckBox notWlanCheckBox;
+	private Dialog mCurrentDialog = null;
 	private final Handler mSplashHandler = new Handler()
 	{
 		// 处理匿名信息
@@ -65,6 +80,21 @@ public class SplashActivity extends Activity
 	{
 		logger.v("onCreate() ---> Enter");
 		super.onCreate(paramBundle);
+		this.mNotWlanCheckBoxSharedPreferences = getSharedPreferences(
+				"LOGIN-PREF", 0);
+		this.mController = Controller
+				.getInstance((MobileMusicApplication) getApplication());
+		this.mDBController = this.mController.getDBController();
+		this.mDispatcher = ((MobileMusicApplication) getApplication())
+				.getEventDispatcher();
+
+		ConfigSettingParameter.CONSTANT_CHANNEL_VALUE = this.mDBController
+				.getChannelId();
+		ConfigSettingParameter.CONSTANT_SUBCHANNEL_VALUE = this.mDBController
+				.getSubChannelId();
+		UIGlobalSettingParameter.usermore_download_auto_recovery = this.mController
+				.getDBController().getDownLoad_AutoRecover();
+
 		requestWindowFeature(1);
 		setContentView(R.layout.splash);
 

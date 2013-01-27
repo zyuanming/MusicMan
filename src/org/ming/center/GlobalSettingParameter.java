@@ -87,8 +87,7 @@ public class GlobalSettingParameter
 	public static UserAccount useraccount = null;
 
 	public GlobalSettingParameter()
-	{
-	}
+	{}
 
 	public static boolean initLoginParam(byte abyte0[])
 	{

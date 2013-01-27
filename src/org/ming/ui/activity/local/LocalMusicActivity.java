@@ -27,6 +27,8 @@ import android.os.Message;
 import android.text.method.TextKeyListener;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +41,8 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class LocalMusicActivity extends ListActivity implements
-		SystemEventListener {
+		SystemEventListener
+{
 	private static final MyLogger logger = MyLogger
 			.getLogger("LocalMusicActivity");
 	private static final int LIST_ITEM_ID_ALL_SONG = 0; // 所有的音乐
@@ -70,19 +73,25 @@ public class LocalMusicActivity extends ListActivity implements
 	private List<Playlist> mLocalPlayList = null;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		logger.v("onCreate() ---> Enter");
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_local_music_layout);
 		logger.v("--------------------");
-		this.mController = ((MobileMusicApplication) getApplication()).getController();
+		this.mController = ((MobileMusicApplication) getApplication())
+				.getController();
 		this.mDBController = this.mController.getDBController();
+
 		UIGlobalSettingParameter.localmusic_scan_smallfile = this.mDBController
 				.getScanSmallSongFile();
-		if (UIGlobalSettingParameter.localmusic_folder_names == null) {
+
+		if (UIGlobalSettingParameter.localmusic_folder_names == null)
+		{
 			String str = this.mDBController.getLocalFolder();
-			if (str != null) {
+			if (str != null)
+			{
 				UIGlobalSettingParameter.localmusic_folder_names = str
 						.split(";");
 			}
@@ -92,16 +101,20 @@ public class LocalMusicActivity extends ListActivity implements
 				R.layout.activity_local_music_layout_header, null);
 		this.mSearchBtn = (Button) localView
 				.findViewById(R.id.search_local_music);
-		this.mSearchBtn.setOnClickListener(new View.OnClickListener() {
+		this.mSearchBtn.setOnClickListener(new View.OnClickListener()
+		{
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				if (!Environment.MEDIA_MOUNTED.equals(Environment
-						.getExternalStorageState())) {
+						.getExternalStorageState()))
+				{
 					Toast.makeText(LocalMusicActivity.this,
 							R.string.sdcard_missing_message_common,
 							Toast.LENGTH_SHORT).show();
-				} else {
+				} else
+				{
 					Intent localIntent = new Intent(LocalMusicActivity.this,
 							LocalMusicSearchActivity.class);
 					LocalMusicActivity.this.startActivity(localIntent);
@@ -111,50 +124,60 @@ public class LocalMusicActivity extends ListActivity implements
 
 		getListView().addHeaderView(localView);
 		this.mBtnCreatePlayList = (Button) findViewById(R.id.button_create_playlist);
+		this.mBtnCreatePlayList
+				.setOnClickListener(this.mCreatePlayListOnClickListener);
 		getListView().setOnCreateContextMenuListener(
-				new View.OnCreateContextMenuListener() {
-
+				new View.OnCreateContextMenuListener()
+				{
+					// 创建长按列表显示的两个操作选项
 					@Override
 					public void onCreateContextMenu(ContextMenu menu, View v,
-							ContextMenuInfo menuInfo) {
+							ContextMenuInfo menuInfo)
+					{
 						AdapterContextMenuInfo localAdapterContextMenuInfo = (AdapterContextMenuInfo) menuInfo;
-						if ((int) localAdapterContextMenuInfo.id > 4) {
-							LocalMusicActivity.this.mCurLongPressSelectedItem = ((int) localAdapterContextMenuInfo.id) - 4;
+						if ((int) localAdapterContextMenuInfo.id > 4)
+						{
+							logger.v("" + localAdapterContextMenuInfo.id);
+							LocalMusicActivity.this.mCurLongPressSelectedItem = ((int) localAdapterContextMenuInfo.id) - 5;
 							menu.add(0, 0, 0,
-									R.string.local_music_delete_songlist);
+									R.string.local_music_delete_songlist); // 删除播放列表
 							menu.add(1, 1, 0,
-									R.string.local_music_rename_songlist);
+									R.string.local_music_rename_songlist); // 重命名播放列表
 						}
 					}
 				});
 
-		this.mBtnCreatePlayList
-				.setOnClickListener(this.mCreatePlayListOnClickListener);
 		this.mController.addSystemEventListener(22, this);
 		logger.v("onCreate() ---> Exit");
 	}
 
-	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener() {
-		public void onClick(View paramAnonymousView) {
+	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener()
+	{
+		public void onClick(View paramAnonymousView)
+		{
 			LocalMusicActivity.logger.v("mLoadMoreOnClickListener() ---> Exit");
 			LocalMusicActivity.this.CreatePlayList();
 			LocalMusicActivity.logger.v("mLoadMoreOnClickListener() ---> Exit");
 		}
 	};
 
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu)
+	{
 		MenuItem localMenuItem = menu.findItem(0);
 		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
+				.getExternalStorageState()))
+		{
 			localMenuItem.setEnabled(true);
-		} else {
+		} else
+		{
 			localMenuItem.setEnabled(false);
 		}
 
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		menu.add(0, 0, 0, "").setIcon(R.drawable.menu_item_scan_selector);
 		menu.add(2, 2, 0, "").setIcon(R.drawable.menu_item_set_selector);
 		menu.add(3, 3, 0, "").setIcon(R.drawable.menu_item_time_close_selector);
@@ -162,14 +185,17 @@ public class LocalMusicActivity extends ListActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	protected void onResume() {
+	protected void onResume()
+	{
 		logger.v("onResume() ----> Enter");
 		super.onResume();
 		if ((UIGlobalSettingParameter.localmusic_folder_names == null)
 				&& (UIGlobalSettingParameter.localmusic_scan_warningdlg)
 				&& (Environment.MEDIA_MOUNTED.equals(Environment
-						.getExternalStorageState()))) {
-			if (this.mCurrentDialog != null) {
+						.getExternalStorageState())))
+		{
+			if (this.mCurrentDialog != null)
+			{
 				this.mCurrentDialog.dismiss();
 				this.mCurrentDialog = null;
 			}
@@ -177,86 +203,95 @@ public class LocalMusicActivity extends ListActivity implements
 			this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(
 					this, getText(R.string.title_information_common),
 					getText(R.string.local_music_add_common),
-					new View.OnClickListener() {
-						public void onClick(View paramAnonymousView) {
+					new View.OnClickListener()
+					{
+						public void onClick(View paramAnonymousView)
+						{
 							Intent localIntent = new Intent(
 									LocalMusicActivity.this,
 									LocalScanMusicActivity.class);
 							LocalMusicActivity.this.startActivity(localIntent);
 							UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE = true;
-							if (LocalMusicActivity.this.mCurrentDialog != null) {
+							if (LocalMusicActivity.this.mCurrentDialog != null)
+							{
 								LocalMusicActivity.this.mCurrentDialog
 										.dismiss();
 								LocalMusicActivity.this.mCurrentDialog = null;
 							}
 						}
-					}, new View.OnClickListener() {
-						public void onClick(View paramAnonymousView) {
-							if (LocalMusicActivity.this.mCurrentDialog != null) {
+					}, new View.OnClickListener()
+					{
+						public void onClick(View paramAnonymousView)
+						{
+							if (LocalMusicActivity.this.mCurrentDialog != null)
+							{
 								LocalMusicActivity.this.mCurrentDialog
 										.dismiss();
 								LocalMusicActivity.this.mCurrentDialog = null;
 							}
 						}
 					});
-		} else if (UIGlobalSettingParameter.localmusic_folder_names != null) {
+		} else if (UIGlobalSettingParameter.localmusic_folder_names != null)
+		{
 			this.mAllSongsNumber = this.mDBController.getAllSongsCountByFolder(
 					UIGlobalSettingParameter.localmusic_folder_names,
 					UIGlobalSettingParameter.localmusic_scan_smallfile);
 			this.mSingerNumber = this.mDBController.getArtistCountByFolder(
 					UIGlobalSettingParameter.localmusic_folder_names,
 					UIGlobalSettingParameter.localmusic_scan_smallfile);
+			Integer num[];
+			String str[];
+			String str1[];
+			DBController localDBController1;
+			DBController localDBController2;
 			if (!Environment.MEDIA_MOUNTED.equals(Environment
-					.getExternalStorageState())) {
+					.getExternalStorageState()))
+			{
 				Toast.makeText(LocalMusicActivity.this,
 						R.string.sdcard_missing_message_common,
 						Toast.LENGTH_SHORT).show();
+				mFolderNumber = 0;
+			} else
+			{
+				mFolderNumber = UIGlobalSettingParameter.localmusic_folder_names.length;
 			}
 
-			for (this.mFolderNumber = UIGlobalSettingParameter.localmusic_folder_names.length;; this.mFolderNumber = 0) {
-				if (UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE) {
-					Object[] arrayOfObject = new Object[1];
-					arrayOfObject[0] = Integer.valueOf(this.mAllSongsNumber);
-					Toast.makeText(
-							this,
-							getString(R.string.local_music_after_scan,
-									arrayOfObject), 1).show();
-					UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE = false;
-				}
-				DBController localDBController1 = this.mDBController;
-				String[] arrayOfString1 = new String[1];
-				arrayOfString1[0] = GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR;
-				this.mDownloadFileNumber = localDBController1
-						.getAllSongsCountByFolder(
-								arrayOfString1,
-								UIGlobalSettingParameter.localmusic_scan_smallfile);
-				DBController localDBController2 = this.mDBController;
-				String[] arrayOfString2 = new String[1];
-				arrayOfString2[0] = GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR;
-				this.mDownloadDoblyFileNumber = localDBController2
-						.getAllSongsCountByFolder(
-								arrayOfString2,
-								UIGlobalSettingParameter.localmusic_scan_smallfile);
-				refreshUI();
-
-				logger.v("onResume() ---> Exit");
+			if (UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE)
+			{
+				num = new Integer[1];
+				num[0] = Integer.valueOf(this.mAllSongsNumber);
+				Toast.makeText(
+						this,
+						getString(R.string.local_music_after_scan,
+								(Object[]) num), 1).show();
+				UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE = false;
 			}
-		} else if (!Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
-			Toast.makeText(LocalMusicActivity.this,
-					R.string.sdcard_missing_message_common, Toast.LENGTH_SHORT)
-					.show();
+			localDBController1 = mDBController;
+			str = new String[1];
+			str[0] = GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR;
+			mDownloadFileNumber = localDBController1.getAllSongsCountByFolder(
+					str, UIGlobalSettingParameter.localmusic_scan_smallfile);
+			localDBController2 = mDBController;
+			str1 = new String[1];
+			str1[0] = GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR;
+			this.mDownloadDoblyFileNumber = localDBController2
+					.getAllSongsCountByFolder(str1,
+							UIGlobalSettingParameter.localmusic_scan_smallfile);
+			refreshUI();
+			logger.v("onResume() ---> Exit");
 		}
 	}
 
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
 		logger.v("onDestroy() ---> Enter");
 		this.mController.removeSystemEventListener(22, this);
 		super.onDestroy();
 		logger.v("onDestroy() ---> Exit");
 	}
 
-	private void refreshUI() {
+	private void refreshUI()
+	{
 		ArrayList localArrayList1 = new ArrayList(4);
 		String[] arrayOfString = { "title", "num", "icon" };
 		int[] arrayOfInt = { R.id.text1, R.id.text2, R.id.listicon1 };
@@ -294,39 +329,48 @@ public class LocalMusicActivity extends ListActivity implements
 						.toString(), R.drawable.list_cell_button_arrow_selector);
 
 		this.mLocalPlayList = this.mDBController.getAllPlaylists(1);
+		logger.v("" + mLocalPlayList.size());
 		Object localObject = null;
 
 		for (Iterator localIterator = this.mLocalPlayList.iterator(); localIterator
-				.hasNext();) {
+				.hasNext();)
+		{
 			Playlist localPlaylist = (Playlist) localIterator.next();
 			if (!localPlaylist.mName
-					.equals("cmccwm.mobilemusic.database.default.local.playlist.recent.download")) {
+					.equals("cmccwm.mobilemusic.database.default.local.playlist.recent.download"))
+			{
 				ArrayList localArrayList2 = (ArrayList) this.mDBController
 						.getSongsFromPlaylist(localPlaylist.mExternalId, 1);
 				String str5 = localPlaylist.mName;
 				Object[] arrayOfObject5 = new Object[1];
-				if (localArrayList2 == null)
-					;
-				for (int i = 0;; i = localArrayList2.size()) {
-					arrayOfObject5[0] = Integer.valueOf(i);
-					addRow(localArrayList1,
-							str5,
-							getString(R.string.local_music_all_song_num,
-									arrayOfObject5).toString(),
-							R.drawable.list_cell_button_arrow_selector);
+				int i;
+				if (localArrayList2 != null)
+				{
+					i = localArrayList2.size();
+
+				} else
+				{
+					i = 0;
 				}
+				arrayOfObject5[0] = Integer.valueOf(i);
+				addRow(localArrayList1,
+						str5,
+						getString(R.string.local_music_all_song_num,
+								arrayOfObject5).toString(),
+						R.drawable.list_cell_button_arrow_selector);
 			}
 			localObject = localPlaylist;
 		}
-		if (localObject != null)
-			this.mLocalPlayList.remove(localObject);
+		// if (localObject != null)
+		// this.mLocalPlayList.remove(localObject);
 		this.mAdapter = new SimpleAdapter(this, localArrayList1,
 				R.layout.cmcc_list_2, arrayOfString, arrayOfInt);
 		setListAdapter(this.mAdapter);
 	}
 
 	private void addRow(List<Map<String, Object>> list, String string1,
-			String string2, int paramInt) {
+			String string2, int paramInt)
+	{
 		HashMap localHashMap = new HashMap();
 		localHashMap.put("title", string1);
 		localHashMap.put("num", string2);
@@ -334,7 +378,8 @@ public class LocalMusicActivity extends ListActivity implements
 		list.add(localHashMap);
 	}
 
-	private void CreatePlayList() {
+	private void CreatePlayList()
+	{
 		View localView = getLayoutInflater().inflate(
 				R.layout.activity_my_migu_music_create_playlist_layout, null);
 		final EditText localEditText = (EditText) localView
@@ -346,8 +391,10 @@ public class LocalMusicActivity extends ListActivity implements
 		this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleView(
 				getParent(),
 				getText(R.string.create_play_list_playlist_activity), null,
-				localView, new View.OnClickListener() {
-					public void onClick(View paramAnonymousView) {
+				localView, new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
 						String str = localEditText.getText().toString();
 						((ListView) LocalMusicActivity.this
 								.findViewById(android.R.id.list))
@@ -358,34 +405,38 @@ public class LocalMusicActivity extends ListActivity implements
 									R.string.invalid_playlist_name_playlist_activity,
 									1).show();
 						if ((str.equals(LocalMusicActivity.this
-								.getString(R.string.playlist_myfav_common)))
+								.getString(R.string.playlist_myfav_common))) // 我的最爱
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.playlist_recent_play_common)))
+										.getString(R.string.playlist_recent_play_common))) // 最近播放
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.local_music_all_song)))
+										.getString(R.string.local_music_all_song))) // 全部歌曲
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.local_music_browse_by_singer)))
+										.getString(R.string.local_music_browse_by_singer))) // 按歌手浏览
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.local_music_browse_by_catalog)))
+										.getString(R.string.local_music_browse_by_catalog))) // 按目录浏览
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.local_music_download_music)))
+										.getString(R.string.local_music_download_music))) // 已付费下载
 								|| (str.equals(LocalMusicActivity.this
-										.getString(R.string.dobly_song_number)))) {
+										.getString(R.string.dobly_song_number)))) // 杜比音乐
+						{
 							Toast.makeText(
 									LocalMusicActivity.this,
 									R.string.duplicate_playlist_edit_playlist_activity,
 									1).show();
 						} else if (LocalMusicActivity.this.mDBController
-								.getPlaylistByName(str, 1) != null) {
+								.getPlaylistByName(str, 1) != null)
+						{
 							Toast.makeText(
 									LocalMusicActivity.this,
 									R.string.duplicate_playlist_edit_playlist_activity,
 									1).show();
-						} else {
+						} else
+						{
 							LocalMusicActivity.this.mDBController
 									.createPlaylist(str, 1);
 							LocalMusicActivity.this.refreshUI();
-							if (LocalMusicActivity.this.mCurrentDialog != null) {
+							if (LocalMusicActivity.this.mCurrentDialog != null)
+							{
 								LocalMusicActivity.this.mCurrentDialog
 										.dismiss();
 								LocalMusicActivity.this.mCurrentDialog = null;
@@ -399,12 +450,15 @@ public class LocalMusicActivity extends ListActivity implements
 									.show();
 						}
 					}
-				}, new View.OnClickListener() {
-					public void onClick(View paramAnonymousView) {
+				}, new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
 						((ListView) LocalMusicActivity.this
 								.findViewById(android.R.id.list))
 								.setVerticalScrollBarEnabled(true);
-						if (LocalMusicActivity.this.mCurrentDialog != null) {
+						if (LocalMusicActivity.this.mCurrentDialog != null)
+						{
 							LocalMusicActivity.this.mCurrentDialog.dismiss();
 							LocalMusicActivity.this.mCurrentDialog = null;
 						}
@@ -413,15 +467,18 @@ public class LocalMusicActivity extends ListActivity implements
 	}
 
 	@Override
-	public void handleSystemEvent(Message paramMessage) {
+	public void handleSystemEvent(Message paramMessage)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem paramMenuItem) {
+	public boolean onOptionsItemSelected(MenuItem paramMenuItem)
+	{
 		boolean bool = true;
-		switch (paramMenuItem.getItemId()) {
+		switch (paramMenuItem.getItemId())
+		{
 		default:
 			bool = super.onOptionsItemSelected(paramMenuItem);
 		case 0:
@@ -443,26 +500,289 @@ public class LocalMusicActivity extends ListActivity implements
 		return bool;
 	}
 
-	private void exitApplication() {
+	// 长按列表
+	public boolean onContextItemSelected(MenuItem paramMenuItem)
+	{
+		logger.v("" + paramMenuItem.getItemId());
+
+		final Playlist localPlaylist = (Playlist) this.mLocalPlayList
+				.get(this.mCurLongPressSelectedItem);
+
+		logger.v(localPlaylist.toString());
+		if (localPlaylist != null)
+			switch (paramMenuItem.getItemId())
+			{
+
+			case CONTEXT_MENU_DELETE:
+				if (localPlaylist.mNumOfSong > 0)
+				{
+					this.mCurrentDialog = DialogUtil
+							.show2BtnDialogWithIconTitleMsg(
+									this,
+									getText(R.string.title_information_common),
+									getText(R.string.local_music_delplaylist_hassongwarn),
+									new View.OnClickListener()
+									{
+										public void onClick(
+												View paramAnonymousView)
+										{
+											LocalMusicActivity.this
+													.delPlayList(localPlaylist.mExternalId);
+											if (LocalMusicActivity.this.mCurrentDialog != null)
+											{
+												LocalMusicActivity.this.mCurrentDialog
+														.dismiss();
+												LocalMusicActivity.this.mCurrentDialog = null;
+											}
+											LocalMusicActivity.this.refreshUI();
+										}
+									}, new View.OnClickListener()
+									{
+										public void onClick(
+												View paramAnonymousView)
+										{
+											if (LocalMusicActivity.this.mCurrentDialog != null)
+											{
+												LocalMusicActivity.this.mCurrentDialog
+														.dismiss();
+												LocalMusicActivity.this.mCurrentDialog = null;
+											}
+										}
+									});
+				} else
+				{
+					delPlayList(localPlaylist.mExternalId);
+					refreshUI();
+				}
+				break;
+			case CONTEXT_MENU_RENAME:
+			{
+
+				logger.v("onContextItemSelected() ----> 0");
+				show2BtnDialogWithEditTextView(localPlaylist.mExternalId);
+				break;
+			}
+			default:
+			}
+
+		return super.onContextItemSelected(paramMenuItem);
+	}
+
+	@Override
+	protected void onListItemClick(ListView listview, View view, int i, long l)
+	{
+		super.onListItemClick(listview, view, i, l);
+		if ("mounted".equals(Environment.getExternalStorageState()))
+		{
+			switch ((int) l)
+			{
+			default:
+				// if (i < listview.getCount())
+				// {
+				// itemId = l;
+				// TextView textview = (TextView) view
+				// .findViewById(R.id.text2);
+				// if (textview != null && textview.getText() != null
+				// && '0' == textview.getText().charAt(0))
+				// {
+				// intent = new Intent(
+				// this,
+				// org.ming.ui.activity.local.LocalAddMusicMainActivity);
+				// intent.putExtra(
+				// "playlistid",
+				// ((Playlist) mLocalPlayList.get(-1
+				// + (-4 + (int) itemId))).mExternalId);
+				// } else
+				// {
+				// intent = new Intent(
+				// this,
+				// org.ming.ui.activity.local.LocalSongListActivity);
+				// intent.putExtra(
+				// "title",
+				// ((Playlist) mLocalPlayList.get(-1
+				// + (-4 + (int) itemId))).mName);
+				// intent.putExtra("type", 4);
+				// intent.putExtra(
+				// "playlistid",
+				// ((Playlist) mLocalPlayList.get(-1
+				// + (-4 + (int) itemId))).mExternalId);
+				// }
+				// startActivity(intent);
+				// }
+				break;
+
+			case 0: // '\0'
+				intent = new Intent(this, LocalSongListActivity.class);
+				intent.putExtra("title", getText(R.string.local_music_all_song)
+						.toString());
+				intent.putExtra("type", 0);
+				startActivity(intent);
+				break;
+
+			// case 1: // '\001'
+			// intent = new Intent(this,
+			// org.ming.ui.activity.local.LocalColumnActivity);
+			// intent.putExtra("title",
+			// getText(R.string.local_music_browse_by_singer)
+			// .toString());
+			// intent.putExtra("TYPE", 1);
+			// startActivity(intent);
+			// break;
+			//
+			// case 2: // '\002'
+			// intent = new Intent(this,
+			// org.ming.ui.activity.local.LocalColumnActivity);
+			// intent.putExtra("title",
+			// getText(R.string.local_music_browse_by_catalog)
+			// .toString());
+			// intent.putExtra("TYPE", 2);
+			// startActivity(intent);
+			// break;
+			//
+			// case 3: // '\003'
+			// intent = new Intent(this,
+			// org.ming.ui.activity.local.LocalSongListActivity);
+			// intent.putExtra("title",
+			// getText(R.string.local_music_download_music).toString());
+			// intent.putExtra("type", 3);
+			// intent.putExtra("folderpath",
+			// GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR);
+			// startActivity(intent);
+			// break;
+			//
+			// case 4: // '\004'
+			// intent = new Intent(this,
+			// org.ming.ui.activity.local.LocalSongListActivity);
+			// intent.putExtra("title", getText(R.string.dobly_song_number)
+			// .toString());
+			// intent.putExtra("type", 3);
+			// intent.putExtra(
+			// "folderpath",
+			// GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR);
+			// startActivity(intent);
+			// break;
+			}
+		} else
+		{
+			Toast.makeText(this, R.string.sdcard_missing_message_common,
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	// 重命名自己创建的列表
+	private void show2BtnDialogWithEditTextView(final int paramInt)
+	{
+		logger.v("show2BtnDialogWithIconTitleView() ---> Enter");
+		final Dialog localDialog = new Dialog(this, R.style.CustomDialogTheme);
+		View localView = LayoutInflater.from(this).inflate(
+				R.layout.dialog_title_edittext_two_button, null);
+		final EditText localEditText = (EditText) localView
+				.findViewById(R.id.new_name);
+		Button localButton1 = (Button) localView.findViewById(R.id.button1);
+		Button localButton2 = (Button) localView.findViewById(R.id.button2);
+		localButton1.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View paramAnonymousView)
+			{
+				String str = localEditText.getText().toString();
+				if ((str == null) || ("".equals(str.trim())))
+					Toast.makeText(
+							LocalMusicActivity.this,
+							LocalMusicActivity.this
+									.getText(R.string.invalid_playlist_name_playlist_activity),
+							0).show();
+				if ((str.equals(LocalMusicActivity.this
+						.getString(R.string.playlist_myfav_common)))
+						|| (str.equals(LocalMusicActivity.this
+								.getString(R.string.playlist_recent_play_common)))
+						|| (str.equals(LocalMusicActivity.this
+								.getString(R.string.local_music_all_song)))
+						|| (str.equals(LocalMusicActivity.this
+								.getString(R.string.local_music_browse_by_singer)))
+						|| (str.equals(LocalMusicActivity.this
+								.getString(R.string.local_music_browse_by_catalog)))
+						|| (str.equals(LocalMusicActivity.this
+								.getString(R.string.local_music_download_music)))
+						|| (str.equals(LocalMusicActivity.this
+								.getString(R.string.dobly_song_number))))
+				{
+					Toast.makeText(LocalMusicActivity.this,
+							R.string.duplicate_playlist_edit_playlist_activity,
+							1).show();
+				} else if (LocalMusicActivity.this.mDBController
+						.getPlaylistByName(str, 1) != null)
+				{
+					Toast.makeText(LocalMusicActivity.this,
+							R.string.duplicate_playlist_edit_playlist_activity,
+							1).show();
+				} else
+				{
+					LocalMusicActivity.this.mDBController.renamePlaylist(
+							paramInt, 1, str);
+					((Playlist) LocalMusicActivity.this.mLocalPlayList
+							.get(LocalMusicActivity.this.mCurLongPressSelectedItem)).mName = str;
+					LocalMusicActivity.this.refreshUI();
+					localDialog.dismiss();
+				}
+			}
+		});
+		localButton2.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View paramAnonymousView)
+			{
+				localDialog.dismiss();
+			}
+		});
+		localDialog.setContentView(localView);
+		localDialog.show();
+		logger.v("show2BtnDialogWithIconTitleView() ---> Exit");
+	}
+
+	private void delPlayList(int paramInt)
+	{
+		this.mDBController.deletePlaylist(paramInt, 1);
+	}
+
+	private void exitApplication()
+	{
 		this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(this,
 				getText(R.string.quit_app_dialog_title),
 				getText(R.string.quit_app_dialog_message),
-				new View.OnClickListener() {
-					public void onClick(View paramAnonymousView) {
-						if (LocalMusicActivity.this.mCurrentDialog != null) {
+				new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
+						if (LocalMusicActivity.this.mCurrentDialog != null)
+						{
 							LocalMusicActivity.this.mCurrentDialog.dismiss();
 							LocalMusicActivity.this.mCurrentDialog = null;
 						}
 						Util.exitMobileMusicApp(false);
 					}
-				}, new View.OnClickListener() {
-					public void onClick(View paramAnonymousView) {
-						if (LocalMusicActivity.this.mCurrentDialog != null) {
+				}, new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
+						if (LocalMusicActivity.this.mCurrentDialog != null)
+						{
 							LocalMusicActivity.this.mCurrentDialog.dismiss();
 							LocalMusicActivity.this.mCurrentDialog = null;
 						}
 					}
 				});
 		this.mCurrentDialog.setCancelable(false);
+	}
+
+	public boolean dispatchKeyEvent(KeyEvent paramKeyEvent)
+	{
+		boolean bool;
+		if (getCurrentFocus() == null)
+			bool = true;
+		if (getListView().isFocused())
+			bool = getListView().dispatchKeyEvent(paramKeyEvent);
+		else
+			bool = super.dispatchKeyEvent(paramKeyEvent);
+		return bool;
+
 	}
 }

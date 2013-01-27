@@ -8,13 +8,14 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="15" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
 
     <application
-        android:allowBackup="true"
+        android:name="org.ming.center.MobileMusicApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/launch" >
@@ -78,13 +79,20 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.local.LocalSongListActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.online.OnlineMusicActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="org.ming.ui.activity.mymigu.MyMiGuActivity"
+            android:name=".ui.activity.mymigu.MyMiGuActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
+
+
     </application>
 
 </manifest>

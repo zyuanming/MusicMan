@@ -58,19 +58,33 @@ public class DialogUtil
 			localTextView1 = (TextView) localView.findViewById(R.id.title);
 			localTextView2 = (TextView) localView.findViewById(R.id.msg);
 			localButton = (Button) localView.findViewById(R.id.button1);
-			if (paramCharSequence1 == null)
+			if (paramCharSequence1 != null)
+			{
 				localTextView1.setText(paramCharSequence1);
-			if (paramCharSequence2 == null)
+				localTextView1.setVisibility(View.VISIBLE);
+			} else
+			{
+				localTextView1.setVisibility(View.GONE);
+			}
+			if (paramCharSequence2 != null)
+			{
 				localTextView2.setText(paramCharSequence2);
-			if (paramOnClickListener == null)
+				localTextView2.setVisibility(View.VISIBLE);
+			} else
+			{
+				localTextView2.setVisibility(View.GONE);
+			}
+			if (paramOnClickListener != null)
+			{
 				localButton.setOnClickListener(paramOnClickListener);
-
+				localButton.setVisibility(View.VISIBLE);
+			} else
+			{
+				localButton.setVisibility(View.GONE);
+			}
 			localDialog.setContentView(localView);
 			localDialog.show();
 			logger.v("show1BtnDialogWithTitleMsg() ---> Exit");
-			localTextView1.setVisibility(8);
-			localTextView2.setVisibility(8);
-			localButton.setVisibility(8);
 		}
 
 		return localDialog;
@@ -150,6 +164,10 @@ public class DialogUtil
 		if (paramCharSequence1 != null)
 		{
 			localTextView1.setText(paramCharSequence1);
+			localTextView1.setVisibility(View.VISIBLE);
+		} else
+		{
+			localTextView1.setVisibility(View.GONE);
 		}
 		if (paramCharSequence2 != null)
 		{
@@ -167,7 +185,7 @@ public class DialogUtil
 		localDialog.setCancelable(true);
 		localDialog.show();
 		logger.v("show2BtnDialogWithIconTitleMsg() ---> Exit");
-		localTextView1.setVisibility(View.GONE);
+
 		return localDialog;
 	}
 
@@ -192,10 +210,18 @@ public class DialogUtil
 		if (paramCharSequence1 != null)
 		{
 			localTextView1.setText(paramCharSequence1);
+			localTextView1.setVisibility(View.VISIBLE);
+		} else
+		{
+			localTextView1.setVisibility(View.GONE);
 		}
 		if (paramCharSequence2 != null)
 		{
+			localTextView2.setVisibility(View.VISIBLE);
 			localTextView2.setText(paramCharSequence2);
+		} else
+		{
+			localTextView2.setVisibility(View.GONE);
 		}
 		if (paramOnClickListener1 != null)
 		{
@@ -212,12 +238,6 @@ public class DialogUtil
 		localDialog.setContentView(localView);
 		localDialog.show();
 		logger.v("show2BtnDialogWithIconTitleView() ---> Exit");
-		localImageView.setVisibility(View.VISIBLE);
-		localTextView1.setVisibility(View.VISIBLE);
-		localTextView2.setVisibility(View.VISIBLE);
-		localLinearLayout.setVisibility(View.VISIBLE);
-		localButton1.setVisibility(View.VISIBLE);
-		localButton2.setVisibility(View.VISIBLE);
 		return localDialog;
 	}
 

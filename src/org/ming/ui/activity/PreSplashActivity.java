@@ -2,34 +2,43 @@ package org.ming.ui.activity;
 
 import java.util.List;
 
+import org.ming.center.Controller;
+import org.ming.center.MobileMusicApplication;
+import org.ming.center.system.SystemEventListener;
 import org.ming.util.MyLogger;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.KeyEvent;
 
-public class PreSplashActivity extends Activity
+public class PreSplashActivity extends Activity implements SystemEventListener
 {
 	static boolean islog = true;
 	private static final MyLogger logger = MyLogger
 			.getLogger("PreSplashActivity");
+	private Controller mController = null;
 
 	protected void onCreate(Bundle paramBundle)
 	{
 		logger.v("onCreate() ---> Enter");
+		super.onCreate(paramBundle);
+		this.mController = ((MobileMusicApplication) getApplication())
+				.getController();
+		this.mController.addSystemEventListener(22, this);
 		if (islog)
 		{
-			super.onCreate(paramBundle);
 			startActivity(new Intent(this, SplashActivity.class));
-			finish();
 		}
+		finish();
 		logger.v("onCreate() ---> Exit");
 	}
 
 	protected void onDestroy()
 	{
+		this.mController.removeSystemEventListener(22, this);
 		super.onDestroy();
 	}
 
@@ -57,5 +66,18 @@ public class PreSplashActivity extends Activity
 		}
 		islog = false;
 		super.onResume();
+	}
+
+	@Override
+	public void handleSystemEvent(Message paramMessage)
+	{
+		logger.v("handleSystemEvent() ---> Enter");
+		switch (paramMessage.what)
+		{
+		default:
+		case 22:
+		}
+		logger.v("handleSystemEvent() ---> Exit");
+		finish();
 	}
 }
