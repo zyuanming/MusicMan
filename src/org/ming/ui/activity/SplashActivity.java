@@ -4,6 +4,7 @@ import org.ming.R;
 import org.ming.center.ConfigSettingParameter;
 import org.ming.center.Controller;
 import org.ming.center.MobileMusicApplication;
+import org.ming.center.MobileMusicService;
 import org.ming.center.database.DBController;
 import org.ming.center.ui.UIGlobalSettingParameter;
 import org.ming.dispatcher.Dispatcher;
@@ -94,6 +95,9 @@ public class SplashActivity extends Activity
 				.getSubChannelId();
 		UIGlobalSettingParameter.usermore_download_auto_recovery = this.mController
 				.getDBController().getDownLoad_AutoRecover();
+
+		// 创建Service了，所有任务都是在这里开始执行。
+		MobileMusicService.startService(getApplicationContext());
 
 		requestWindowFeature(1);
 		setContentView(R.layout.splash);

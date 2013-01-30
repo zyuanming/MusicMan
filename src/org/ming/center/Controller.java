@@ -2,6 +2,7 @@ package org.ming.center;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import org.ming.center.database.DBControllerImpl;
 import org.ming.center.download.DLController;
 import org.ming.center.download.DLControllerImpl;
 import org.ming.center.download.DLEventListener;
+import org.ming.center.http.HttpController;
+import org.ming.center.http.HttpControllerImpl;
 import org.ming.center.http.MMHttpEventListener;
 import org.ming.center.player.PlayerController;
 import org.ming.center.player.PlayerControllerImpl;
@@ -39,6 +42,7 @@ public class Controller implements DispatcherEventListener
 	private DBController mDbController = null;
 	private DLController mDlController = null;
 	private PlayerController mPlayerController = null;
+	private HttpController mHttpController = null;
 	private SystemController mSystemController = null;
 	private Map<Integer, List<DLEventListener>> mDLEventListeners = null;
 	private Map<Integer, List<MMHttpEventListener>> mHttpEventListeners = null;
@@ -58,6 +62,11 @@ public class Controller implements DispatcherEventListener
 		if (sInstance == null)
 			sInstance = new Controller(mobileMusicApplication);
 		return sInstance;
+	}
+
+	public HttpController getHttpController()
+	{
+		return this.mHttpController;
 	}
 
 	public DBController getDBController()
@@ -82,32 +91,81 @@ public class Controller implements DispatcherEventListener
 
 	private void handleDLEvent(Message paramMessage)
 	{
-		logger.v("handleDLEvent() ---> Enter");
-
+		// logger.v("handleDLEvent() ---> Enter");
+		// List<DLEventListener> localList = (List<DLEventListener>)
+		// this.mDLEventListeners
+		// .get(Integer.valueOf(paramMessage.what));
+		//
+		// for (Iterator<DLEventListener> localIterator = localList.iterator();
+		// localIterator
+		// .hasNext();)
+		// {
+		// ((DLEventListener) localIterator.next())
+		// .handleDLEvent(paramMessage);
+		// }
 	}
 
 	private void handleHttpEvent(Message paramMessage)
 	{
-		logger.v("handleHttpEvent() ---> Enter");
-
+		// logger.v("handleHttpEvent() ---> Enter");
+		// List<MMHttpEventListener> localList = (List<MMHttpEventListener>)
+		// this.mHttpEventListeners
+		// .get(Integer.valueOf(paramMessage.what));
+		//
+		// for (Iterator<MMHttpEventListener> localIterator =
+		// localList.iterator(); localIterator
+		// .hasNext();)
+		// {
+		// ((MMHttpEventListener) localIterator.next())
+		// .handleMMHttpEvent(paramMessage);
+		// }
 	}
 
-	private void handlePlayerEvent(Message paramMessage)
+	private void handlePlayerEvent(Message message)
 	{
+		List list;
 		logger.v("handlePlayerEvent() ---> Enter");
-
+		list = (List) mPlayerEventListeners.get(Integer.valueOf(message.what));
+		if (list == null)
+		{
+			logger.v("handlePlayerEvent() ---> Exit");
+			return;
+		} else
+		{
+			for (Iterator iterator = list.iterator(); iterator.hasNext();)
+			{
+				((PlayerEventListener) iterator.next())
+						.handlePlayerEvent(message);
+			}
+		}
 	}
 
 	private void handleSystemEvent(Message paramMessage)
 	{
-		logger.v("handleSystemEvent() ---> Enter");
-
+		// logger.v("handleSystemEvent() ---> Enter");
+		// List<SystemEventListener> localList = (List<SystemEventListener>)
+		// this.mSystemEventListeners
+		// .get(Integer.valueOf(paramMessage.what));
+		// for (Iterator<SystemEventListener> localIterator =
+		// localList.iterator(); localIterator
+		// .hasNext();)
+		// {
+		// ((SystemEventListener) localIterator.next())
+		// .handleSystemEvent(paramMessage);
+		// }
 	}
 
 	private void handleUIEvent(Message paramMessage)
 	{
 		logger.v("handleUIEvent() ---> Enter");
-
+		List<UIEventListener> localList = (List<UIEventListener>) this.mUIEventListeners
+				.get(Integer.valueOf(paramMessage.what));
+		for (Iterator<UIEventListener> localIterator = localList.iterator(); localIterator
+				.hasNext();)
+		{
+			((UIEventListener) localIterator.next())
+					.handleUIEvent(paramMessage);
+		}
 	}
 
 	public void addDLEventListener(int paramInt,
@@ -212,30 +270,26 @@ public class Controller implements DispatcherEventListener
 				+ DispatcherEventEnum.getString(paramMessage.what));
 		if (DispatcherEventEnum.isSystemEvent(paramMessage))
 			handleSystemEvent(paramMessage);
-		while (true)
-		{
-			logger.v("handleMessage() ---> Exit");
 
-			if (DispatcherEventEnum.isPlayerEvent(paramMessage))
-				handlePlayerEvent(paramMessage);
-			else if (DispatcherEventEnum.isHttpEvent(paramMessage))
-				handleHttpEvent(paramMessage);
-			else if (DispatcherEventEnum.isDLEvent(paramMessage))
-				handleDLEvent(paramMessage);
-			else if (DispatcherEventEnum.isUIEvent(paramMessage))
-				handleUIEvent(paramMessage);
-
-			return;
-		}
+		else if (DispatcherEventEnum.isPlayerEvent(paramMessage))
+			handlePlayerEvent(paramMessage);
+		else if (DispatcherEventEnum.isHttpEvent(paramMessage))
+			handleHttpEvent(paramMessage);
+		else if (DispatcherEventEnum.isDLEvent(paramMessage))
+			handleDLEvent(paramMessage);
+		else if (DispatcherEventEnum.isUIEvent(paramMessage))
+			handleUIEvent(paramMessage);
+		logger.v("handleMessage() ---> Exit");
 	}
 
 	protected void initController()
 	{
 		logger.v("initController() ---> Enter");
-		this.mSystemEventListeners = new HashMap<Integer, List<SystemEventListener>>();
+		this.mSystemEventListeners = new HashMap();
 		this.mSystemController = SystemControllerImpl.getInstance(this.mApp);
 		this.mDbController = DBControllerImpl.getInstance(this.mApp);
 		this.mHttpEventListeners = new HashMap();
+		this.mHttpController = HttpControllerImpl.getInstance(this.mApp);
 		this.mPlayerEventListeners = new HashMap();
 		this.mPlayerController = PlayerControllerImpl.getInstance(this.mApp);
 		this.mDLEventListeners = new HashMap();

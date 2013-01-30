@@ -1,9 +1,11 @@
 package org.ming.center.player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.database.DBController;
+import org.ming.center.database.MusicType;
 import org.ming.center.database.Playlist;
 import org.ming.center.database.Song;
 import org.ming.center.http.MMHttpEventListener;
@@ -21,7 +23,8 @@ import android.os.Message;
 import android.util.Log;
 
 public class PlayerControllerImpl implements PlayerController,
-		PlayerEventListener, SystemEventListener, MMHttpEventListener {
+		PlayerEventListener, SystemEventListener, MMHttpEventListener
+{
 	public static final int MAX_PLAYER_ERROR_COUNT = 5;
 	public static final int MEDIA_ERROR_DATA_SOURCE = -102;
 	public static final int MEDIA_ERROR_LICENSE_REQUIRED = 300;
@@ -46,6 +49,7 @@ public class PlayerControllerImpl implements PlayerController,
 	private List<Song> mNowPlayingList;
 	private List<Song> mRecommendPlayList = null;
 	private List<Song> mBackUpList;
+	private List<Song> mFullPlayList;
 	private int mPayingNextItem = 0;
 	private int mPlayerErrCount = 0;
 	private int mPlayingItemPosition = 0;
@@ -55,17 +59,38 @@ public class PlayerControllerImpl implements PlayerController,
 	private int mTransId = -1;
 	private long time_lastPress;
 	private MusicPlayerWrapper wrapper;
-	static {
+	static
+	{
 		mIsplayEnd = false;
 	}
 
 	private PlayerControllerImpl(
-			MobileMusicApplication paramMobileMusicApplication) {
+			MobileMusicApplication paramMobileMusicApplication)
+	{
 		logger.v("PlayerControllerImpl() ---> Enter");
 		this.mApp = paramMobileMusicApplication;
 		this.mDBController = paramMobileMusicApplication.getController()
 				.getDBController();
+		// this.mHttpController = paramMobileMusicApplication.getController()
+		// .getHttpController();
 		this.mDispatcher = this.mApp.getEventDispatcher();
+		this.mFullPlayList = new ArrayList();
+		// asyncLoadFullList();
+		if (this.wrapper == null)
+			this.wrapper = new MusicPlayerWrapper(this.mApp);
+		this.mNowPlayingList = new ArrayList();
+		this.mBackUpList = new ArrayList();
+		Playlist localPlaylist = this.mDBController.getPlaylistByName(
+				"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
+				2);
+		List localList = this.mDBController
+				.getSongsFromMixPlaylist(localPlaylist.mExternalId);
+		if (localList != null)
+		{
+			this.mNowPlayingList.addAll(localList);
+			this.mDispatcher.sendMessage(this.mDispatcher.obtainMessage(1023));
+			this.mBackUpList.addAll(localList);
+		}
 		this.mApp.getController().addHttpEventListener(3009, this);
 		this.mApp.getController().addPlayerEventListener(1002, this);
 		this.mApp.getController().addPlayerEventListener(1004, this);
@@ -103,7 +128,8 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	public static PlayerControllerImpl getInstance(
-			MobileMusicApplication paramMobileMusicApplication) {
+			MobileMusicApplication paramMobileMusicApplication)
+	{
 		logger.v("getInstance() ---> Enter");
 		if (sInstance == null)
 			sInstance = new PlayerControllerImpl(paramMobileMusicApplication);
@@ -112,181 +138,221 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void handleMMHttpEvent(Message paramMessage) {
+	public void handleMMHttpEvent(Message paramMessage)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handleSystemEvent(Message paramMessage) {
+	public void handleSystemEvent(Message paramMessage)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void handlePlayerEvent(Message paramMessage) {
+	public void handlePlayerEvent(Message paramMessage)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void cancelPlaybackStatusBar() {
+	public void cancelPlaybackStatusBar()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void clearNowPlayingList() {
+	public void clearNowPlayingList()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean get51CHStatus() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int getDuration() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getEQMode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean getIsLoadingData() {
+	public boolean get51CHStatus()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int getNowPlayingItemPosition() {
+	public int getDuration()
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getNowPlayingNextItem() {
+	public int getEQMode()
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getPosition() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getProgressDownloadPercent() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getRepeatMode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getShuffleMode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getTransId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isFileOnExternalStorage() {
+	public boolean getIsLoadingData()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isInitialized() {
+	public int getNowPlayingItemPosition()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getNowPlayingNextItem()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPosition()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getProgressDownloadPercent()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getRepeatMode()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getShuffleMode()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTransId()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isFileOnExternalStorage()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isInteruptByCall() {
-		try {
+	public boolean isInitialized()
+	{
+		boolean bool = this.wrapper.isInitialized();
+		return bool;
+	}
+
+	@Override
+	public boolean isInteruptByCall()
+	{
+		logger.d("isInteruptByCall ----> enter");
+		try
+		{
 			boolean bool = this.wrapper.isInteruptByCall();
+			logger.d("return ---->" + bool);
+			logger.d("isInteruptByCall ----> exit");
 			return bool;
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return false;
 	}
 
 	@Override
-	public boolean isPause() {
+	public boolean isPause()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPlayEnd() {
+	public boolean isPlayEnd()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPlayRecommendSong() {
+	public boolean isPlayRecommendSong()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isPlaying() {
+	public boolean isPlaying()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void loadAllLocalTracks2NowPlayingList() {
+	public void loadAllLocalTracks2NowPlayingList()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void next() {
+	public void next()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public boolean open(int paramInt) {
-		try {
+	public boolean open(int paramInt)
+	{
+		boolean bool1 = false;
+		try
+		{
 			logger.v("open(position) ---> Enter");
-			boolean bool1 = doHandOpen(paramInt);
 			this.ISOPENLOCALMUSIC = true;
-			bool1 = false;
 			if (paramInt == -1)
 				return bool1;
 			if (Util.checkWapStatus())
-				break;
+			{
+				boolean bool2 = doHandOpen(paramInt);
+				bool1 = bool2;
+				return bool1;
+			}
 			if ((this.mNowPlayingList == null)
 					|| (this.mNowPlayingList.get(paramInt) == null)
 					|| (((Song) this.mNowPlayingList.get(paramInt)).mUrl == null)
 					|| ("<unknown>".equals(((Song) this.mNowPlayingList
 							.get(paramInt)).mUrl))
 					|| ("".equals(((Song) this.mNowPlayingList.get(paramInt)).mUrl)))
-				break;
+			{
+				logger.v("------------------------");
+				bool1 = doHandOpen(paramInt);
+			}
 			if (((Song) this.mNowPlayingList.get(paramInt)).mUrl
-					.contains("218.200.160.30")) {
-				if (this.mRecommendPlayList != null) {
+					.contains("218.200.160.30"))
+			{
+				if (this.mRecommendPlayList != null)
+				{
 					this.mRecommendPlayList.clear();
 					this.mRecommendPlayList = null;
 					this.mPlayingItemPosition = 0;
@@ -296,25 +362,36 @@ public class PlayerControllerImpl implements PlayerController,
 				if ((CacheSongData.getInstance().getCacheSong() != null)
 						&& (CacheSongData.getInstance().getCacheSong().mContentId
 								.equals(((Song) this.mNowPlayingList
-										.get(paramInt)).mContentId))) {
+										.get(paramInt)).mContentId)))
+				{
 					playOnlineSong(CacheSongData.getInstance().getCacheXml());
 					Log.v("cache", "begin playing cache db");
-				} else {
-					doHandOpen(paramInt);
+				} else
+				{
+					bool1 = doHandOpen(paramInt);
 				}
 			}
-		} catch (Exception e) {
+			bool1 = doHandOpen(paramInt);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
+		return bool1;
 	}
 
-	private boolean doHandOpen(int i) {
+	private boolean doHandOpen(int i)
+	{
+		logger.v("doHandlOpen ----> enter");
 		boolean flag = false;
-		if (mNowPlayingList != null && !mNowPlayingList.isEmpty()) {
-			if (i < 0 || i > -1 + mNowPlayingList.size()) {
+		if (mNowPlayingList != null && !mNowPlayingList.isEmpty())
+		{
+			if (i < 0 || i > -1 + mNowPlayingList.size())
+			{
 				logger.e("open(position), position is invalid");
-				flag = false;
-			} else {
-				if (mRecommendPlayList != null) {
+			} else
+			{
+				if (mRecommendPlayList != null)
+				{
 					mRecommendPlayList.clear();
 					mRecommendPlayList = null;
 					mPlayingItemPosition = 0;
@@ -323,19 +400,22 @@ public class PlayerControllerImpl implements PlayerController,
 				mDispatcher.sendMessage(mDispatcher.obtainMessage(4008));
 				Song song = (Song) mNowPlayingList.get(i);
 				flag = false;
-				if (song != null) {
+				if (song != null)
+				{
 					mDispatcher.sendMessage(mDispatcher.obtainMessage(4010));
-					if (mCurrentTask != null) {
-						mHttpController.cancelTask(mCurrentTask);
-						mCurrentTask = null;
-					}
+					// if (mCurrentTask != null) {
+					// mHttpController.cancelTask(mCurrentTask);
+					// mCurrentTask = null;
+					// }
 					if (song.mUrl == null
-							|| song.mUrl.equalsIgnoreCase("<unknown>")) {
+							|| song.mUrl.equalsIgnoreCase("<unknown>"))
+					{
 						mPlayingItemPosition = i;
 						wrapper.stop();
 						if (CacheSongData.getInstance().getCacheSong() != null
 								&& CacheSongData.getInstance().getCacheSong().mContentId
-										.equals(song.mContentId)) {
+										.equals(song.mContentId))
+						{
 							if (NetUtil.netState == 3
 									&& !SystemControllerImpl.getInstance(mApp)
 											.checkWapStatus()
@@ -346,11 +426,13 @@ public class PlayerControllerImpl implements PlayerController,
 							else
 								playOnlineSong(CacheSongData.getInstance()
 										.getCacheXml());
-							Log.v("cache", "begin playing cache db");
-						} else {
+							logger.v("cache----->begin playing cache db");
+						} else
+						{
 							askSongInfo(song);
 						}
-					} else {
+					} else
+					{
 						wrapper.start((Song) mNowPlayingList.get(i));
 						mPlayingItemPosition = i;
 						logger.v("open(position) ---> Exit");
@@ -358,13 +440,15 @@ public class PlayerControllerImpl implements PlayerController,
 					flag = true;
 				}
 			}
-		} else {
+		} else
+		{
 			logger.e("open(position), now playing list is empty");
 		}
 		return flag;
 	}
 
-	private void askSongInfo(Song paramSong) {
+	private void askSongInfo(Song paramSong)
+	{
 		// if (paramSong.mGroupCode == "<unknown>")
 		// paramSong.mGroupCode = "null";
 		// if (paramSong.mContentId == "<unknown>")
@@ -383,200 +467,250 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public boolean openRecommendSong(int paramInt) {
+	public boolean openRecommendSong(int paramInt)
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void pause() {
+	public void pause()
+	{
+		logger.v("pause() ---> Enter");
+		this.wrapper.pause();
+		logger.v("pause() ---> Exit");
+	}
+
+	@Override
+	public void playOnlineSong(String paramString)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void playOnlineSong(String paramString) {
+	public void prev()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void prev() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean renewOnlinePlay(int paramInt) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void seek(long paramLong) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void set51CHStatus(boolean paramBoolean) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEQMode(int paramInt) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean setNextItem() {
+	public boolean renewOnlinePlay(int paramInt)
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void setNowPlayingItemPosition(int paramInt) {
+	public void seek(long paramLong)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int setRepeatMode(int paramInt) {
+	public void set51CHStatus(boolean paramBoolean)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setEQMode(int paramInt)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean setNextItem()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setNowPlayingItemPosition(int paramInt)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int setRepeatMode(int paramInt)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int setShuffleMode(int paramInt) {
+	public int setShuffleMode(int paramInt)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void setTransId(int paramInt) {
+	public void setTransId(int paramInt)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void start() {
+	public void start()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void stop() {
+	public void stop()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int add2NowPlayingList(Song paramSong) {
-		try {
+	public int add2NowPlayingList(Song paramSong)
+	{
+		logger.d("add2NowPlayingList() ----> enter");
+		try
+		{
 			int i = add2NowPlayingList(paramSong, false);
+			logger.d("i ----> " + i);
+			logger.d("add2NowPlayingList() ----> exit");
 			return i;
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
 	@Override
-	public int add2NowPlayingList(Song paramSong, boolean paramBoolean) {
+	public int add2NowPlayingList(Song song, boolean flag)
+	{
+		logger.v("add2NowPlayingList() ---> Enter");
 		int i = -1;
-		try {
-			logger.v("add2NowPlayingList() ---> Enter");
-			if (paramSong == null)
-				return i;
-			if (this.mIsRadio) {
-				this.mNowPlayingList.clear();
-				this.mBackUpList.clear();
-				Playlist localPlaylist = this.mDBController
+		if (song != null)
+		{
+			int j;
+			if (mIsRadio)
+			{
+				mNowPlayingList.clear();
+				mBackUpList.clear();
+				Playlist playlist = mDBController
 						.getPlaylistByName(
 								"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
 								2);
-				List localList = this.mDBController
-						.getSongsFromMixPlaylist(localPlaylist.mExternalId);
-				if (localList != null) {
-					this.mNowPlayingList.addAll(localList);
-					this.mBackUpList.addAll(localList);
+				List list = mDBController
+						.getSongsFromMixPlaylist(playlist.mExternalId);
+				if (list != null)
+				{
+					mNowPlayingList.addAll(list);
+					mBackUpList.addAll(list);
 				}
-				this.mPlayingItemPosition = 0;
-				this.mIsRadio = false;
+				mPlayingItemPosition = 0;
+				mIsRadio = false;
 			}
-			if ((this.mRecommendPlayList != null)
-					&& (this.mRecommendPlayList.size() > 0))
-				paramBoolean = true;
-			int j = this.mNowPlayingList.indexOf(paramSong);
-			if (paramBoolean) {
-				if (i == j) {
-					this.mNowPlayingList.add(paramSong);
-					this.mBackUpList.add(paramSong);
-				} else {
-					this.mNowPlayingList.remove(paramSong);
-					this.mBackUpList.remove(paramSong);
+			if (mRecommendPlayList != null && mRecommendPlayList.size() > 0)
+				flag = true;
+			j = mNowPlayingList.indexOf(song);
+			if (!flag)
+			{
+				if (i != j)
+				{
+					mNowPlayingList.remove(song);
+					mBackUpList.remove(song);
+				} else if (i == j)
+				{
+					logger.d("mNowPlayingList do not has the song , now add the song");
+					mNowPlayingList.add(song);
+					mBackUpList.add(song);
 				}
-				this.mDispatcher.sendMessage(this.mDispatcher
-						.obtainMessage(1023));
+				if (j > mPlayingItemPosition)
+				{
+					mNowPlayingList.add(1 + mPlayingItemPosition, song);
+					mBackUpList.add(1 + mPlayingItemPosition, song);
+					if (mNowPlayingList.size() == 0
+							|| mPlayingItemPosition == -1
+									+ mNowPlayingList.size())
+					{
+						mNowPlayingList.add(song);
+						mBackUpList.add(song);
+					} else
+					{
+						int k = 1 + mPlayingItemPosition;
+						int l = 1 + mPlayingItemPosition;
+						if (mNowPlayingList.size() < 1 + mPlayingItemPosition)
+							k = mNowPlayingList.size();
+						mNowPlayingList.add(k, song);
+						if (mBackUpList.size() < 1 + mPlayingItemPosition)
+							l = mBackUpList.size();
+						mBackUpList.add(l, song);
+					}
+
+				} else
+				{
+					int i1 = 1 + mPlayingItemPosition;
+					int j1 = 1 + mPlayingItemPosition;
+					if (mNowPlayingList.size() < 1 + mPlayingItemPosition)
+						i1 = mNowPlayingList.size();
+					mNowPlayingList.add(i1, song);
+					if (mBackUpList.size() < 1 + mPlayingItemPosition)
+						j1 = mBackUpList.size();
+					mBackUpList.add(j1, song);
+					mPlayingItemPosition = -1 + mPlayingItemPosition;
+					if (flag)
+						mDispatcher
+								.sendMessage(mDispatcher.obtainMessage(1023));
+					i = mNowPlayingList.indexOf(song);
+					logger.d("i ----> " + i);
+					logger.v("add2NowPlayingList() ---> Exit");
+					return i;
+				}
+			} else
+			{
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(1023));
+				i = mNowPlayingList.indexOf(song);
+				logger.d("i ----> " + i);
+				logger.v("add2NowPlayingList() ---> Exit");
+				return i;
 			}
-			if (j <= this.mPlayingItemPosition) {
-				int n = 1 + this.mPlayingItemPosition;
-				int i1 = 1 + this.mPlayingItemPosition;
-				if (this.mNowPlayingList.size() < 1 + this.mPlayingItemPosition)
-					n = this.mNowPlayingList.size();
-				this.mNowPlayingList.add(n, paramSong);
-				if (this.mBackUpList.size() < 1 + this.mPlayingItemPosition)
-					i1 = this.mBackUpList.size();
-				this.mBackUpList.add(i1, paramSong);
-				this.mPlayingItemPosition = (-1 + this.mPlayingItemPosition);
-			}
-		} finally {
 		}
-		this.mNowPlayingList.add(1 + this.mPlayingItemPosition, paramSong);
-		this.mBackUpList.add(1 + this.mPlayingItemPosition, paramSong);
-		if ((this.mNowPlayingList.size() == 0)
-				|| (this.mPlayingItemPosition == -1
-						+ this.mNowPlayingList.size())) {
-			this.mNowPlayingList.add(paramSong);
-			this.mBackUpList.add(paramSong);
-		} else {
-			int k = 1 + this.mPlayingItemPosition;
-			int m = 1 + this.mPlayingItemPosition;
-			if (this.mNowPlayingList.size() < 1 + this.mPlayingItemPosition)
-				k = this.mNowPlayingList.size();
-			this.mNowPlayingList.add(k, paramSong);
-			if (this.mBackUpList.size() < 1 + this.mPlayingItemPosition)
-				m = this.mBackUpList.size();
-			this.mBackUpList.add(m, paramSong);
-		}
-		logger.v("add2NowPlayingList() ---> Exit");
-		i = this.mNowPlayingList.indexOf(paramSong);
 		return i;
 	}
 
 	@Override
-	public int add2NowPlayingList(List<Song> paramList) {
+	public int add2NowPlayingList(List<Song> paramList)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void addRecommendSongList(List<Song> paramList) {
+	public void addRecommendSongList(List<Song> paramList)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int checkSongInNowPlayingList(Song paramSong) {
+	public int checkSongInNowPlayingList(Song paramSong)
+	{
 		logger.v("checkSongInNowPlayingList() ---> Enter");
 		int ii = 0;
-		if (paramSong == null) {
+		if (paramSong == null)
+		{
 			ii = -1;
-		} else {
-			for (int i = 0; i < this.mNowPlayingList.size(); i++) {
-				if (paramSong.equals((Song) this.mNowPlayingList.get(i))) {
+		} else
+		{
+			for (int i = 0; i < this.mNowPlayingList.size(); i++)
+			{
+				if (paramSong.equals((Song) this.mNowPlayingList.get(i)))
+				{
 					logger.d("Got the position is " + i);
 					return i;
 				}
@@ -587,68 +721,195 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void delDownloadSong(Song paramSong) {
+	public void delDownloadSong(Song paramSong)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void delOnlineSong(Song paramSong) {
+	public void delOnlineSong(Song paramSong)
+	{
+		Song localSong;
+		int i;
+		int j;
+		try
+		{
+			logger.v("delOnlineSong() ---> Enter");
+			localSong = getCurrentPlayingItem();
+			if (this.mNowPlayingList.size() > 0)
+			{
+				i = this.mNowPlayingList.indexOf(paramSong);
+				if ((paramSong != null) && (i != -1))
+				{
+					this.mNowPlayingList.remove(paramSong);
+					this.mBackUpList.remove(paramSong);
+					this.mDispatcher.sendMessage(this.mDispatcher
+							.obtainMessage(1023));
+				}
+			} else
+			{
+				return;
+			}
+			j = 0;
+			if (localSong != null)
+			{
+				if (paramSong.mMusicType != MusicType.LOCALMUSIC.ordinal())
+				{
+					int i4 = localSong.mMusicType;
+					int i5 = MusicType.LOCALMUSIC.ordinal();
+					j = 0;
+					if (i4 == i5)
+					{
+						boolean bool3 = localSong.mUrl.equals(paramSong.mUrl);
+						j = 0;
+						if (bool3)
+						{
+							j = 1;
+							stop();
+						}
+					}
+				} else if (localSong.mMusicType == MusicType.ONLINEMUSIC
+						.ordinal())
+				{
+					j = 0;
+					if (localSong.mMusicType == localSong.mMusicType)
+					{
+						j = 0;
+						if (localSong.mContentId.equals(paramSong.mContentId))
+						{
+							j = 0;
+							if (localSong.mGroupCode
+									.equals(paramSong.mGroupCode))
+							{
+								j = 1;
+								stop();
+								if ((this.mPlayingItemPosition == i)
+										&& ((this.mNowPlayingList.size() == 0) || (this.mPlayingItemPosition >= this.mNowPlayingList
+												.size())))
+								{
+									this.mPlayingItemPosition = 0;
+									this.mDispatcher
+											.sendMessage(this.mDispatcher
+													.obtainMessage(4008));
+								} else if (this.mPlayingItemPosition <= i)
+								{
+									int m = 0;
+									if (this.mPlayingItemPosition > 0)
+									{
+										m = -1 + this.mPlayingItemPosition;
+									}
+									this.mPlayingItemPosition = m;
+									setIsLoadingData(false);
+								}
+							}
+						}
+					}
+				}
+			}
+			if (j != 0)
+				open(this.mPlayingItemPosition);
+			logger.v("delOnlineSong() ---> Exit");
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void setIsLoadingData(boolean paramBoolean)
+	{
+		this.mIsLoadingData = paramBoolean;
+	}
+
+	@Override
+	public void delRadioSong(Song paramSong)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void delRadioSong(Song paramSong) {
-		// TODO Auto-generated method stub
-
+	public Song getCurrentPlayingItem()
+	{
+		Song localSong = null;
+		try
+		{
+			List localList = this.mRecommendPlayList;
+			localSong = null;
+			if (localList != null)
+			{
+				int i = this.mRecommendPlayList.size();
+				localSong = null;
+				if (i > 0)
+				{
+					localSong = (Song) this.mRecommendPlayList
+							.get(this.mPlayingItemPosition);
+					if (localSong != null)
+						return localSong;
+				}
+			}
+			if ((this.mNowPlayingList != null)
+					&& (!this.mNowPlayingList.isEmpty()))
+				localSong = (Song) this.mNowPlayingList
+						.get(this.mPlayingItemPosition);
+			return localSong;
+		} catch (IndexOutOfBoundsException localIndexOutOfBoundsException)
+		{
+			localIndexOutOfBoundsException.printStackTrace();
+		}
+		return localSong;
 	}
 
 	@Override
-	public Song getCurrentPlayingItem() {
+	public List<Song> getNowPlayingList()
+	{
+		List<Song> localList = new ArrayList<Song>();
+		if (this.mNowPlayingList != null)
+		{
+			localList = this.mNowPlayingList;
+		}
+		return localList;
+	}
+
+	@Override
+	public List<Song> getRecommendPlayList()
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Song> getNowPlayingList() {
+	public Song makeOnlineSong(String paramString, Context paramContext)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Song> getRecommendPlayList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Song makeOnlineSong(String paramString, Context paramContext) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void playOnlineSong(Song paramSong) {
+	public void playOnlineSong(Song paramSong)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setNowPlayingList(List<Song> paramList, boolean paramBoolean) {
+	public void setNowPlayingList(List<Song> paramList, boolean paramBoolean)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public long addCurrentTrack2OnlineMusicTable(SongListItem paramSongListItem) {
+	public long addCurrentTrack2OnlineMusicTable(SongListItem paramSongListItem)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void addCurrentTrack2RecentPlaylist(SongListItem paramSongListItem,
-			long paramLong) {
+			long paramLong)
+	{
 		// TODO Auto-generated method stub
 
 	}

@@ -16,6 +16,7 @@ import org.ming.center.ui.UIGlobalSettingParameter;
 import org.ming.ui.adapter.LocalSongCursorAdapter;
 import org.ming.ui.util.DialogUtil;
 import org.ming.ui.util.Uiutil;
+import org.ming.ui.widget.PlayerStatusBar;
 import org.ming.util.MyLogger;
 import org.ming.util.Util;
 
@@ -38,9 +39,11 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 public class LocalSongListViewByCursor extends LinearLayout implements
-		PlayerEventListener, UIEventListener {
+		PlayerEventListener, UIEventListener
+{
 	private static final int POPWINDOW_END = 1;
-	private static final MyLogger logger = MyLogger.getLogger("SongListView");
+	private static final MyLogger logger = MyLogger
+			.getLogger("LocalSongListViewByCursor");
 	LocalSongCursorAdapter adapter;
 	private Cursor cursor;
 	private Button mBtnPlayAll = null;
@@ -51,37 +54,49 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 	private LayoutInflater mLayoutInflater;
 	private ImageView mNothingView;
 	private PlayerController mPlayerController = null;
-	// private PlayerStatusBar mPlayerStatusBar = null;
+	private PlayerStatusBar mPlayerStatusBar = null;
 	private PopupWindow mPopupWindow = null;
 	private List<Song> mSongListData = null;
-	private AdapterView.OnItemClickListener mSongListItemOnItemClickListener = new AdapterView.OnItemClickListener() {
+	private AdapterView.OnItemClickListener mSongListItemOnItemClickListener = new AdapterView.OnItemClickListener()
+	{
 		public void onItemClick(AdapterView<?> paramAnonymousAdapterView,
-				View paramAnonymousView, int paramAnonymousInt,
-				long paramAnonymousLong) {
-			if (mPlayerController.isInteruptByCall()) {
+				View v, int i, long l)
+		{
+			logger.d("ItemClick ----> enter");
+			logger.d("paramAnonymousInt ---> " + i);
+			logger.d("paramAnonymousLong ---> " + l);
+			if (mPlayerController.isInteruptByCall())
+			{
 				Toast.makeText(getContext(), R.string.user_calling, 1).show();
 			}
 			Cursor localCursor = cursor;
 			Song localSong = null;
-			if (localCursor != null) {
-				int j = cursor.getCount();
+			if (localCursor != null)
+			{
+				logger.v("localCursor != null");
+				int k = cursor.getCount();
 				localSong = null;
-				if (j > paramAnonymousInt) {
-					cursor.moveToPosition(paramAnonymousInt);
+				if (k > i)
+				{
+					cursor.moveToPosition(i);
 					localSong = mDBController.getSongById(cursor.getLong(cursor
 							.getColumnIndexOrThrow("_id")));
 				}
 			}
-			if (localSong != null) {
-				int i = mPlayerController.add2NowPlayingList(localSong);
+			if (localSong != null)
+			{
+				logger.d("localSong ! = null");
+				int j = mPlayerController.add2NowPlayingList(localSong);
 				Playlist localPlaylist = mDBController
 						.getPlaylistByName(
 								"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
 								2);
 				if (!mDBController.isSongInMixPlaylist(
-						localPlaylist.mExternalId, localSong.mId, false)) {
+						localPlaylist.mExternalId, localSong.mId, false))
+				{
 					if (mDBController.countSongNumInPlaylist(
-							localPlaylist.mExternalId, 2) >= 20) {
+							localPlaylist.mExternalId, 2) >= 20)
+					{
 						long l2 = mDBController.getFirstSongInPlaylist(
 								localPlaylist.mExternalId, 2);
 						if (l2 != -1L)
@@ -89,36 +104,42 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 									localPlaylist.mExternalId,
 									new long[] { l2 }, 2);
 					}
-					DBController localDBController = LocalSongListViewByCursor.this.mDBController;
+					DBController localDBController = mDBController;
 					long l1 = localPlaylist.mExternalId;
 					long[] arrayOfLong = new long[1];
 					arrayOfLong[0] = localSong.mId;
 					localDBController.addSongs2MixPlaylist(l1, arrayOfLong,
 							false);
 				}
-				mPlayerController.open(i);
+				mPlayerController.open(j);
 				adapter.notifyDataSetChanged();
 			}
+			logger.d("ItemClick ----> exit");
 		}
 	};
 	private ListView mSongListView = null;
-	private Handler mSplashHandler = new Handler() {
-		public void handleMessage(Message paramAnonymousMessage) {
-			LocalSongListViewByCursor.logger.v("handleMessage() ---> Enter : "
+	private Handler mSplashHandler = new Handler()
+	{
+		public void handleMessage(Message paramAnonymousMessage)
+		{
+			logger.v("handleMessage() ---> Enter : "
 					+ paramAnonymousMessage.what);
-			switch (paramAnonymousMessage.what) {
+			switch (paramAnonymousMessage.what)
+			{
 			default:
-				LocalSongListViewByCursor.logger.v("handleMessage() ---> Exit");
+				logger.v("handleMessage() ---> Exit");
 			case 1:
 			}
-			if (LocalSongListViewByCursor.this.mPopupWindow != null) {
-				LocalSongListViewByCursor.this.mPopupWindow.dismiss();
-				LocalSongListViewByCursor.this.mPopupWindow = null;
+			if (mPopupWindow != null)
+			{
+				mPopupWindow.dismiss();
+				mPopupWindow = null;
 			}
 		}
 	};
 
-	public LocalSongListViewByCursor(Context context) {
+	public LocalSongListViewByCursor(Context context)
+	{
 		super(context);
 		mSongListView = null;
 		mPlayerController = null;
@@ -127,11 +148,13 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		mBtnPlayAll = null;
 		mPopupWindow = null;
 		mCurrentDialog = null;
+		mPlayerStatusBar = null;
 		mContext = context;
 		inital();
 	}
 
-	public LocalSongListViewByCursor(Context context, AttributeSet attributeset) {
+	public LocalSongListViewByCursor(Context context, AttributeSet attributeset)
+	{
 		super(context, attributeset);
 		mSongListView = null;
 		mPlayerController = null;
@@ -140,13 +163,13 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		mBtnPlayAll = null;
 		mPopupWindow = null;
 		mCurrentDialog = null;
-		// mPlayerStatusBar = null;
-		// mSplashHandler = new _cls1();
+		mPlayerStatusBar = null;
 		mContext = context;
 		inital();
 	}
 
-	private int playAll() {
+	private int playAll()
+	{
 		// int i = -1;
 		// long l = this.mDBController.getPlaylistByName(
 		// "cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
@@ -182,8 +205,10 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		return 0;
 	}
 
-	public void addEventListner() {
-		// this.mPlayerStatusBar.registEventListener();
+	public void addEventListner()
+	{
+		logger.d("addEventlistener ----> enter");
+		this.mPlayerStatusBar.registEventListener();
 		this.mController.addPlayerEventListener(1002, this);
 		this.mController.addPlayerEventListener(1010, this);
 		this.mController.addPlayerEventListener(1012, this);
@@ -192,16 +217,19 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		this.mController.addUIEventListener(4008, this);
 	}
 
-	public void closeCursor() {
+	public void closeCursor()
+	{
 		if ((this.cursor != null) && (!this.cursor.isClosed()))
 			this.cursor.close();
 	}
 
-	public void deleteSongFromList(Song paramSong) {
+	public void deleteSongFromList(Song paramSong)
+	{
 		this.cursor.requery();
 	}
 
-	public Song getSong(Cursor paramCursor) {
+	public Song getSong(Cursor paramCursor)
+	{
 		Song localSong = new Song();
 		localSong.mAlbum = paramCursor.getString(paramCursor
 				.getColumnIndexOrThrow("album"));
@@ -211,9 +239,10 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 				.getColumnIndexOrThrow("_data"));
 		localSong.mContentId = this.mDBController
 				.queryContentId(localSong.mUrl);
-		localSong.mMusicType = MusicType.LOCALMUSIC;
+		localSong.mMusicType = MusicType.LOCALMUSIC.ordinal();
 		localSong.mLyric = null;
-		try {
+		try
+		{
 			localSong.mAlbumId = paramCursor.getInt(paramCursor
 					.getColumnIndexOrThrow("album_id"));
 			localSong.mDuration = paramCursor.getInt(paramCursor
@@ -226,25 +255,31 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 			if ((i < paramCursor.getColumnCount()) && (i >= 0))
 				localSong.mSize = paramCursor.getLong(paramCursor
 						.getColumnIndexOrThrow("_size"));
-		} catch (Exception localException) {
+		} catch (Exception localException)
+		{
 			localException.printStackTrace();
 		}
 		return localSong;
 	}
 
-	public Song getSongbyPosition(int i) {
+	public Song getSongbyPosition(int i)
+	{
 		Song song;
-		if (cursor != null && cursor.getCount() > i) {
+		if (cursor != null && cursor.getCount() > i)
+		{
 			cursor.moveToPosition(i);
 			song = getSong(cursor);
-		} else {
+		} else
+		{
 			song = null;
 		}
 		return song;
 	}
 
-	public void handlePlayerEvent(Message paramMessage) {
-		switch (paramMessage.what) {
+	public void handlePlayerEvent(Message paramMessage)
+	{
+		switch (paramMessage.what)
+		{
 		default:
 		case 1014:
 		case 1002:
@@ -261,15 +296,19 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		notifyDataChange();
 	}
 
-	public void handleUIEvent(Message paramMessage) {
-		switch (paramMessage.what) {
+	public void handleUIEvent(Message paramMessage)
+	{
+		switch (paramMessage.what)
+		{
 		default:
 		case 4008:
 		}
 		notifyDataChange();
 	}
 
-	public void inital() {
+	public void inital()
+	{
+		logger.d("inital ---> enter");
 		mController = Controller.getInstance(MobileMusicApplication
 				.getInstance());
 		mPlayerController = mController.getPlayerController();
@@ -279,18 +318,23 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		LayoutParams layoutparams = new LayoutParams(-1, -1);
 		LinearLayout linearlayout = (LinearLayout) mLayoutInflater.inflate(
 				R.layout.local_song_list_view, null);
-		// mPlayerStatusBar = (PlayerStatusBar) linearlayout
-		// .findViewById(R.id.playerStatusBar);
+		mPlayerStatusBar = (PlayerStatusBar) linearlayout
+				.findViewById(R.id.playerStatusBar);
 		mNothingView = (ImageView) findViewById(R.id.nothing);
 		addView(linearlayout, layoutparams);
 		mBtnPlayAll = (Button) findViewById(R.id.btn_all_play);
-		mBtnPlayAll.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				if (mPlayerController.isInteruptByCall()) {
+		mBtnPlayAll.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View view)
+			{
+				if (mPlayerController.isInteruptByCall())
+				{
 					Toast.makeText(getContext(), R.string.user_calling, 1)
 							.show();
-				} else {
-					if (mCurrentDialog != null) {
+				} else
+				{
+					if (mCurrentDialog != null)
+					{
 						mCurrentDialog.dismiss();
 						mCurrentDialog = null;
 					}
@@ -304,17 +348,20 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		});
 	}
 
-	public void notifyDataChange() {
+	public void notifyDataChange()
+	{
 		if (this.adapter != null)
 			this.adapter.notifyDataSetChanged();
 	}
 
-	public void reQueryCursor() {
+	public void reQueryCursor()
+	{
 		this.cursor.requery();
 	}
 
-	public void removeEventListner() {
-		// this.mPlayerStatusBar.unRegistEventListener();
+	public void removeEventListner()
+	{
+		this.mPlayerStatusBar.unRegistEventListener();
 		this.mController.removePlayerEventListener(1002, this);
 		this.mController.removePlayerEventListener(1010, this);
 		this.mController.removePlayerEventListener(1012, this);
@@ -323,22 +370,28 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		this.mController.removeUIEventListener(4008, this);
 	}
 
-	public void renameSongFromList(Song paramSong, String paramString) {
+	public void renameSongFromList(Song paramSong, String paramString)
+	{
 		paramSong.mTrack = paramString;
 	}
 
-	public void setButtonDisable(boolean flag) {
-		if (flag) {
+	public void setButtonDisable(boolean flag)
+	{
+		if (flag)
+		{
 			this.mBtnPlayAll.setEnabled(true);
-		} else {
+		} else
+		{
 			this.mBtnPlayAll.setEnabled(false);
 		}
 	}
 
-	public void setCursor(Cursor paramCursor) {
+	public void setCursor(Cursor paramCursor)
+	{
 		logger.d("setCursor() ----> enter");
 		closeCursor();
-		if ((paramCursor != null) && (paramCursor.getCount() > 0)) {
+		if ((paramCursor != null) && (paramCursor.getCount() > 0))
+		{
 			mNothingView = ((ImageView) findViewById(R.id.nothing));
 			mNothingView.setVisibility(View.GONE);
 			mSongListView = ((ListView) findViewById(R.id.songlistview));
@@ -349,7 +402,8 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 			mSongListView
 					.setOnItemClickListener(mSongListItemOnItemClickListener);
 			cursor = paramCursor;
-		} else {
+		} else
+		{
 			mNothingView = ((ImageView) findViewById(R.id.nothing));
 			mNothingView.setVisibility(View.VISIBLE);
 			logger.d("setCursor() ----> exit");
@@ -357,31 +411,37 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 	}
 
 	public void setOnCreateContextMenuListener(
-			View.OnCreateContextMenuListener menuListener) {
+			View.OnCreateContextMenuListener menuListener)
+	{
 		if (mSongListView != null)
 			mSongListView.setOnCreateContextMenuListener(menuListener);
 	}
 
-	public class ListButtonListener implements View.OnClickListener {
-		public ListButtonListener() {
-		}
+	public class ListButtonListener implements View.OnClickListener
+	{
+		public ListButtonListener()
+		{}
 
-		public void onClick(View view) {
-			LocalSongListViewByCursor.logger.v("ListButtonListener----");
+		public void onClick(View view)
+		{
+			logger.v("ListButtonListener.onClick() ----> enter");
 			view.getId();
 			int i = Integer.parseInt(view.getTag().toString());
 			Cursor cursor1 = cursor;
 			Song song = null;
-			if (cursor1 != null) {
+			if (cursor1 != null)
+			{
 				int j = cursor.getCount();
 				song = null;
-				if (j > i) {
+				if (j > i)
+				{
 					cursor.moveToPosition(i);
 					song = mDBController.getSongById(cursor.getLong(cursor
 							.getColumnIndexOrThrow("_id")));
 				}
 			}
-			if (song != null) {
+			if (song != null)
+			{
 				Song song1 = mPlayerController.getCurrentPlayingItem();
 				if (song1 == null || !Util.isRadioMusic(song1))
 					mPlayerController.add2NowPlayingList(song, true);
@@ -390,9 +450,11 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 								"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
 								2);
 				if (!mDBController.isSongInMixPlaylist(playlist.mExternalId,
-						song.mId, false)) {
+						song.mId, false))
+				{
 					if (mDBController.countSongNumInPlaylist(
-							playlist.mExternalId, 2) >= 20) {
+							playlist.mExternalId, 2) >= 20)
+					{
 						long l1 = mDBController.getFirstSongInPlaylist(
 								playlist.mExternalId, 2);
 						if (l1 != -1L)
@@ -408,7 +470,8 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 							&& !Util.isRadioMusic(song1))
 						mPlayerController.open(0);
 				}
-				if (mPopupWindow != null) {
+				if (mPopupWindow != null)
+				{
 					mPopupWindow.dismiss();
 					mPopupWindow = null;
 				}
@@ -420,24 +483,29 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		}
 	}
 
-	class PlayAllTask extends AsyncTask<String, Void, Integer> {
-		PlayAllTask() {
-		}
+	class PlayAllTask extends AsyncTask<String, Void, Integer>
+	{
+		PlayAllTask()
+		{}
 
-		public Integer doInBackground(String[] paramArrayOfString) {
+		public Integer doInBackground(String[] paramArrayOfString)
+		{
 			return Integer.valueOf(playAll());
 		}
 
-		public void onPostExecute(Integer paramInteger) {
+		public void onPostExecute(Integer paramInteger)
+		{
 			mBtnPlayAll.setClickable(true);
-			if (mCurrentDialog != null) {
+			if (mCurrentDialog != null)
+			{
 				mCurrentDialog.dismiss();
 				mCurrentDialog = null;
 			}
 			super.onPostExecute(paramInteger);
 		}
 
-		public void onPreExecute() {
+		public void onPreExecute()
+		{
 			super.onPreExecute();
 		}
 	}

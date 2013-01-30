@@ -4,13 +4,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
 
-public class Song implements Parcelable {
-	public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
-		public Song createFromParcel(Parcel paramAnonymousParcel) {
+public class Song implements Parcelable
+{
+	public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>()
+	{
+		public Song createFromParcel(Parcel paramAnonymousParcel)
+		{
 			return new Song(paramAnonymousParcel);
 		}
 
-		public Song[] newArray(int paramAnonymousInt) {
+		public Song[] newArray(int paramAnonymousInt)
+		{
 			return new Song[paramAnonymousInt];
 		}
 	};
@@ -38,10 +42,11 @@ public class Song implements Parcelable {
 	public String mUrl2 = "<unknown>";
 	public String mUrl3 = "<unknown>";
 
-	public Song() {
-	}
+	public Song()
+	{}
 
-	private Song(Parcel paramParcel) {
+	private Song(Parcel paramParcel)
+	{
 		boolean[] arrayOfBoolean = new boolean[1];
 		this.mId = paramParcel.readLong();
 		this.mUrl = paramParcel.readString();
@@ -68,16 +73,20 @@ public class Song implements Parcelable {
 		this.isDolby = arrayOfBoolean[0];
 	}
 
-	public int describeContents() {
+	public int describeContents()
+	{
 		return 0;
 	}
 
-	public boolean equals(Object paramObject) {
+	public boolean equals(Object paramObject)
+	{
 		boolean bool;
 		if (paramObject == null)
 			bool = false;
-		if ((this.mMusicType == MusicType.ONLINEMUSIC)
-				&& (((Song) paramObject).mMusicType == MusicType.ONLINEMUSIC)) {
+		if ((this.mMusicType == MusicType.ONLINEMUSIC.ordinal())
+				&& (((Song) paramObject).mMusicType == MusicType.ONLINEMUSIC
+						.ordinal()))
+		{
 			if ((this.mContentId
 					.equalsIgnoreCase(((Song) paramObject).mContentId))
 					&& (this.mGroupCode
@@ -85,14 +94,18 @@ public class Song implements Parcelable {
 				bool = true;
 			else
 				bool = false;
-		} else if ((this.mMusicType == MusicType.LOCALMUSIC)
-				&& (((Song) paramObject).mMusicType == MusicType.LOCALMUSIC)) {
+		} else if ((this.mMusicType == MusicType.LOCALMUSIC.ordinal())
+				&& (((Song) paramObject).mMusicType == MusicType.LOCALMUSIC
+						.ordinal()))
+		{
 			if (this.mId == ((Song) paramObject).mId)
 				bool = true;
 			else
 				bool = false;
-		} else if ((this.mMusicType == MusicType.RADIO)
-				&& (((Song) paramObject).mMusicType == MusicType.RADIO)) {
+		} else if ((this.mMusicType == MusicType.RADIO.ordinal())
+				&& (((Song) paramObject).mMusicType == MusicType.RADIO
+						.ordinal()))
+		{
 			if ((this.mContentId
 					.equalsIgnoreCase(((Song) paramObject).mContentId))
 					&& (this.mGroupCode
@@ -100,14 +113,16 @@ public class Song implements Parcelable {
 				bool = true;
 			else
 				bool = false;
-		} else {
+		} else
+		{
 			bool = false;
 		}
 
 		return bool;
 	}
 
-	public void writeToParcel(Parcel paramParcel, int paramInt) {
+	public void writeToParcel(Parcel paramParcel, int paramInt)
+	{
 		boolean[] arrayOfBoolean = new boolean[1];
 		paramParcel.writeLong(this.mId);
 		paramParcel.writeString(this.mUrl);

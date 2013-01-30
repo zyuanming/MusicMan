@@ -5,13 +5,17 @@ import org.ming.center.database.MusicType;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class SongListItem implements Parcelable {
-	public static final Parcelable.Creator<SongListItem> CREATOR = new Parcelable.Creator<SongListItem>() {
-		public SongListItem createFromParcel(Parcel paramAnonymousParcel) {
+public class SongListItem implements Parcelable
+{
+	public static final Parcelable.Creator<SongListItem> CREATOR = new Parcelable.Creator<SongListItem>()
+	{
+		public SongListItem createFromParcel(Parcel paramAnonymousParcel)
+		{
 			return new SongListItem(paramAnonymousParcel);
 		}
 
-		public SongListItem[] newArray(int paramAnonymousInt) {
+		public SongListItem[] newArray(int paramAnonymousInt)
+		{
 			return new SongListItem[paramAnonymousInt];
 		}
 	};
@@ -23,7 +27,7 @@ public class SongListItem implements Parcelable {
 	public String groupcode;
 	public String img;
 	public String isdolby = "<unknown>";
-	public int mMusicType = MusicType.ONLINEMUSIC;
+	public int mMusicType = MusicType.ONLINEMUSIC.ordinal();
 	public String point;
 	public String singer;
 	public String title;
@@ -32,10 +36,11 @@ public class SongListItem implements Parcelable {
 	public String url2;
 	public String url3;
 
-	public SongListItem() {
-	}
+	public SongListItem()
+	{}
 
-	private SongListItem(Parcel paramParcel) {
+	private SongListItem(Parcel paramParcel)
+	{
 		this.title = paramParcel.readString();
 		this.contentid = paramParcel.readString();
 		this.groupcode = paramParcel.readString();
@@ -54,17 +59,20 @@ public class SongListItem implements Parcelable {
 		this.filesize3 = paramParcel.readString();
 	}
 
-	public int describeContents() {
+	public int describeContents()
+	{
 		return 0;
 	}
 
-	public String toString() {
+	public String toString()
+	{
 		return "SongListItem [content_type=" + this.content_type
 				+ ", contentid=" + this.contentid + ", img=" + this.img
 				+ ", mark=" + this.point + ", title=" + this.title + "]";
 	}
 
-	public void writeToParcel(Parcel paramParcel, int paramInt) {
+	public void writeToParcel(Parcel paramParcel, int paramInt)
+	{
 		paramParcel.writeString(this.title);
 		paramParcel.writeString(this.contentid);
 		paramParcel.writeString(this.groupcode);

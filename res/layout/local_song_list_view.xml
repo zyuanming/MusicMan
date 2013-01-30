@@ -43,10 +43,9 @@
             android:textColor="@drawable/text_red_selector" />
     </LinearLayout>
 
-    <!--
-    <cmccwm.mobilemusic.ui.widget.PlayerStatusBar
+    <org.ming.ui.widget.PlayerStatusBar
         android:id="@id/playerStatusBar"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />    -->
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

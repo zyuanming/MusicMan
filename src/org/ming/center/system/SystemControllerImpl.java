@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
@@ -169,8 +170,33 @@ public class SystemControllerImpl implements SystemController
 
 	public boolean checkWapStatus()
 	{
-		// TODO
-		return true;
+		boolean flag = true;
+		NetworkInfo anetworkinfo[];
+		boolean flag1;
+		boolean flag2;
+		if (mConnMgr != null)
+		{
+			anetworkinfo = mConnMgr.getAllNetworkInfo();
+			flag1 = false;
+			flag2 = false;
+			if (anetworkinfo != null)
+			{
+				for (int i = 0; i < anetworkinfo.length; i++)
+				{
+					if (anetworkinfo[i].getState() == android.net.NetworkInfo.State.CONNECTED)
+					{
+						String s = anetworkinfo[i].getExtraInfo();
+						if (s != null && s.equals("cmwap"))
+							flag2 = true;
+						else if (anetworkinfo[i].getType() == 1)
+							flag1 = true;
+					}
+					flag = false;
+					return flag;
+				}
+			}
+		}
+		return flag;
 	}
 
 	public void scanDirAsync(String paramString)
@@ -220,8 +246,7 @@ public class SystemControllerImpl implements SystemController
 	private class PhoneListener extends PhoneStateListener
 	{
 		private PhoneListener()
-		{
-		}
+		{}
 
 		public void onCallStateChanged(int paramInt, String paramString)
 		{

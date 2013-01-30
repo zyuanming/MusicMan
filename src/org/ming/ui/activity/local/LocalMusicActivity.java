@@ -378,6 +378,7 @@ public class LocalMusicActivity extends ListActivity implements
 		list.add(localHashMap);
 	}
 
+	// 创建播放列表
 	private void CreatePlayList()
 	{
 		View localView = getLayoutInflater().inflate(

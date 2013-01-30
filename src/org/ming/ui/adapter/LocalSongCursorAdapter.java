@@ -103,8 +103,8 @@ public class LocalSongCursorAdapter extends CursorAdapter
 				.getString(songArtistIndex));
 		Song song = getSong(cursor);
 		Song song1 = mPlayerController.getCurrentPlayingItem();
-		if (song1 != null && song.mMusicType == MusicType.LOCALMUSIC
-				&& song1.mMusicType == MusicType.LOCALMUSIC)
+		if (song1 != null && song.mMusicType == MusicType.LOCALMUSIC.ordinal()
+				&& song1.mMusicType == MusicType.LOCALMUSIC.ordinal())
 		{
 			if (song.mUrl.equalsIgnoreCase(song1.mUrl))
 				((ImageView) view.findViewById(R.id.play_state))
@@ -114,7 +114,8 @@ public class LocalSongCursorAdapter extends CursorAdapter
 						.setVisibility(View.GONE);
 		} else
 		{
-			((ImageView) view.findViewById(R.id.play_state)).setVisibility(View.GONE);
+			((ImageView) view.findViewById(R.id.play_state))
+					.setVisibility(View.GONE);
 		}
 		((ImageView) view.findViewById(R.id.btn_recommend_add))
 				.setOnClickListener(mBtnClicker);
@@ -133,7 +134,7 @@ public class LocalSongCursorAdapter extends CursorAdapter
 		song.mDuration = cursor
 				.getInt(cursor.getColumnIndexOrThrow("duration"));
 		song.mId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
-		song.mMusicType = MusicType.LOCALMUSIC;
+		song.mMusicType = MusicType.LOCALMUSIC.ordinal();
 		song.mLyric = null;
 		song.mTrack = cursor.getString(cursor.getColumnIndexOrThrow("title"));
 		song.mSize = cursor.getLong(cursor.getColumnIndexOrThrow("_size"));

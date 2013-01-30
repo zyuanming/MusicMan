@@ -13,6 +13,9 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="org.ming.center.MobileMusicApplication"
@@ -92,7 +95,7 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
 
-
+        <service android:name="com.redclound.lib.MobileMusicService" />
     </application>
 
 </manifest>

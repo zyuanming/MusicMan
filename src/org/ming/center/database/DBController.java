@@ -6,7 +6,8 @@ import java.util.Set;
 import android.database.Cursor;
 import android.net.Uri;
 
-public abstract interface DBController {
+public abstract interface DBController
+{
 	public abstract long addCacheData(String paramString1, String paramString2,
 			String paramString3, String paramString4);
 
@@ -24,6 +25,11 @@ public abstract interface DBController {
 			long[] paramArrayOfLong, int paramInt);
 
 	public abstract void closeDB();
+
+	public abstract Playlist getPlaylistByID(long paramLong, int paramInt);
+
+	public abstract List<Song> getSongsByFolder(String[] paramArrayOfString,
+			boolean paramBoolean);
 
 	public abstract Song getSongById(long paramLong);
 
