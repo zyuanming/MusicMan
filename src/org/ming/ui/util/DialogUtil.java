@@ -283,10 +283,11 @@ public class DialogUtil
 			int paramInt)
 	{
 		logger.v("showIndeterminateProgressDialog() ---> Enter");
-		Dialog localDialog = new Dialog(paramContext, 2131296261);
+		Dialog localDialog = new Dialog(paramContext, R.style.CustomDialogTheme);
 		View localView = ((LayoutInflater) paramContext
-				.getSystemService("layout_inflater")).inflate(2130903099, null);
-		TextView localTextView = (TextView) localView.findViewById(16908308);
+				.getSystemService("layout_inflater")).inflate(
+				R.layout.dialog_progress_circular, null);
+		TextView localTextView = (TextView) localView.findViewById(android.R.id.text1);   //1020014
 		if (paramInt != 0)
 			localTextView.setText(paramInt);
 		localDialog.setContentView(localView);

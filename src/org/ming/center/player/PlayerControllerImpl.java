@@ -8,7 +8,9 @@ import org.ming.center.database.DBController;
 import org.ming.center.database.MusicType;
 import org.ming.center.database.Playlist;
 import org.ming.center.database.Song;
+import org.ming.center.http.HttpController;
 import org.ming.center.http.MMHttpEventListener;
+import org.ming.center.http.MMHttpTask;
 import org.ming.center.http.item.SongListItem;
 import org.ming.center.system.SystemControllerImpl;
 import org.ming.center.system.SystemEventListener;
@@ -18,6 +20,7 @@ import org.ming.util.NetUtil;
 import org.ming.util.Util;
 
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Message;
 import android.util.Log;
@@ -59,6 +62,8 @@ public class PlayerControllerImpl implements PlayerController,
 	private int mTransId = -1;
 	private long time_lastPress;
 	private MusicPlayerWrapper wrapper;
+	private MMHttpTask mCurrentTask;
+	private HttpController mHttpController;
 	static
 	{
 		mIsplayEnd = false;
@@ -161,8 +166,10 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public void cancelPlaybackStatusBar()
 	{
-		// TODO Auto-generated method stub
-
+		logger.v("cancelPlaybackStatusBar() ---> Enter");
+		((NotificationManager) this.mApp.getSystemService("notification"))
+				.cancel(1);
+		logger.v("cancelPlaybackStatusBar() ---> Exit");
 	}
 
 	@Override
@@ -196,15 +203,31 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public boolean getIsLoadingData()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		boolean bool = false;
+		try
+		{
+			bool = this.mIsLoadingData;
+			return bool;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return bool;
 	}
 
 	@Override
 	public int getNowPlayingItemPosition()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int i = -1;
+		try
+		{
+			i = this.mPlayingItemPosition;
+			return i;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return i;
 	}
 
 	@Override
@@ -217,15 +240,13 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public int getPosition()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return this.wrapper.getCurrentPosition();
 	}
 
 	@Override
 	public int getProgressDownloadPercent()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return (int) (100.0F * this.wrapper.getPercent());
 	}
 
 	@Override
@@ -283,8 +304,7 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public boolean isPause()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return this.wrapper.isPaused();
 	}
 
 	@Override
@@ -297,15 +317,18 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public boolean isPlayRecommendSong()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		boolean flag;
+		if (mRecommendPlayList != null)
+			flag = true;
+		else
+			flag = false;
+		return flag;
 	}
 
 	@Override
 	public boolean isPlaying()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return this.wrapper.isPlaying();
 	}
 
 	@Override
@@ -467,10 +490,60 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public boolean openRecommendSong(int paramInt)
+	public boolean openRecommendSong(int i)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		boolean flag = false;
+		logger.v("open(position) ---> Enter");
+		if (mRecommendPlayList != null && !mRecommendPlayList.isEmpty())
+		{
+			if ((i < 0) || (i > -1 + this.mRecommendPlayList.size()))
+			{
+				logger.e("open(position), position is invalid");
+				flag = false;
+			}
+			logger.e("open(position), position is invalid");
+			Song song = (Song) mRecommendPlayList.get(i);
+			flag = false;
+			if (song != null)
+			{
+				add2NowPlayingList(song, true);
+				setIsLoadingData(true);
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(4008));
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(4010));
+				if (mCurrentTask != null)
+				{
+					mHttpController.cancelTask(mCurrentTask);
+					mCurrentTask = null;
+				}
+				if (song.mUrl == null
+						|| song.mUrl.equalsIgnoreCase("<unknown>"))
+				{
+					mPlayingItemPosition = i;
+					wrapper.stop();
+					if (CacheSongData.getInstance().getCacheSong() != null
+							&& CacheSongData.getInstance().getCacheSong().mContentId
+									.equals(song.mContentId))
+					{
+						playOnlineSong(CacheSongData.getInstance()
+								.getCacheXml());
+						Log.v("cache", "begin playing cache db");
+					} else
+					{
+						askSongInfo(song);
+					}
+				} else
+				{
+					wrapper.start((Song) mRecommendPlayList.get(i));
+					mPlayingItemPosition = i;
+					logger.v("open(position) ---> Exit");
+				}
+				flag = true;
+			}
+		} else
+		{
+			logger.e("open(position), now playing list is empty");
+		}
+		return flag;
 	}
 
 	@Override
@@ -568,8 +641,10 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public void stop()
 	{
-		// TODO Auto-generated method stub
-
+		logger.v("stop() ---> Enter");
+		setIsLoadingData(false);
+		this.wrapper.stop();
+		logger.v("stop() ---> Exit");
 	}
 
 	@Override

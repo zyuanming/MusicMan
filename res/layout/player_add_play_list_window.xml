@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/popupwindow_linearlayout"
+    android:layout_width="270.0dip"
+    android:layout_height="wrap_content"
+    android:background="@drawable/popupwindow_bg"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10.0dip"
+        android:layout_marginLeft="7.0dip"
+        android:gravity="center"
+        android:text="@string/choose_create_play_list_playlist_activity"
+        android:textColor="@color/white_color"
+        android:textSize="14.0sp" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/popwindow_line" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="240.0dip"
+        android:scrollbars="vertical" >
+
+        <LinearLayout
+            android:id="@id/playlist_li"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20.0dip"
+        android:gravity="center" >
+
+        <Button
+            android:id="@id/orderwindow_createplaylist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_dialog_selector"
+            android:text="@string/foot_view_create_play_list_playlist_activity"
+            android:textColor="@color/white_color" />
+    </LinearLayout>
+
+</LinearLayout>

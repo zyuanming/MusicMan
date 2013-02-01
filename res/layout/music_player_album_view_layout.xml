@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/linearlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="403.0dip"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20.0dip"
+        android:layout_weight="1.0"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@id/dobly_image_relativelayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20.0dip"
+            android:background="@drawable/bg_player_activity_defalt_album" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20.0dip" >
+
+            <ImageView
+                android:id="@id/show_error_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:padding="8.0dip"
+                android:src="@drawable/music_player_error_dialog_btn"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/alum_pictrue_margin_top" >
+
+            <ImageView
+                android:id="@id/ablum_img"
+                android:layout_width="@dimen/alum_pictrue_width"
+                android:layout_height="@dimen/alum_pictrue_height"
+                android:layout_alignBottom="@id/dobly_image_relativelayout"
+                android:layout_alignTop="@id/dobly_image_relativelayout"
+                android:layout_marginLeft="52.0dip"
+                android:layout_marginTop="8.0dip"
+                android:scaleType="fitXY"
+                android:src="@drawable/image_default_ablum_for_play_view" />
+
+            <ImageView
+                android:id="@id/dobly_image_for_player_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/ablum_img"
+                android:layout_alignTop="@id/ablum_img"
+                android:background="@drawable/dobly_image_for_player_activity"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@id/weibo_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ablum_img"
+                android:layout_toRightOf="@id/ablum_img"
+                android:background="@drawable/btn_weibo_share"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

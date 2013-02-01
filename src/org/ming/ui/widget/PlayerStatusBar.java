@@ -11,6 +11,8 @@ import org.ming.center.player.PlayerController;
 import org.ming.center.player.PlayerControllerImpl;
 import org.ming.center.player.PlayerEventListener;
 import org.ming.center.ui.UIEventListener;
+import org.ming.dispatcher.DispatcherEventEnum;
+import org.ming.ui.activity.MusicPlayerActivity;
 import org.ming.util.MyLogger;
 import org.ming.util.NetUtil;
 import org.ming.util.Util;
@@ -67,6 +69,7 @@ public class PlayerStatusBar extends RelativeLayout implements
 		Song localSong = this.mPlayerController.getCurrentPlayingItem();
 		if (localSong != null)
 		{
+			logger.v("localSong != null -----------------");
 			if (mPlayerController.isPause())
 			{
 				mPlayPauseBtn
@@ -170,32 +173,31 @@ public class PlayerStatusBar extends RelativeLayout implements
 		logger.v("handlePlayerEvent() ---> Enter");
 		switch (paramMessage.what)
 		{
-		case 1002:
-		case 1007:
-		case 1008:
-		case 1009:
-		case 1010:
-		case 1014:
-		case 1017:
-		case 1018:
-		{
-			logger.v("handlePlayerEvent() ---> Exit");
-		}
-			break;
-		case 1003:
+		case DispatcherEventEnum.PLAYER_EVENT_TRACK_ENDED:
 		{
 			if (mPlayerController instanceof PlayerControllerImpl)
 				stopRefresh();
 			refreshPlayerStatusBar();
 		}
 			break;
-		case 1004:
+		default:
+		case DispatcherEventEnum.PLAYER_EVENT_NOTFOUND_MUSIC:
+		case DispatcherEventEnum.PLAYER_EVENT_BUFFER_UPDATED:
+		case DispatcherEventEnum.PLAYER_EVENT_META_CHANGED:
+		case DispatcherEventEnum.PLAYER_EVENT_PREPARE_START:
+		case DispatcherEventEnum.PLAYER_EVENT_NO_RIGHTS_LISTEN_ONLINE_LISTEN:
+		case DispatcherEventEnum.PLAYER_EVENT_RETRY_PLAY:
+		case DispatcherEventEnum.PLAYER_EVENT_RETRY_DOWNLOAD:
+		case DispatcherEventEnum.PLAYER_EVENT_NO_LOGIN_LISTEN:
 		{
+			logger.v("handlePlayerEvent() ---> Exit");
+		}
+			break;
+		case DispatcherEventEnum.PLAYER_EVENT_PREPARED_ENDED:
+		{
+
 			Song song = mPlayerController.getCurrentPlayingItem();
-			if (song == null)
-			{
-				return;
-			} else
+			if (song != null)
 			{
 				if (song.mDuration <= 0)
 				{
@@ -208,10 +210,9 @@ public class PlayerStatusBar extends RelativeLayout implements
 			}
 		}
 			break;
-		default:
-		case 1005:
-		case 1006:
-		case 1015:
+		case DispatcherEventEnum.PLAYER_EVENT_ERROR_OCCURED:
+		case DispatcherEventEnum.PLAYER_EVENT_NETWORK_ERROR:
+		case DispatcherEventEnum.PLAYER_EVENT_WAP_CLOSED:
 		{
 			isLoading = false;
 			mProgressBar.setVisibility(4);
@@ -221,17 +222,17 @@ public class PlayerStatusBar extends RelativeLayout implements
 			refreshPlayerStatusBar();
 		}
 			break;
-		case 1011:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_START:
 		{
 			isLoading = false;
-			mProgressBar.setVisibility(8);
-			mPlayPauseBtn.setVisibility(0);
+			mProgressBar.setVisibility(View.GONE);
+			mPlayPauseBtn.setVisibility(View.VISIBLE);
 			refreshPlayerStatusBar();
 			queueNextRefresh(refreshNow());
 		}
 			break;
-		case 1012:
-		case 1013:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_STOP:
 		{
 			refreshPlayerStatusBar();
 		}
@@ -246,19 +247,19 @@ public class PlayerStatusBar extends RelativeLayout implements
 		switch (paramMessage.what)
 		{
 		default:
-		case 4008:
+		case DispatcherEventEnum.UI_EVENT_PLAY_NEWSONG:
 		{
 			changeSong();
 		}
 			break;
-		case 4010:
+		case DispatcherEventEnum.UI_EVENT_DOWNSONGINF_START:
 		{
 			isLoading = true;
 			this.mProgressBar.setVisibility(View.VISIBLE);
 			this.mPlayPauseBtn.setVisibility(View.INVISIBLE);
 		}
 			break;
-		case 4009:
+		case DispatcherEventEnum.UI_EVENT_PLAY_ERROR:
 		{
 			isLoading = false;
 			this.mProgressBar.setVisibility(View.INVISIBLE);
@@ -281,11 +282,10 @@ public class PlayerStatusBar extends RelativeLayout implements
 		{
 			public void onClick(View paramAnonymousView)
 			{
-				// Intent localIntent = new
-				// Intent(PlayerStatusBar.this.mContext,
-				// MusicPlayerActivity.class);
-				// localIntent.putExtra("PLAYERTYPE", "ONLINEMUSIC");
-				// PlayerStatusBar.this.mContext.startActivity(localIntent);
+				Intent localIntent = new Intent(PlayerStatusBar.this.mContext,
+						MusicPlayerActivity.class);
+				localIntent.putExtra("PLAYERTYPE", "ONLINEMUSIC");
+				PlayerStatusBar.this.mContext.startActivity(localIntent);
 			}
 		});
 
@@ -368,11 +368,10 @@ public class PlayerStatusBar extends RelativeLayout implements
 		{
 			public void onClick(View paramAnonymousView)
 			{
-				// Intent localIntent = new
-				// Intent(PlayerStatusBar.this.mContext,
-				// MusicPlayerActivity.class);
-				// localIntent.putExtra("PLAYERTYPE", "ONLINEMUSIC");
-				// PlayerStatusBar.this.mContext.startActivity(localIntent);
+				Intent localIntent = new Intent(PlayerStatusBar.this.mContext,
+						MusicPlayerActivity.class);
+				localIntent.putExtra("PLAYERTYPE", "ONLINEMUSIC");
+				PlayerStatusBar.this.mContext.startActivity(localIntent);
 			}
 		});
 		setOnTouchListener(new View.OnTouchListener()
@@ -405,21 +404,19 @@ public class PlayerStatusBar extends RelativeLayout implements
 		{
 			if (mPlayerController.isPlaying())
 			{
+				logger.v("the music is playing");
 				MusicType musictype = MusicType.values()[song.mMusicType];
 				if (song.isDolby && GlobalSettingParameter.show_dobly_toast
 						&& !"LOCALMUSIC".equals(musictype.toString()))
 				{
 					Toast.makeText(mContext,
-							R.string.you_can_enjoy_dobly_music, 0).show();
+							R.string.you_can_enjoy_dobly_music, 1).show();
 					GlobalSettingParameter.show_dobly_toast = false;
 				}
-			}
-			if (mPlayerController.isPlaying())
-			{
 				mMsgHandler.removeMessages(0);
-				queueNextRefresh(refreshNow());
 				mPlayPauseBtn
 						.setImageResource(R.drawable.musicplayer_statusbar_button_pause_slt);
+				queueNextRefresh(refreshNow());
 			} else
 			{
 				mMsgHandler.removeMessages(0);
@@ -507,11 +504,11 @@ public class PlayerStatusBar extends RelativeLayout implements
 		if (str1 == null)
 			str1 = this.mContext.getText(
 					R.string.unknown_artist_name_db_controller).toString();
-		if (str1.contains("[12530.com]"))
-			str1 = str1.substring(0, str1.indexOf("[12530.com]"));
+		if (str1.contains(songTag))
+			str1 = str1.substring(0, str1.indexOf(songTag));
 		String str2 = paramString1;
-		if (str2.contains("[12530.com]"))
-			str2 = str2.substring(0, str2.indexOf("[12530.com]"));
+		if (str2.contains(songTag))
+			str2 = str2.substring(0, str2.indexOf(songTag));
 		this.mTitle.setText(str2 + "-" + str1);
 		logger.v("setTitle() ---> Exit");
 	}

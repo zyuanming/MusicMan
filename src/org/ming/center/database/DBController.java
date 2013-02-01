@@ -24,6 +24,8 @@ public abstract interface DBController
 	public abstract boolean addSongs2Playlist(long paramLong,
 			long[] paramArrayOfLong, int paramInt);
 
+	public long addOnlineMusicItem(Song song);
+
 	public abstract void closeDB();
 
 	public abstract Playlist getPlaylistByID(long paramLong, int paramInt);

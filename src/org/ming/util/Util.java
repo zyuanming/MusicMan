@@ -1,21 +1,36 @@
 package org.ming.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.ming.center.MobileMusicApplication;
+import org.ming.center.MobileMusicService;
+import org.ming.center.database.DBControllerImpl;
 import org.ming.center.database.MusicType;
 import org.ming.center.database.Song;
+import org.ming.center.download.DLControllerImpl;
+import org.ming.center.player.PlayerControllerImpl;
+import org.ming.dispatcher.Dispatcher;
 import org.ming.ui.activity.SplashActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Paint;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Process;
 
 public class Util
 {
+	// private static DolbyUtils mDolbyUtils = null;
+	private static DefaultHttpClient mHttpsClient = null;
+	private static DefaultHttpClient mHttpClient = null;
 	private static final MyLogger logger = MyLogger.getLogger("Util");
 
 	private static SharedPreferences preferences;
@@ -30,6 +45,48 @@ public class Util
 			return preferences.getBoolean("isFirstInApplication", true);
 		}
 		return false;
+	}
+
+	public static String getRandKey(String s, String s1, String s2)
+	{
+		return getMD5((new StringBuilder(String.valueOf(s))).append(s1)
+				.append(s2).append("c079d16a-bca3-4151-8cb3-c4ea521c086b")
+				.toString().getBytes());
+	}
+
+	public static String getRandKey(String s, String s1)
+	{
+		return getMD5((new StringBuilder(String.valueOf(s))).append(s1)
+				.append("c079d16a-bca3-4151-8cb3-c4ea521c086b").toString()
+				.getBytes());
+	}
+
+	public static String getMD5(byte abyte0[])
+	{
+		String s1;
+		String s = null;
+		try
+		{
+			MessageDigest messagedigest = MessageDigest.getInstance("MD5");
+			messagedigest.update(abyte0);
+			s1 = byteArrayToHexString(messagedigest.digest());
+			s = s1;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return s;
+	}
+
+	public static boolean isDolby(Song song)
+	{
+		boolean flag;
+		if (song != null && song.mUrl3 != null
+				&& !song.mUrl3.equals("<unknown>") && !song.mUrl3.equals(""))
+			flag = true;
+		else
+			flag = false;
+		return flag;
 	}
 
 	public static void setNoNeedUserLead(Context context)
@@ -53,43 +110,50 @@ public class Util
 		return flag;
 	}
 
-	public static void exitMobileMusicApp(boolean flag)
+	public static void exitMobileMusicApp(final boolean useForClear)
 	{
-		// Dispatcher dispatcher = MobileMusicApplication.getInstance()
-		// .getEventDispatcher();
-		// dispatcher.sendMessage(dispatcher.obtainMessage(22));
-		// final MobileMusicApplication app =
-		// MobileMusicApplication.getInstance();
-		// if (PlayerControllerImpl.getInstance(app).isPlaying())
-		// PlayerControllerImpl.getInstance(app).stop();
-		// PlayerControllerImpl.getInstance(app).cancelPlaybackStatusBar();
-		// DLControllerImpl.getInstance(app).cancelDownloadRemainNotification();
-		// DLControllerImpl.getInstance(app).cancelDownloadNotification();
-		// shutDownHttpClient();
-		// MobileMusicService.stopService(app);
-		// if (useForClear)
-		// MobileMusicApplication.getInstance().setIsInitService(false);
-		// (new Handler()).postDelayed(new Runnable()
-		// {
-		//
-		// public void run()
-		// {
-		// if (!useForClear)
-		// {
-		// Process.killProcess(Process.myPid());
-		// DBControllerImpl.getInstance(app).closeDB();
-		// }
-		// }
-		//
-		// private final MobileMusicApplication val$app;
-		// private final boolean val$useForClear;
-		//
-		// {
-		// useForClear = flag;
-		// app = mobilemusicapplication;
-		// super();
-		// }
-		// }, 600L);
+		Dispatcher dispatcher = MobileMusicApplication.getInstance()
+				.getEventDispatcher();
+		dispatcher.sendMessage(dispatcher.obtainMessage(22));
+		final MobileMusicApplication app = MobileMusicApplication.getInstance();
+		if (PlayerControllerImpl.getInstance(app).isPlaying())
+			PlayerControllerImpl.getInstance(app).stop();
+		PlayerControllerImpl.getInstance(app).cancelPlaybackStatusBar();
+		DLControllerImpl.getInstance(app).cancelDownloadRemainNotification();
+		DLControllerImpl.getInstance(app).cancelDownloadNotification();
+		shutDownHttpClient();
+		MobileMusicService.stopService(app);
+		if (useForClear)
+			MobileMusicApplication.getInstance().setIsInitService(false);
+		(new Handler()).postDelayed(new Runnable()
+		{
+			public void run()
+			{
+				if (!useForClear)
+				{
+					Process.killProcess(Process.myPid());
+					DBControllerImpl.getInstance(app).closeDB();
+				}
+			}
+		}, 600L);
+	}
+
+	public static void shutDownHttpClient()
+	{
+		logger.v("shutDownHttpClient() ---> Enter");
+		if (mHttpsClient != null)
+		{
+			mHttpsClient.getConnectionManager().shutdown();
+			mHttpsClient = null;
+		}
+		if (mHttpClient != null)
+		{
+			mHttpClient.getConnectionManager().shutdown();
+			mHttpClient = null;
+		}
+		logger.v((new StringBuilder(
+				"shutDownHttpClient() ---> Exit, mHttpsClient = ")).append(
+				mHttpsClient).toString());
 	}
 
 	public static boolean getDefaultSettings()
@@ -229,5 +293,103 @@ public class Util
 			stringbuffer.append(s);
 			i++;
 		} while (true);
+	}
+
+	public static String[] breakLine(String s, Paint paint, int i)
+	{
+		String as[] = {};
+		if (s != null && i >= 0)
+		{
+			ArrayList arraylist = new ArrayList();
+			int j = 0;
+			int k = s.length();
+			int l = 1;
+			int i1 = paint.breakText(s, 0, k, true, i, null);
+			do
+			{
+				if (j + i1 > k)
+				{
+					arraylist.add(s.substring(j, j + i1));
+					as = (String[]) arraylist.toArray(new String[l]);
+					return as;
+				}
+				l++;
+				int j1 = s.lastIndexOf(' ', j + i1);
+				if (j1 > j)
+				{
+					arraylist.add(s.substring(j, j1));
+					j = j1 + 1;
+				} else
+				{
+					arraylist.add(s.substring(j, j + i1));
+					j += i1;
+				}
+				i1 = paint.breakText(s, j, k, true, i, null);
+			} while (true);
+		}
+		return as;
+	}
+
+	public static byte[] getUTF8Bytes(String s)
+	{
+		byte abyte0[] = new byte[0];
+		if (s != null)
+		{
+			try
+			{
+				byte abyte2[] = s.getBytes("UTF-8");
+				abyte0 = abyte2;
+				ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+				DataOutputStream dataoutputstream = new DataOutputStream(
+						bytearrayoutputstream);
+				dataoutputstream.writeUTF(s);
+				byte abyte1[] = bytearrayoutputstream.toByteArray();
+				bytearrayoutputstream.close();
+				dataoutputstream.close();
+				abyte0 = new byte[-2 + abyte1.length];
+				System.arraycopy(abyte1, 2, abyte0, 0, abyte0.length);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return abyte0;
+	}
+
+	public static String makeTimeString(long l)
+	{
+		StringBuffer stringbuffer = new StringBuffer();
+		long l1 = l / 60000L;
+		Object obj;
+		long l2;
+		Object obj1;
+		if (l1 < 10L)
+			obj = (new StringBuilder("0")).append(l1).toString();
+		else
+			obj = Long.valueOf(l1);
+		stringbuffer.append(obj);
+		stringbuffer.append(":");
+		l2 = (l / 1000L) % 60L;
+		if (l2 < 10L)
+			obj1 = (new StringBuilder("0")).append(l2).toString();
+		else
+			obj1 = Long.valueOf(l2);
+		stringbuffer.append(obj1);
+		return stringbuffer.toString();
+	}
+
+	public static boolean LocalSongIsDolby(Song song)
+	{
+		return false;
+		// if (mDolbyUtils == null)
+		// mDolbyUtils = new DolbyUtils();
+		// boolean flag;
+		// if (mDolbyUtils.startParse(song.mUrl) != 0
+		// || !"China Mobile".equalsIgnoreCase(mDolbyUtils
+		// .getDistributor()))
+		// flag = false;
+		// else
+		// flag = true;
+		// return flag;
 	}
 }

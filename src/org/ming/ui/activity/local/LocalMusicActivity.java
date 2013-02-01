@@ -482,17 +482,17 @@ public class LocalMusicActivity extends ListActivity implements
 		{
 		default:
 			bool = super.onOptionsItemSelected(paramMenuItem);
-		case 0:
+		case MENU_ITEM_SCAN_MUSIC:
 			startActivity(new Intent(this, LocalScanMusicActivity.class));
 			break;
-		case 1:
+		case MENU_ITEM_EXIT:
+			exitApplication();
+			break;
+		case MENU_ITEM_SET:
 			// startActivity(new Intent(this, MobileMusicMoreActivity.class));
 			break;
-		case 2:
+		case MENU_ITEM_TIME_CLOSE:
 			// startActivity(new Intent(this, TimingClosureActivity.class));
-			break;
-		case 3:
-			exitApplication();
 			break;
 		}
 

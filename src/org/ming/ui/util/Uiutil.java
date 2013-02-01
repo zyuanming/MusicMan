@@ -72,20 +72,26 @@ public class Uiutil
 					mWlanCloseDialog = null;
 				}
 				if (mWlanCloseDialog == null)
-					mWlanCloseDialog = DialogUtil.show1BtnDialogWithTitleMsg(
-							paramContext, paramContext.getText(2131165249),
-							paramContext.getString(2131165342),
-							new View.OnClickListener()
-							{
-								public void onClick(View paramAnonymousView)
-								{
-									if (Uiutil.mWlanCloseDialog != null)
+					mWlanCloseDialog = DialogUtil
+							.show1BtnDialogWithTitleMsg(
+									paramContext,
+									paramContext
+											.getText(R.string.title_information_common),
+									paramContext
+											.getString(R.string.net_disconnect_util),
+									new View.OnClickListener()
 									{
-										Uiutil.mWlanCloseDialog.dismiss();
-										Uiutil.mWlanCloseDialog = null;
-									}
-								}
-							});
+										public void onClick(
+												View paramAnonymousView)
+										{
+											if (Uiutil.mWlanCloseDialog != null)
+											{
+												Uiutil.mWlanCloseDialog
+														.dismiss();
+												Uiutil.mWlanCloseDialog = null;
+											}
+										}
+									});
 			}
 
 			if (((NetUtil.netState == 2) || (NetUtil.netState == 7) || (NetUtil.netState == 5))
@@ -97,26 +103,30 @@ public class Uiutil
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
 				}
-				mWlanCloseDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(
-						paramContext, paramContext.getText(2131165249),
-						paramContext.getString(2131165341),
-						new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								Util.exitMobileMusicApp(false);
-							}
-						}, new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								if (Uiutil.mWlanCloseDialog != null)
+				mWlanCloseDialog = DialogUtil
+						.show2BtnDialogWithIconTitleMsg(
+								paramContext,
+								paramContext
+										.getText(R.string.title_information_common),
+								paramContext
+										.getString(R.string.wlan_disconnect_cmwap_open_util),
+								new View.OnClickListener()
 								{
-									Uiutil.mWlanCloseDialog.dismiss();
-									Uiutil.mWlanCloseDialog = null;
-								}
-							}
-						});
+									public void onClick(View paramAnonymousView)
+									{
+										Util.exitMobileMusicApp(false);
+									}
+								}, new View.OnClickListener()
+								{
+									public void onClick(View paramAnonymousView)
+									{
+										if (Uiutil.mWlanCloseDialog != null)
+										{
+											Uiutil.mWlanCloseDialog.dismiss();
+											Uiutil.mWlanCloseDialog = null;
+										}
+									}
+								});
 			} else if (NetUtil.netState == 8)
 			{
 				if ((mWlanCloseDialog != null)
@@ -125,20 +135,24 @@ public class Uiutil
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
 				}
-				mWlanCloseDialog = DialogUtil.show1BtnDialogWithTitleMsg(
-						paramContext, paramContext.getText(2131165252),
-						paramContext.getString(2131165242),
-						new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								if (Uiutil.mWlanCloseDialog != null)
+				mWlanCloseDialog = DialogUtil
+						.show1BtnDialogWithTitleMsg(
+								paramContext,
+								paramContext
+										.getText(R.string.network_error_common),
+								paramContext
+										.getString(R.string.wlan_disconnect_title_util),
+								new View.OnClickListener()
 								{
-									Uiutil.mWlanCloseDialog.dismiss();
-									Uiutil.mWlanCloseDialog = null;
-								}
-							}
-						});
+									public void onClick(View paramAnonymousView)
+									{
+										if (Uiutil.mWlanCloseDialog != null)
+										{
+											Uiutil.mWlanCloseDialog.dismiss();
+											Uiutil.mWlanCloseDialog = null;
+										}
+									}
+								});
 			}
 		}
 		logger.v("ifSwitchToWapDialog Exit");
@@ -163,21 +177,25 @@ public class Uiutil
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
 				}
-				mWlanCloseDialog = DialogUtil.show1BtnDialogWithTitleMsg(
-						paramContext, paramContext.getText(2131165249),
-						paramContext.getString(2131165342),
-						new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								if (Uiutil.mWlanCloseDialog != null)
+				mWlanCloseDialog = DialogUtil
+						.show1BtnDialogWithTitleMsg(
+								paramContext,
+								paramContext
+										.getText(R.string.title_information_common),
+								paramContext
+										.getString(R.string.net_disconnect_util),
+								new View.OnClickListener()
 								{
-									Uiutil.mWlanCloseDialog.dismiss();
-									Uiutil.mWlanCloseDialog = null;
-									((Activity) context).finish();
-								}
-							}
-						});
+									public void onClick(View paramAnonymousView)
+									{
+										if (Uiutil.mWlanCloseDialog != null)
+										{
+											Uiutil.mWlanCloseDialog.dismiss();
+											Uiutil.mWlanCloseDialog = null;
+											((Activity) context).finish();
+										}
+									}
+								});
 			}
 			if (((NetUtil.netState == 2) || (NetUtil.netState == 7) || (NetUtil.netState == 5))
 					&& ((i == 3) || (i == 6) || (i == 1)))
@@ -188,27 +206,31 @@ public class Uiutil
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
 				}
-				mWlanCloseDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(
-						paramContext, paramContext.getText(2131165249),
-						paramContext.getString(2131165341),
-						new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								Util.exitMobileMusicApp(false);
-							}
-						}, new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								if (Uiutil.mWlanCloseDialog != null)
+				mWlanCloseDialog = DialogUtil
+						.show2BtnDialogWithIconTitleMsg(
+								paramContext,
+								paramContext
+										.getText(R.string.title_information_common),
+								paramContext
+										.getString(R.string.wlan_disconnect_cmwap_open_util),
+								new View.OnClickListener()
 								{
-									Uiutil.mWlanCloseDialog.dismiss();
-									Uiutil.mWlanCloseDialog = null;
-								}
-								((Activity) context).finish();
-							}
-						});
+									public void onClick(View paramAnonymousView)
+									{
+										Util.exitMobileMusicApp(false);
+									}
+								}, new View.OnClickListener()
+								{
+									public void onClick(View paramAnonymousView)
+									{
+										if (Uiutil.mWlanCloseDialog != null)
+										{
+											Uiutil.mWlanCloseDialog.dismiss();
+											Uiutil.mWlanCloseDialog = null;
+										}
+										((Activity) context).finish();
+									}
+								});
 			} else if (NetUtil.netState == 8)
 			{
 				if ((mWlanCloseDialog != null)
@@ -217,21 +239,25 @@ public class Uiutil
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
 				}
-				mWlanCloseDialog = DialogUtil.show1BtnDialogWithTitleMsg(
-						paramContext, paramContext.getText(2131165252),
-						paramContext.getString(2131165242),
-						new View.OnClickListener()
-						{
-							public void onClick(View paramAnonymousView)
-							{
-								if (Uiutil.mWlanCloseDialog != null)
+				mWlanCloseDialog = DialogUtil
+						.show1BtnDialogWithTitleMsg(
+								paramContext,
+								paramContext
+										.getText(R.string.network_error_common),
+								paramContext
+										.getString(R.string.wlan_disconnect_title_util),
+								new View.OnClickListener()
 								{
-									Uiutil.mWlanCloseDialog.dismiss();
-									Uiutil.mWlanCloseDialog = null;
-								}
-								((Activity) context).finish();
-							}
-						});
+									public void onClick(View paramAnonymousView)
+									{
+										if (Uiutil.mWlanCloseDialog != null)
+										{
+											Uiutil.mWlanCloseDialog.dismiss();
+											Uiutil.mWlanCloseDialog = null;
+										}
+										((Activity) context).finish();
+									}
+								});
 			}
 			logger.v("ifSwitchToWapDialog Exit");
 		}
@@ -369,25 +395,25 @@ public class Uiutil
 	 * @param paramString1
 	 * @param paramString2
 	 */
-	// public static void setTone(Context paramContext, String paramString1,
-	// String paramString2)
-	// {
-	// logger.v("setTone() ---> Enter");
-	// Intent localIntent = new Intent(paramContext,
-	// MusicOnlineSetRingToneActivity.class);
-	// localIntent
-	// .putExtra(
-	// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-	// paramString1);
-	// localIntent
-	// .putExtra(
-	// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-	// paramString2);
-	// localIntent.putExtra(
-	// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 1);
-	// paramContext.startActivity(localIntent);
-	// logger.v("setTone() ---> Exit");
-	// }
+	public static void setTone(Context paramContext, String paramString1,
+			String paramString2)
+	{
+		logger.v("setTone() ---> Enter");
+		// Intent localIntent = new Intent(paramContext,
+		// MusicOnlineSetRingToneActivity.class);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
+		// paramString1);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
+		// paramString2);
+		// localIntent.putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 1);
+		// paramContext.startActivity(localIntent);
+		logger.v("setTone() ---> Exit");
+	}
 
 	/**
 	 * 设置振动
@@ -396,55 +422,95 @@ public class Uiutil
 	 * @param paramString1
 	 * @param paramString2
 	 */
-	// public static void setViberate(Context paramContext, String paramString1,
-	// String paramString2)
-	// {
-	// logger.v("setViberate() ---> Enter");
-	// Intent localIntent = new Intent(paramContext,
-	// MusicOnlineSetRingToneActivity.class);
-	// localIntent
-	// .putExtra(
-	// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-	// paramString1);
-	// localIntent
-	// .putExtra(
-	// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-	// paramString2);
-	// localIntent.putExtra(
-	// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 2);
-	// paramContext.startActivity(localIntent);
-	// logger.v("setViberate() ---> Exit");
-	// }
+	public static void setViberate(Context paramContext, String paramString1,
+			String paramString2)
+	{
+		logger.v("setViberate() ---> Enter");
+		// Intent localIntent = new Intent(paramContext,
+		// MusicOnlineSetRingToneActivity.class);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
+		// paramString1);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
+		// paramString2);
+		// localIntent.putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 2);
+		// paramContext.startActivity(localIntent);
+		logger.v("setViberate() ---> Exit");
+	}
 
-	// public static Dialog showWaitingDialog(Context paramContext,
-	// DialogInterface.OnCancelListener paramOnCancelListener)
-	// {
-	// logger.v("showWaitingDialog() ---> Enter");
-	// mLoadDataDialog = DialogUtil.show1BtnProgressDialog(paramContext,
-	// 2131165291, 2131165220, new View.OnClickListener()
-	// {
-	// public void onClick(View paramAnonymousView)
-	// {
-	// if (Uiutil.mLoadDataDialog != null)
-	// {
-	// Uiutil.mLoadDataDialog.cancel();
-	// Uiutil.mLoadDataDialog = null;
-	// }
-	// }
-	// });
-	// mLoadDataDialog.setOnCancelListener(paramOnCancelListener);
-	// mLoadDataDialog.setOnKeyListener(new DialogInterface.OnKeyListener()
-	// {
-	// public boolean onKey(DialogInterface paramAnonymousDialogInterface,
-	// int paramAnonymousInt, KeyEvent paramAnonymousKeyEvent)
-	// {
-	// if (paramAnonymousInt == 82)
-	// ;
-	// for (boolean bool = true;; bool = false)
-	// return bool;
-	// }
-	// });
-	// logger.v("showWaitingDialog() ---> Exit");
-	// return mLoadDataDialog;
-	// }
+	public static Dialog showWaitingDialog(Context paramContext,
+			DialogInterface.OnCancelListener paramOnCancelListener)
+	{
+		logger.v("showWaitingDialog() ---> Enter");
+		mLoadDataDialog = DialogUtil.show1BtnProgressDialog(paramContext,
+				2131165291, 2131165220, new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
+						if (Uiutil.mLoadDataDialog != null)
+						{
+							Uiutil.mLoadDataDialog.cancel();
+							Uiutil.mLoadDataDialog = null;
+						}
+					}
+				});
+		mLoadDataDialog.setOnCancelListener(paramOnCancelListener);
+		mLoadDataDialog.setOnKeyListener(new DialogInterface.OnKeyListener()
+		{
+			public boolean onKey(DialogInterface paramAnonymousDialogInterface,
+					int paramAnonymousInt, KeyEvent paramAnonymousKeyEvent)
+			{
+				if (paramAnonymousInt == 82)
+					;
+				for (boolean bool = true;; bool = false)
+					return bool;
+			}
+		});
+		logger.v("showWaitingDialog() ---> Exit");
+		return mLoadDataDialog;
+	}
+
+	public static void sendMusic(Context paramContext, String paramString1,
+			String paramString2)
+	{
+		logger.v("sendMusic() ---> Enter");
+		// Intent localIntent = new Intent(paramContext,
+		// MusicOnlineRecommendFriend.class);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
+		// paramString1);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
+		// paramString2);
+		// localIntent.putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 4);
+		// paramContext.startActivity(localIntent);
+		logger.v("sendMusic() ---> Exit");
+	}
+
+	public static void recommondMusic(Context paramContext,
+			String paramString1, String paramString2)
+	{
+		logger.v("recommondMusic() ---> Enter");
+		// Intent localIntent = new Intent(paramContext,
+		// MusicOnlineRecommendFriend.class);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
+		// paramString1);
+		// localIntent
+		// .putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
+		// paramString2);
+		// localIntent.putExtra(
+		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 5);
+		// paramContext.startActivity(localIntent);
+		logger.v("recommondMusic() ---> Exit");
+	}
 }

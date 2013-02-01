@@ -13,6 +13,7 @@ import org.ming.center.player.PlayerController;
 import org.ming.center.player.PlayerEventListener;
 import org.ming.center.ui.UIEventListener;
 import org.ming.center.ui.UIGlobalSettingParameter;
+import org.ming.dispatcher.DispatcherEventEnum;
 import org.ming.ui.adapter.LocalSongCursorAdapter;
 import org.ming.ui.util.DialogUtil;
 import org.ming.ui.util.Uiutil;
@@ -170,38 +171,39 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 
 	private int playAll()
 	{
-		// int i = -1;
-		// long l = this.mDBController.getPlaylistByName(
-		// "cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
-		// 2).mExternalId;
-		// int j;
-		// if ((this.cursor == null) || (this.cursor.getCount() == 0))
-		// {
-		// j = i;
-		// return j;
-		// }
-		// if (cursor != null && cursor.getCount() != 0)
-		// {
-		// this.cursor.moveToPosition(-1);
-		// long[] arrayOfLong = new long[this.cursor.getCount()];
-		// if (!this.cursor.moveToNext())
-		// {
-		// if ((l != -1L)
-		// && (this.mDBController.addSongs2MixPlaylist(l,
-		// arrayOfLong, false)))
-		// i = 0;
-		// this.cursor.moveToFirst();
-		// Song localSong2 = getSong(this.cursor);
-		// this.mPlayerController.open(this.mPlayerController
-		// .checkSongInNowPlayingList(localSong2));
-		// j = i;
-		// break;
-		// }
-		// Song localSong1 = getSong(this.cursor);
-		// this.mPlayerController.add2NowPlayingList(localSong1, true);
-		// if (this.cursor.getPosition() < arrayOfLong.length)
-		// arrayOfLong[this.cursor.getPosition()] = localSong1.mId;
-		// }
+		logger.v("playAll() ----> enter");
+		int i = -1;
+		int j;
+		long l = this.mDBController.getPlaylistByName(
+				"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
+				2).mExternalId;
+		if ((this.cursor == null) || (this.cursor.getCount() == 0))
+		{
+			j = i;
+			return j;
+		}
+		if (cursor != null && cursor.getCount() != 0)
+		{
+			this.cursor.moveToPosition(-1);
+			long[] arrayOfLong = new long[this.cursor.getCount()];
+			if (!this.cursor.moveToNext())
+			{
+				if ((l != -1L)
+						&& (this.mDBController.addSongs2MixPlaylist(l,
+								arrayOfLong, false)))
+					i = 0;
+				this.cursor.moveToFirst();
+				Song localSong2 = getSong(this.cursor);
+				this.mPlayerController.open(this.mPlayerController
+						.checkSongInNowPlayingList(localSong2));
+				j = i;
+			}
+			Song localSong1 = getSong(this.cursor);
+			this.mPlayerController.add2NowPlayingList(localSong1, true);
+			if (this.cursor.getPosition() < arrayOfLong.length)
+				arrayOfLong[this.cursor.getPosition()] = localSong1.mId;
+		}
+		logger.v("playAll() ----> exit");
 		return 0;
 	}
 
@@ -281,19 +283,26 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		switch (paramMessage.what)
 		{
 		default:
-		case 1014:
-		case 1002:
-		case 1010:
-		case 1011:
-		case 1012:
+			return;
+		case DispatcherEventEnum.PLAYER_EVENT_WAP_CLOSED:
+		{
+			Object obj;
+			if (((Activity) mContext).getParent() == null)
+				obj = mContext;
+			else
+				obj = (Activity) mContext;
+			Uiutil.ifSwitchToWapDialog(((Context) (obj)));
 		}
-		Object obj;
-		if (((Activity) mContext).getParent() == null)
-			obj = mContext;
-		else
-			obj = (Activity) mContext;
-		Uiutil.ifSwitchToWapDialog(((Context) (obj)));
-		notifyDataChange();
+			break;
+		case DispatcherEventEnum.PLAYER_EVENT_TRACK_ENDED:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_START:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_STOP:
+		{
+			notifyDataChange();
+		}
+			break;
+		}
 	}
 
 	public void handleUIEvent(Message paramMessage)
@@ -301,9 +310,13 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 		switch (paramMessage.what)
 		{
 		default:
-		case 4008:
+			return;
+		case DispatcherEventEnum.UI_EVENT_PLAY_NEWSONG:
+		{
+			notifyDataChange();
 		}
-		notifyDataChange();
+			break;
+		}
 	}
 
 	public void inital()

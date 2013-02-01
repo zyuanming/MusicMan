@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/player_activity_function_button_share_nor" android:state_enabled="true" android:state_pressed="false"/>
+    <item android:drawable="@drawable/player_activity_function_button_share_hl" android:state_enabled="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/player_activity_function_button_share_disable" android:state_enabled="false"/>
+
+</selector>

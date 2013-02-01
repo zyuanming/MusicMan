@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_market_window"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="20.0dip" >
+
+    <LinearLayout
+        android:id="@id/popupwindow_settone_li"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginRight="5.0dip"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@id/orderwindow_settone"
+            android:layout_width="fill_parent"
+            android:layout_height="35.0dip"
+            android:background="@drawable/popup_window_btn_slt"
+            android:text="@string/orderwindow_settone"
+            android:textColor="@android:color/white"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popupwindow_setring_li"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginRight="5.0dip"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@id/orderwindow_setring"
+            android:layout_width="fill_parent"
+            android:layout_height="35.0dip"
+            android:background="@drawable/popup_window_btn_slt"
+            android:text="@string/orderwindow_setring"
+            android:textColor="@android:color/white"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popupwindow_download_li"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginRight="5.0dip"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="5.0dip" >
+
+        <Button
+            android:id="@id/orderwindow_download"
+            android:layout_width="fill_parent"
+            android:layout_height="35.0dip"
+            android:background="@drawable/popup_window_btn_slt"
+            android:text="@string/orderwindow_download"
+            android:textColor="@android:color/white"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popupwindow_sendsong_li"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginRight="5.0dip"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="5.0dip" >
+
+        <Button
+            android:id="@id/orderwindow_sendsong"
+            android:layout_width="fill_parent"
+            android:layout_height="35.0dip"
+            android:background="@drawable/popup_window_btn_slt"
+            android:text="@string/orderwindow_sendsong"
+            android:textColor="@android:color/white"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/popupwindow_recommand_li"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginRight="5.0dip"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@id/orderwindow_recommand"
+            android:layout_width="fill_parent"
+            android:layout_height="35.0dip"
+            android:background="@drawable/popup_window_btn_slt"
+            android:text="@string/orderwindow_recommand"
+            android:textColor="@android:color/white"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+</LinearLayout>

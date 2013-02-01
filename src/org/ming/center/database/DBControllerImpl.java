@@ -1575,4 +1575,77 @@ public class DBControllerImpl implements DBController
 		}
 		return playlist;
 	}
+
+	@Override
+	public long addOnlineMusicItem(Song song)
+	{
+		logger.v("addOnlineMusicItem() ---> Enter");
+		long l;
+		if (isOnlineMusicInDB(song))
+		{
+			logger.v((new StringBuilder(
+					"addOnlineMusicItem() ---> item already exsits, Just Exit. Item id is: "))
+					.append(song.mId).toString());
+			l = song.mId;
+		} else
+		{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put("_data", song.mUrl);
+			contentvalues.put("album", song.mAlbum);
+			contentvalues.put("album_id", Integer.valueOf(song.mAlbumId));
+			contentvalues.put("artist", song.mArtist);
+			contentvalues.put("date_added",
+					Long.valueOf(System.currentTimeMillis()));
+			contentvalues.put("title", song.mTrack);
+			contentvalues.put("duration", Integer.valueOf(song.mDuration));
+			contentvalues.put("_size", Long.valueOf(song.mSize));
+			contentvalues.put("contentid", song.mContentId);
+			contentvalues.put("groupcode", song.mGroupCode);
+			contentvalues.put("url2", song.mUrl2);
+			contentvalues.put("url3", song.mUrl3);
+			contentvalues.put("filesize2", Long.valueOf(song.mSize2));
+			contentvalues.put("filesize3", Long.valueOf(song.mSize3));
+			contentvalues.put("groupcode", song.mGroupCode);
+			String s;
+			if (GlobalSettingParameter.useraccount != null)
+				contentvalues.put("user_id",
+						Long.valueOf(GlobalSettingParameter.useraccount.mId));
+			else
+				contentvalues.put("user_id", Integer.valueOf(-1));
+			contentvalues.put("point", Integer.valueOf(song.mPoint));
+			contentvalues.put("img", song.mArtUrl);
+			if (song.isDolby)
+				s = "1";
+			else
+				s = "0";
+			contentvalues.put("isdolby", s);
+			song.mId = mDb.insert("online_music_audio_info", null,
+					contentvalues);
+			logger.d((new StringBuilder("new item id is: ")).append(song.mId)
+					.toString());
+			logger.v("addOnlineMusicItem() ---> Exit");
+			l = song.mId;
+		}
+		return l;
+	}
+
+	private boolean isOnlineMusicInDB(Song song)
+	{
+		logger.v("isOnlineMusicInDB() ---> Enter");
+		boolean flag = true;
+		Cursor cursor = mDb.query("online_music_audio_info", null,
+				(new StringBuilder("contentid='")).append(song.mContentId)
+						.append("'").toString(), null, null, null, null);
+		if (cursor.getCount() == 0)
+		{
+			flag = false;
+		} else
+		{
+			cursor.moveToFirst();
+			song.mId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+		}
+		cursor.close();
+		logger.v("isOnlineMusicInDB() ---> Exit");
+		return flag;
+	}
 }

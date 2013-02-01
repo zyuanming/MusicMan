@@ -14,6 +14,7 @@ import org.ming.center.database.MusicType;
 import org.ming.center.database.Song;
 import org.ming.center.system.SystemControllerImpl;
 import org.ming.dispatcher.Dispatcher;
+import org.ming.dispatcher.DispatcherEventEnum;
 import org.ming.util.MyLogger;
 import org.ming.util.NetUtil;
 import org.ming.util.Util;
@@ -1068,65 +1069,85 @@ public class MusicPlayerWrapper
 
 	public boolean isPlaying()
 	{
+		logger.v("isPlaying() ----> enter");
 		boolean bool1 = true;
 		try
 		{
 			if ((this.mSong != null)
 					&& ((checkedLocalSongType()) || ((this.mSong != null) && (this.mSong.isDolby))))
+			{
+				logger.v("this.mSong != null");
 				if (this.mAudioTrackPlay != null)
 				{
 					boolean bool3 = this.mAudioTrackPlay.isPlaying();
 					if (!bool3)
-						;
-				}
-			bool1 = false;
-			if (this.player != null)
-			{
-				State[] arrayOfState = new State[8];
-				arrayOfState[0] = State.IDLE;
-				arrayOfState[1] = State.INITIALIZED;
-				arrayOfState[2] = State.PREPARED;
-				arrayOfState[3] = State.STARTED;
-				arrayOfState[4] = State.PAUSED;
-				arrayOfState[5] = State.STOPPED;
-				arrayOfState[6] = State.COMPLETED;
-				arrayOfState[7] = State.SEEKING;
-				if (inStates(arrayOfState))
-				{
-					boolean bool2 = this.player.isPlaying();
-					bool1 = bool2;
+					{
+						bool1 = false;
+					} else
+					{
+						return bool1;
+					}
 				}
 			} else
 			{
-				bool1 = false;
+				boolean bool2;
+				if (this.player != null)
+				{
+					State[] arrayOfState = new State[8];
+					arrayOfState[0] = State.IDLE;
+					arrayOfState[1] = State.INITIALIZED;
+					arrayOfState[2] = State.PREPARED;
+					arrayOfState[3] = State.STARTED;
+					arrayOfState[4] = State.PAUSED;
+					arrayOfState[5] = State.STOPPED;
+					arrayOfState[6] = State.COMPLETED;
+					arrayOfState[7] = State.SEEKING;
+					if (inStates(arrayOfState))
+					{
+						bool2 = this.player.isPlaying();
+						bool1 = bool2;
+					}
+				} else
+				{
+					bool1 = false;
+				}
 			}
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		logger.v("isPlaying() ----> enter");
 		return bool1;
 	}
 
 	public void pause()
 	{
+		logger.v("pause() ----> enter");
 		try
 		{
 			if ((checkedLocalSongType())
 					|| ((this.mSong != null) && (this.mSong != null) && (this.mSong.isDolby)))
+			{
 				if (this.mAudioTrackPlay != null)
 				{
-					interruptBy(1);
-					this.mDispatcher.removeMessages(1017);
-					this.mDispatcher.removeMessages(1013);
-					this.mDispatcher.sendMessage(this.mDispatcher
-							.obtainMessage(1011));
+					interruptBy(INTERRUPT_PAUSE);
+					this.mDispatcher
+							.removeMessages(DispatcherEventEnum.PLAYER_EVENT_NO_LOGIN_LISTEN);
+					this.mDispatcher
+							.removeMessages(DispatcherEventEnum.PLAYER_EVENT_NO_RIGHTS_LISTEN_ONLINE_LISTEN);
+					this.mDispatcher
+							.sendMessage(this.mDispatcher
+									.obtainMessage(DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE));
 				}
-			((AudioManager) this.mApp.getApplicationContext().getSystemService(
-					"audio")).abandonAudioFocus(this.mAudioFocusListener);
+				((AudioManager) this.mApp.getApplicationContext()
+						.getSystemService("audio"))
+						.abandonAudioFocus(this.mAudioFocusListener);
+			}
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		logger.v("pause() ----> exit");
 	}
 
 	public void resume()
