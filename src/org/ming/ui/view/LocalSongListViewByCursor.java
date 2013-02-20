@@ -173,38 +173,43 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 	{
 		logger.v("playAll() ----> enter");
 		int i = -1;
-		int j;
 		long l = this.mDBController.getPlaylistByName(
 				"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
 				2).mExternalId;
+		int j;
 		if ((this.cursor == null) || (this.cursor.getCount() == 0))
 		{
 			j = i;
+			logger.v("cursor == null");
+			logger.v("playAll() ----> exit");
 			return j;
-		}
-		if (cursor != null && cursor.getCount() != 0)
+		} else
 		{
 			this.cursor.moveToPosition(-1);
 			long[] arrayOfLong = new long[this.cursor.getCount()];
-			if (!this.cursor.moveToNext())
+			while (true)
 			{
-				if ((l != -1L)
-						&& (this.mDBController.addSongs2MixPlaylist(l,
-								arrayOfLong, false)))
-					i = 0;
-				this.cursor.moveToFirst();
-				Song localSong2 = getSong(this.cursor);
-				this.mPlayerController.open(this.mPlayerController
-						.checkSongInNowPlayingList(localSong2));
-				j = i;
+				if (!this.cursor.moveToNext())
+				{
+					if ((l != -1L)
+							&& (this.mDBController.addSongs2MixPlaylist(l,
+									arrayOfLong, false)))
+						i = 0;
+					this.cursor.moveToFirst();
+					Song localSong2 = getSong(this.cursor);
+					this.mPlayerController.open(this.mPlayerController
+							.checkSongInNowPlayingList(localSong2));
+					j = i;
+					logger.v("playAll() ----> exit");
+					return j;
+				}
+				Song localSong1 = getSong(this.cursor);
+				this.mPlayerController.add2NowPlayingList(localSong1, true);
+				logger.v("add song to nowPlayingList ---->" + localSong1.mId);
+				if (this.cursor.getPosition() < arrayOfLong.length)
+					arrayOfLong[this.cursor.getPosition()] = localSong1.mId;
 			}
-			Song localSong1 = getSong(this.cursor);
-			this.mPlayerController.add2NowPlayingList(localSong1, true);
-			if (this.cursor.getPosition() < arrayOfLong.length)
-				arrayOfLong[this.cursor.getPosition()] = localSong1.mId;
 		}
-		logger.v("playAll() ----> exit");
-		return 0;
 	}
 
 	public void addEventListner()

@@ -12,6 +12,7 @@ import org.ming.center.GlobalSettingParameter;
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.database.DBController;
 import org.ming.center.database.Playlist;
+import org.ming.center.database.Song;
 import org.ming.center.system.SystemEventListener;
 import org.ming.center.ui.UIGlobalSettingParameter;
 import org.ming.ui.util.DialogUtil;
@@ -339,7 +340,7 @@ public class LocalMusicActivity extends ListActivity implements
 			if (!localPlaylist.mName
 					.equals("cmccwm.mobilemusic.database.default.local.playlist.recent.download"))
 			{
-				ArrayList localArrayList2 = (ArrayList) this.mDBController
+				ArrayList<Song> localArrayList2 = (ArrayList<Song>) this.mDBController
 						.getSongsFromPlaylist(localPlaylist.mExternalId, 1);
 				String str5 = localPlaylist.mName;
 				Object[] arrayOfObject5 = new Object[1];
@@ -513,7 +514,6 @@ public class LocalMusicActivity extends ListActivity implements
 		if (localPlaylist != null)
 			switch (paramMenuItem.getItemId())
 			{
-
 			case CONTEXT_MENU_DELETE:
 				if (localPlaylist.mNumOfSong > 0)
 				{
@@ -558,7 +558,6 @@ public class LocalMusicActivity extends ListActivity implements
 				break;
 			case CONTEXT_MENU_RENAME:
 			{
-
 				logger.v("onContextItemSelected() ----> 0");
 				show2BtnDialogWithEditTextView(localPlaylist.mExternalId);
 				break;
@@ -612,7 +611,7 @@ public class LocalMusicActivity extends ListActivity implements
 				// }
 				break;
 
-			case 0: // '\0'
+			case LIST_ITEM_ID_ALL_SONG: // '\0'
 				intent = new Intent(this, LocalSongListActivity.class);
 				intent.putExtra("title", getText(R.string.local_music_all_song)
 						.toString());
@@ -620,7 +619,7 @@ public class LocalMusicActivity extends ListActivity implements
 				startActivity(intent);
 				break;
 
-			// case 1: // '\001'
+			// case LIST_ITEM_ID_BROWSE_BY_SINGER: // '\001'
 			// intent = new Intent(this,
 			// org.ming.ui.activity.local.LocalColumnActivity);
 			// intent.putExtra("title",
@@ -630,7 +629,7 @@ public class LocalMusicActivity extends ListActivity implements
 			// startActivity(intent);
 			// break;
 			//
-			// case 2: // '\002'
+			// case LIST_ITEM_ID_BROWSE_BY_CATALOG: // '\002'
 			// intent = new Intent(this,
 			// org.ming.ui.activity.local.LocalColumnActivity);
 			// intent.putExtra("title",
@@ -640,7 +639,7 @@ public class LocalMusicActivity extends ListActivity implements
 			// startActivity(intent);
 			// break;
 			//
-			// case 3: // '\003'
+			// case LIST_ITEM_ID_DWONLOAD_MUSIC: // '\003'
 			// intent = new Intent(this,
 			// org.ming.ui.activity.local.LocalSongListActivity);
 			// intent.putExtra("title",
@@ -651,7 +650,7 @@ public class LocalMusicActivity extends ListActivity implements
 			// startActivity(intent);
 			// break;
 			//
-			// case 4: // '\004'
+			// case LIST_ITEM_ID_DOWNLOAD_DOLBY_MUSIC: // '\004'
 			// intent = new Intent(this,
 			// org.ming.ui.activity.local.LocalSongListActivity);
 			// intent.putExtra("title", getText(R.string.dobly_song_number)
@@ -691,7 +690,7 @@ public class LocalMusicActivity extends ListActivity implements
 							LocalMusicActivity.this,
 							LocalMusicActivity.this
 									.getText(R.string.invalid_playlist_name_playlist_activity),
-							0).show();
+							1).show();
 				if ((str.equals(LocalMusicActivity.this
 						.getString(R.string.playlist_myfav_common)))
 						|| (str.equals(LocalMusicActivity.this

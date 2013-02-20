@@ -231,8 +231,8 @@ public class PlayerStatusBar extends RelativeLayout implements
 			queueNextRefresh(refreshNow());
 		}
 			break;
-		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE:
-		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_STOP:
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE: // 暂停
+		case DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_STOP: // 停止
 		{
 			refreshPlayerStatusBar();
 		}
@@ -289,7 +289,7 @@ public class PlayerStatusBar extends RelativeLayout implements
 			}
 		});
 
-		// 暂停
+		// 暂停按钮
 		this.mPlayPauseBtn = ((ImageButton) findViewById(R.id.statusbar_play_and_pause_button));
 		this.mPlayPauseBtn.setOnClickListener(new View.OnClickListener()
 		{
@@ -307,33 +307,38 @@ public class PlayerStatusBar extends RelativeLayout implements
 					if (mPlayerController.isPlaying())
 					{
 						mPlayerController.pause();
-						refreshPlayerStatusBar();
+					} else
+					{
+						// 如果当前播放的音乐是在线音乐或者是广播
+						if (((mPlayerController.getCurrentPlayingItem().mMusicType == MusicType.ONLINEMUSIC
+								.ordinal()) || (mPlayerController
+								.getCurrentPlayingItem().mMusicType == MusicType.RADIO
+								.ordinal()))
+								&& (NetUtil.isConnection()))
+						{
+							mPlayerController.start();
+						} else if (mPlayerController.getCurrentPlayingItem().mMusicType == MusicType.LOCALMUSIC
+								.ordinal())
+						{
+							mPlayerController.start();
+						} else
+						{
+							Toast.makeText(mContext,
+									R.string.wlan_disconnect_title_util, 1)
+									.show();
+							mProgressBar.setProgress(0);
+							mProgressBar.setSecondaryProgress(0);
+							if (mPlayerController.isPlayRecommendSong())
+								mPlayerController
+										.openRecommendSong(mPlayerController
+												.getNowPlayingItemPosition());
+							else
+								mPlayerController.open(mPlayerController
+										.getNowPlayingItemPosition());
+						}
 					}
 				}
-				if (((mPlayerController.getCurrentPlayingItem().mMusicType == MusicType.ONLINEMUSIC
-						.ordinal()) || (mPlayerController
-						.getCurrentPlayingItem().mMusicType == MusicType.RADIO
-						.ordinal()))
-						&& (NetUtil.isConnection()))
-				{
-					mPlayerController.start();
-				} else if (mPlayerController.getCurrentPlayingItem().mMusicType == MusicType.LOCALMUSIC
-						.ordinal())
-				{
-					mPlayerController.start();
-				} else
-				{
-					Toast.makeText(mContext,
-							R.string.wlan_disconnect_title_util, 1).show();
-					mProgressBar.setProgress(0);
-					mProgressBar.setSecondaryProgress(0);
-					if (mPlayerController.isPlayRecommendSong())
-						mPlayerController.openRecommendSong(mPlayerController
-								.getNowPlayingItemPosition());
-					else
-						mPlayerController.open(mPlayerController
-								.getNowPlayingItemPosition());
-				}
+				refreshPlayerStatusBar();
 			}
 		});
 
@@ -343,8 +348,10 @@ public class PlayerStatusBar extends RelativeLayout implements
 		{
 			public void onClick(View paramAnonymousView)
 			{
-				Message localMessage = mMsgHandler.obtainMessage(2);
-				mMsgHandler.removeMessages(2);
+				logger.d("click to play previous song");
+				Message localMessage = mMsgHandler
+						.obtainMessage(MsgHandler.MSG_CLICK_PRE_SONG);
+				mMsgHandler.removeMessages(MsgHandler.MSG_CLICK_PRE_SONG);
 				mMsgHandler.sendMessageDelayed(localMessage, 0L);
 			}
 		});
@@ -355,8 +362,10 @@ public class PlayerStatusBar extends RelativeLayout implements
 		{
 			public void onClick(View paramAnonymousView)
 			{
-				Message localMessage = mMsgHandler.obtainMessage(1);
-				mMsgHandler.removeMessages(1);
+				logger.d("click to play next song");
+				Message localMessage = mMsgHandler
+						.obtainMessage(MsgHandler.MSG_CLICK_NEXT_SONG);
+				mMsgHandler.removeMessages(MsgHandler.MSG_CLICK_NEXT_SONG);
 				mMsgHandler.sendMessageDelayed(localMessage, 0L);
 			}
 		});
@@ -547,20 +556,20 @@ public class PlayerStatusBar extends RelativeLayout implements
 			default:
 			case MSG_TYPE_REFRESH_UI:
 			{
-				long l = PlayerStatusBar.this.refreshNow();
-				PlayerStatusBar.this.queueNextRefresh(l);
+				long l = refreshNow();
+				queueNextRefresh(l);
 			}
 				break;
 			case MSG_CLICK_NEXT_SONG:
 			{
-				PlayerStatusBar.this.mPlayerController.next();
-				PlayerStatusBar.this.refreshPlayerStatusBar();
+				mPlayerController.next();
+				refreshPlayerStatusBar();
 			}
 				break;
 			case MSG_CLICK_PRE_SONG:
 			{
-				PlayerStatusBar.this.mPlayerController.prev();
-				PlayerStatusBar.this.refreshPlayerStatusBar();
+				mPlayerController.prev();
+				refreshPlayerStatusBar();
 			}
 			}
 		}

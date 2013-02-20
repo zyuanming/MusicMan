@@ -273,23 +273,19 @@ public class MusicPlayerWrapper
 	private boolean checkedLocalSongType()
 	{
 		Song localSong1 = this.mSong;
-		boolean bool1 = false;
+		boolean flag = false;
 		if (localSong1 != null)
 		{
 			int i = this.mSong.mMusicType;
 			int j = MusicType.LOCALMUSIC.ordinal();
-			bool1 = false;
 			if (i == j)
 			{
-				bool1 = true;
-			} else
-			{
-				boolean bool2 = this.mSong.isDolby;
-				if (bool2)
-					bool1 = true;
+				boolean flag1 = mSong.isDolby;
+				if (flag1)
+					flag = true;
 			}
 		}
-		return bool1;
+		return flag;
 	}
 
 	private void doComplete(DataSourceHandler paramDataSourceHandler)
@@ -615,7 +611,7 @@ public class MusicPlayerWrapper
 		for (int j = 0; j < i; j++)
 		{
 			State localState = paramArrayOfState[j];
-			if (this.state != localState)
+			if (this.state == localState)
 				bool = true;
 		}
 		return bool;
@@ -627,25 +623,30 @@ public class MusicPlayerWrapper
 		{
 			if ((checkedLocalSongType())
 					|| ((this.mSong != null) && (this.mSong.isDolby)))
+			{
 				if (this.mAudioTrackPlay != null)
 				{
 					this.mAudioTrackPlay.pause();
 					this.state = State.PAUSED;
 					this.mDispatcher.removeMessages(1013);
 				}
-			if (this.player != null)
+			} else
 			{
-				State[] arrayOfState = new State[2];
-				arrayOfState[0] = State.STARTED;
-				arrayOfState[1] = State.PAUSED;
-				if ((inStates(arrayOfState)) && (isInterruptedBy(7)))
+				if (this.player != null)
 				{
-					this.player.pause();
-					this.state = State.PAUSED;
-					this.mDispatcher.removeMessages(1017);
-					this.mDispatcher.removeMessages(1013);
-					this.mDispatcher.sendMessage(this.mDispatcher
-							.obtainMessage(1011));
+					State[] arrayOfState = new State[2];
+					arrayOfState[0] = State.STARTED;
+					arrayOfState[1] = State.PAUSED;
+					if ((inStates(arrayOfState))
+							&& (isInterruptedBy(INTERRUPT_ANY)))
+					{
+						this.player.pause();
+						this.state = State.PAUSED;
+						this.mDispatcher.removeMessages(1017);
+						this.mDispatcher.removeMessages(1013);
+						this.mDispatcher.sendMessage(this.mDispatcher
+								.obtainMessage(1011));
+					}
 				}
 			}
 		} catch (Exception e)
@@ -726,6 +727,7 @@ public class MusicPlayerWrapper
 			{
 				if ((!isInterruptedBy(7)) && (this.mAudioTrackPlay != null))
 				{
+					// 请求音频焦点
 					localAudioManager.requestAudioFocus(
 							this.mAudioFocusListener, 3, 1);
 					this.mApp.sendBroadcast(new Intent(
@@ -748,7 +750,7 @@ public class MusicPlayerWrapper
 				arrayOfState[4] = State.COMPLETED;
 				if (inStates(arrayOfState))
 				{
-					if (!isInterruptedBy(7))
+					if (!isInterruptedBy(INTERRUPT_ANY))
 					{
 						localAudioManager.requestAudioFocus(
 								this.mAudioFocusListener, 3, 1);
@@ -983,7 +985,7 @@ public class MusicPlayerWrapper
 		{
 			if (!isPlaying())
 			{
-				boolean bool2 = isInterruptedBy(7);
+				boolean bool2 = isInterruptedBy(INTERRUPT_ANY);
 				if (!bool2)
 				{
 					bool1 = false;
@@ -1116,7 +1118,8 @@ public class MusicPlayerWrapper
 		{
 			e.printStackTrace();
 		}
-		logger.v("isPlaying() ----> enter");
+		logger.v("return ---> " + bool1);
+		logger.v("isPlaying() ----> exit");
 		return bool1;
 	}
 
@@ -1126,7 +1129,7 @@ public class MusicPlayerWrapper
 		try
 		{
 			if ((checkedLocalSongType())
-					|| ((this.mSong != null) && (this.mSong != null) && (this.mSong.isDolby)))
+					|| ((this.mSong != null) && (this.mSong.isDolby)))
 			{
 				if (this.mAudioTrackPlay != null)
 				{
@@ -1139,9 +1142,19 @@ public class MusicPlayerWrapper
 							.sendMessage(this.mDispatcher
 									.obtainMessage(DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE));
 				}
+			} else
+			{
 				((AudioManager) this.mApp.getApplicationContext()
 						.getSystemService("audio"))
 						.abandonAudioFocus(this.mAudioFocusListener);
+				interruptBy(INTERRUPT_PAUSE);
+				this.mDispatcher
+						.removeMessages(DispatcherEventEnum.PLAYER_EVENT_NO_LOGIN_LISTEN);
+				this.mDispatcher
+						.removeMessages(DispatcherEventEnum.PLAYER_EVENT_NO_RIGHTS_LISTEN_ONLINE_LISTEN);
+				this.mDispatcher
+						.sendMessage(this.mDispatcher
+								.obtainMessage(DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_PAUSE));
 			}
 		} catch (Exception e)
 		{
@@ -1154,7 +1167,7 @@ public class MusicPlayerWrapper
 	{
 		try
 		{
-			resumeInterruptBy(1);
+			resumeInterruptBy(INTERRUPT_PAUSE);
 			return;
 		} catch (Exception e)
 		{
@@ -1183,7 +1196,7 @@ public class MusicPlayerWrapper
 								{
 									public void onPrepared()
 									{
-										MusicPlayerWrapper.this.doOnPrepared(0);
+										doOnPrepared(0);
 									}
 								});
 						this.mAudioTrackPlay
@@ -1191,21 +1204,24 @@ public class MusicPlayerWrapper
 								{
 									public void onCompletion()
 									{
-										MusicPlayerWrapper.this
-												.doComplete(MusicPlayerWrapper.this.currentHandler);
+										doComplete(MusicPlayerWrapper.this.currentHandler);
 									}
 								});
 						this.mAudioTrackPlay.start();
 					}
+				} else
+				{
+					start(this.currentSong);
 				}
-				start(this.currentSong);
+			} else
+			{
+				if (isInterruptedBy(INTERRUPT_PAUSE))
+					resume();
 			}
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		if (isInterruptedBy(1))
-			resume();
 	}
 
 	public void retryDowmload()
@@ -1335,7 +1351,9 @@ public class MusicPlayerWrapper
 			this.startStopHandler.removeMessages(2);
 			this.mDispatcher.removeMessages(1017);
 			this.mDispatcher.removeMessages(1013);
-			this.mDispatcher.sendMessage(this.mDispatcher.obtainMessage(1012));
+			this.mDispatcher
+					.sendMessage(this.mDispatcher
+							.obtainMessage(DispatcherEventEnum.PLAYER_EVENT_PLAYBACK_STOP));
 			this.isAbandonAudioFocus = true;
 			this.state = State.END;
 			((AudioManager) this.mApp.getApplicationContext().getSystemService(
