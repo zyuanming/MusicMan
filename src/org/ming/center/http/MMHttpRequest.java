@@ -165,8 +165,3 @@ public class MMHttpRequest
 		this.mUrl = paramString;
 	}
 }
-
-/*
- * Location: E:\反编译工具\音乐随身听\classes-dex2jar.jar Qualified Name:
- * com.redclound.lib.http.MMHttpRequest JD-Core Version: 0.6.2
- */

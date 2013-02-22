@@ -1,28 +1,42 @@
 package org.ming.ui.activity;
 
+import java.util.List;
+
 import org.ming.R;
 import org.ming.center.GlobalSettingParameter;
+import org.ming.center.MobileMusicApplication;
+import org.ming.center.system.SystemEventListener;
 import org.ming.ui.activity.local.LocalMusicActivity;
 import org.ming.ui.activity.mymigu.MyMiGuActivity;
 import org.ming.ui.activity.online.OnlineMusicActivity;
 import org.ming.ui.util.DialogUtil;
+import org.ming.ui.util.NotificationService;
+import org.ming.ui.util.Uiutil;
 import org.ming.ui.widget.PlayerStatusBar;
 import org.ming.util.MyLogger;
+import org.ming.util.NetUtil;
+import org.ming.util.Util;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -30,38 +44,63 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-public class MobileMusicMainActivity extends TabActivity
+public class MobileMusicMainActivity extends TabActivity implements
+		SystemEventListener
 {
 	private static final MyLogger logger = MyLogger
 			.getLogger("MobileMusicMainActivity");
+	private int CMD_CANCEL_ALARMMANAGER = 1;
+	private int CMD_START_ALARMMANAGER = 3;
+	private int CMD_STOP_SERVICE = 2;
 	private Dialog ShortCutDialog;
 	AlarmManager alarmManager;
 	private LayoutInflater mInflater;
 	private boolean mIsFromLocalScan = false;
+	private SharedPreferences allowPushPreferences;
 	private int mLastCurrentTab;
 	private Intent newIntent;
 	private boolean mTurnMiGu = false;
 	private boolean mStartFromNotification = false;
+	private ClosePushReceiver cpReceiver;
+	private Handler handler;
+	private Dialog mCurrentDialog = null;
 	private TabHost.OnTabChangeListener mOnTabChangeListener = new TabHost.OnTabChangeListener()
 	{
-		public void onTabChanged(String paramAnonymousString)
+		public void onTabChanged(String s)
 		{
 			MobileMusicMainActivity.logger.v("onTabChanged() ---> Enter");
 			requestRoot = true;
-			if (paramAnonymousString.equalsIgnoreCase("TAB_MIGU"))
+			if (s.equalsIgnoreCase("TAB_MIGU"))
 			{
-				MobileMusicMainActivity.logger.v("onTabChanged() ---> Exit");
-				mLastCurrentTab = mTabHost.getCurrentTab();
-				Intent localIntent2 = getIntent();
-				localIntent2.putExtra("TABINDEX", mTabHost.getCurrentTab());
-				setIntent(localIntent2);
-			} else if ((paramAnonymousString.equalsIgnoreCase("TAB_LOCAL")))
+				if (OnlineMusicActivity.mListButtonClickListener != null)
+					OnlineMusicActivity.mListButtonClickListener
+							.closePopupWindow();
+				if (GlobalSettingParameter.useraccount == null)
+				{
+					mTurnMiGu = true;
+					Uiutil.login(MobileMusicMainActivity.this, 0);
+					mTabHost.setCurrentTab(mLastCurrentTab);
+				} else
+				{
+					mLastCurrentTab = mTabHost.getCurrentTab();
+					Intent intent1 = getIntent();
+					intent1.putExtra("TABINDEX", mTabHost.getCurrentTab());
+					setIntent(intent1);
+				}
+			} else
 			{
-				mLastCurrentTab = mTabHost.getCurrentTab();
-				Intent localIntent1 = getIntent();
-				localIntent1.putExtra("TABINDEX", mTabHost.getCurrentTab());
-				setIntent(localIntent1);
+				if (s.equalsIgnoreCase("TAB_LOCAL")
+						&& OnlineMusicActivity.mListButtonClickListener != null)
+				{
+					OnlineMusicActivity.mListButtonClickListener
+							.closePopupWindow();
+					mLastCurrentTab = mTabHost.getCurrentTab();
+					Intent intent = getIntent();
+					intent.putExtra("TABINDEX", mTabHost.getCurrentTab());
+					setIntent(intent);
+				}
 			}
+			MobileMusicMainActivity.logger.v("onTabChanged() ---> Exit");
 
 		}
 	};
@@ -114,6 +153,13 @@ public class MobileMusicMainActivity extends TabActivity
 	private static int getSystemVersion()
 	{
 		return Build.VERSION.SDK_INT;
+	}
+
+	public void handleSystemEvent(Message paramMessage)
+	{
+		// int i = Util.setRingTone(this, ((Long)
+		// paramMessage.obj).longValue());
+		// this.handler.sendEmptyMessage(i);
 	}
 
 	private void initTab()
@@ -178,6 +224,47 @@ public class MobileMusicMainActivity extends TabActivity
 								R.drawable.tab_my_migu_selector_special_member));
 				break;
 			}
+	}
+
+	// 退出应用提示
+	private void exitApplication()
+	{
+		logger.v("exitApplication() ---> Enter");
+		this.mCurrentDialog = DialogUtil.show2BtnDialogWithIconTitleMsg(this,
+				getText(R.string.quit_app_dialog_title),
+				getText(R.string.quit_app_dialog_message),
+				new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
+						if (MobileMusicMainActivity.this.mCurrentDialog != null)
+						{
+							MobileMusicMainActivity.this.mCurrentDialog
+									.dismiss();
+							MobileMusicMainActivity.this.mCurrentDialog = null;
+						}
+						Intent localIntent = new Intent();
+						localIntent
+								.setAction("cmccwm.mobilemusic.ui.util.NotificationService");
+						localIntent.putExtra("commendsign",
+								MobileMusicMainActivity.this.CMD_STOP_SERVICE);
+						MobileMusicMainActivity.this.sendBroadcast(localIntent);
+						Util.exitMobileMusicApp(false);
+					}
+				}, new View.OnClickListener()
+				{
+					public void onClick(View paramAnonymousView)
+					{
+						if (MobileMusicMainActivity.this.mCurrentDialog != null)
+						{
+							MobileMusicMainActivity.this.mCurrentDialog
+									.dismiss();
+							MobileMusicMainActivity.this.mCurrentDialog = null;
+						}
+					}
+				});
+		this.mCurrentDialog.setCancelable(false);
+		logger.v("exitApplication() ---> Exit");
 	}
 
 	private void shortcutDialogDismiss()
@@ -269,9 +356,30 @@ public class MobileMusicMainActivity extends TabActivity
 		setContentView(R.layout.main_activity_layout);
 
 		this.mPlayerStatusBar = ((PlayerStatusBar) findViewById(R.id.mainplayerStatusBar));
+
+		// 处理来电铃声消息
+		this.handler = new Handler()
+		{
+			public void handleMessage(Message paramAnonymousMessage)
+			{
+				switch (paramAnonymousMessage.what)
+				{
+				default:
+					Toast.makeText(MobileMusicApplication.getInstance(),
+							R.string.set_vibrate_failed, 1).show();
+				case 0:
+					Toast.makeText(MobileMusicApplication.getInstance(),
+							R.string.set_vibrate_successed, 1).show();
+				case -1:
+					Toast.makeText(MobileMusicApplication.getInstance(),
+							R.string.set_vibrate_failed_in_some_mode, 1).show();
+				}
+				super.handleMessage(paramAnonymousMessage);
+			}
+		};
+
 		// 初始化主界面的各个TAG页
 		initTab();
-
 		this.newIntent = getIntent();
 		Bundle localBundle = this.newIntent.getExtras();
 		if (localBundle != null)
@@ -281,9 +389,58 @@ public class MobileMusicMainActivity extends TabActivity
 					"startFromNotification", false);
 		}
 
-		showDilaogForShortCutInLaunch();
+		// 如果网络连接上了，而且没有通知启动标志，就开始轮询
+		if ((NetUtil.isConnection()) && (!this.mStartFromNotification))
+			startPollService();
+		this.cpReceiver = new ClosePushReceiver();
 
+		// 启动通知服务
+		IntentFilter localIntentFilter = new IntentFilter();
+		localIntentFilter
+				.addAction("cmccwm.mobilemusic.ui.util.NotificationService");
+		registerReceiver(this.cpReceiver, localIntentFilter);
+
+		showDilaogForShortCutInLaunch();
 		logger.v("onCreate() ---> Exit");
+	}
+
+	public boolean dispatchKeyEvent(KeyEvent keyevent)
+	{
+		boolean flag = true;
+		if (keyevent.getKeyCode() == KeyEvent.KEYCODE_BACK)
+		{
+			if (keyevent.getAction() == KeyEvent.ACTION_DOWN
+					&& (OnlineMusicActivity.mListButtonClickListener == null || !OnlineMusicActivity.mListButtonClickListener
+							.closePopupWindow()))
+			{
+				List list = ((ActivityManager) getSystemService("activity"))
+						.getRunningTasks(2);
+				if (list.size() > 1)
+				{
+					android.app.ActivityManager.RunningTaskInfo runningtaskinfo = (android.app.ActivityManager.RunningTaskInfo) list
+							.get(1);
+					Intent intent1 = new Intent();
+					intent1.setComponent(runningtaskinfo.topActivity);
+					startActivity(intent1);
+				} else
+				{
+					Intent intent = new Intent("android.intent.action.MAIN");
+					intent.setFlags(0x10000000);
+					intent.addCategory("android.intent.category.HOME");
+					startActivity(intent);
+				}
+			}
+		} else
+		{
+			if (requestRoot)
+			{
+				mTabHost.getTabWidget().getChildAt(mTabHost.getCurrentTab())
+						.getRootView().requestFocus();
+				requestRoot = false;
+			}
+			flag = super.dispatchKeyEvent(keyevent);
+		}
+		return flag;
 	}
 
 	@Override
@@ -307,6 +464,12 @@ public class MobileMusicMainActivity extends TabActivity
 	{
 		logger.v("onNewIntent() ---> Enter");
 		Bundle localBundle = paramIntent.getExtras();
+		this.mTurnMiGu = localBundle.getBoolean("hasLogin", false);
+		if ((this.mTurnMiGu) && (GlobalSettingParameter.useraccount != null))
+		{
+			this.mTabHost.setCurrentTab(2);
+			this.mTurnMiGu = false;
+		}
 		this.mIsFromLocalScan = localBundle
 				.getBoolean("isFromLocalScan", false);
 		if (this.mIsFromLocalScan)
@@ -323,11 +486,11 @@ public class MobileMusicMainActivity extends TabActivity
 	{
 		logger.v("onResume() ---> Enter");
 		this.requestRoot = true;
-		// if ((this.mTurnMiGu) && (GlobalSettingParameter.useraccount != null))
-		// {
-		// this.mTabHost.setCurrentTab(2);
-		// this.mTurnMiGu = false;
-		// }
+		if ((this.mTurnMiGu) && (GlobalSettingParameter.useraccount != null))
+		{
+			this.mTabHost.setCurrentTab(2);
+			this.mTurnMiGu = false;
+		}
 		this.mPlayerStatusBar.registEventListener();
 		if (this.newIntent != null)
 		{
@@ -345,5 +508,38 @@ public class MobileMusicMainActivity extends TabActivity
 	{
 		this.mPlayerStatusBar.unRegistEventListener();
 		super.onPause();
+	}
+
+	private class ClosePushReceiver extends BroadcastReceiver
+	{
+		private ClosePushReceiver()
+		{}
+
+		public void onReceive(Context paramContext, Intent paramIntent)
+		{
+			int i = paramIntent.getIntExtra("isCancelAlarm", 0);
+			if (i == CMD_START_ALARMMANAGER)
+				if (NetUtil.isConnection())
+					startPollService();
+			if ((i == CMD_CANCEL_ALARMMANAGER) && (pIntent != null))
+			{
+				alarmManager.cancel(pIntent);
+				pIntent = null;
+			}
+		}
+	}
+
+	private void startPollService()
+	{
+		this.allowPushPreferences = getSharedPreferences("allowpush", 0);
+		if (this.allowPushPreferences.getBoolean("isallowpush", true))
+		{
+			long l = System.currentTimeMillis();
+			this.pIntent = PendingIntent.getService(this, 0, new Intent(this,
+					NotificationService.class), 268435456);
+			this.alarmManager.setRepeating(0, l, 1800000L, this.pIntent);
+			this.allowPushPreferences.edit().putBoolean("isallowpush", true)
+					.commit();
+		}
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ming.dispatcher.Dispatcher;
+import org.ming.ui.util.ImageCache;
 import org.ming.util.MyLogger;
 import org.ming.util.Util;
 
@@ -27,6 +28,7 @@ public class MobileMusicApplication extends Application
 	private Dispatcher mDispatcher;
 	private boolean mIsInitService;
 	private int mLastMemberShip;
+	private static ImageCache mImageCache;
 
 	public MobileMusicApplication()
 	{
@@ -78,6 +80,13 @@ public class MobileMusicApplication extends Application
 		else
 			sTransId = 0;
 		return sTransId;
+	}
+
+	public static ImageCache getImageCache()
+	{
+		if (mImageCache == null)
+			mImageCache = new ImageCache();
+		return mImageCache;
 	}
 
 	public static boolean isRated(Integer integer)

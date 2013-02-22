@@ -733,6 +733,7 @@ public class MMHttpRequestBuilder
 	public static MMHttpRequest buildRequest(int i)
 	{
 		logger.v("buildRequest() ---> Enter");
+		logger.v("i ----> " + i);
 		MMHttpRequest mmhttprequest = new MMHttpRequest();
 		mmhttprequest.setReqType(i);
 		mmhttprequest.addUrlParams("version",
@@ -771,6 +772,7 @@ public class MMHttpRequestBuilder
 		{
 			mmhttprequest1 = buildHttpsRequest(mmhttprequest, i);
 		}
+		logger.v("buildRequest() ---> Exit");
 		return mmhttprequest1;
 	}
 }
