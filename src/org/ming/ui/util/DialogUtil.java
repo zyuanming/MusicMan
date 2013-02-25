@@ -1,6 +1,8 @@
 package org.ming.ui.util;
 
 import org.ming.R;
+import org.ming.center.MobileMusicApplication;
+import org.ming.center.database.DBController;
 import org.ming.util.MyLogger;
 
 import android.app.Activity;
@@ -95,11 +97,12 @@ public class DialogUtil
 			View.OnClickListener paramOnClickListener)
 	{
 		logger.v("show1BtnProgressDialog() ---> Enter");
-		Dialog localDialog = new Dialog(paramContext, 2131296261);
-		View localView = LayoutInflater.from(paramContext).inflate(2130903101,
-				null);
-		Button localButton = (Button) localView.findViewById(2131034349);
-		TextView localTextView = (TextView) localView.findViewById(16908308);
+		Dialog localDialog = new Dialog(paramContext, R.style.CustomDialogTheme);
+		View localView = LayoutInflater.from(paramContext).inflate(
+				R.layout.dialog_progress_text_one_button, null);
+		Button localButton = (Button) localView.findViewById(R.id.button);
+		TextView localTextView = (TextView) localView
+				.findViewById(android.R.id.text1); // 1020014
 		localButton.setText(paramInt2);
 		localButton.setOnClickListener(paramOnClickListener);
 		localTextView.setText(paramInt1);
@@ -110,41 +113,51 @@ public class DialogUtil
 	}
 
 	public static Dialog show2BtnDialogWithCheckBoxIconTitleMsg(
-			Context paramContext, CharSequence paramCharSequence1,
-			CharSequence paramCharSequence2,
-			View.OnClickListener paramOnClickListener1,
-			View.OnClickListener paramOnClickListener2)
+			Context context, CharSequence charsequence,
+			CharSequence charsequence1,
+			android.view.View.OnClickListener onclicklistener,
+			android.view.View.OnClickListener onclicklistener1)
 	{
 		logger.v("show2BtnDialogWithIconTitleMsg() ---> Enter");
-		Dialog localDialog = new Dialog(paramContext, 2131296261);
-		View localView = LayoutInflater.from(paramContext).inflate(2130903103,
-				null);
-		TextView localTextView1 = (TextView) localView.findViewById(2131034354);
-		TextView localTextView2 = (TextView) localView.findViewById(2131034194);
-		Button localButton1 = (Button) localView.findViewById(2131034340);
-		Button localButton2 = (Button) localView.findViewById(2131034338);
-		CheckBox localCheckBox = (CheckBox) localView.findViewById(2131034355);
-		localCheckBox.setOnClickListener(new View.OnClickListener()
+		Dialog dialog = new Dialog(context, R.style.CustomDialogTheme);
+		View view = LayoutInflater.from(context).inflate(
+				R.layout.dialog_tile_text_two_button_checkbox, null);
+		TextView textview = (TextView) view.findViewById(R.id.nw_title);
+		TextView textview1 = (TextView) view.findViewById(R.id.msg);
+		Button button = (Button) view.findViewById(R.id.button1);
+		Button button1 = (Button) view.findViewById(R.id.button2);
+		final CheckBox checkbox = (CheckBox) view.findViewById(R.id.not_warn);
+		checkbox.setOnClickListener(new View.OnClickListener()
 		{
-			public void onClick(View paramAnonymousView)
-			{
 
+			public void onClick(View view1)
+			{
+				DBController dbcontroller = MobileMusicApplication
+						.getInstance().getController().getDBController();
+				boolean flag;
+				if (checkbox.isChecked())
+					flag = false;
+				else
+					flag = true;
+				dbcontroller.setCheckOlderVersion(flag);
 			}
+
 		});
-		if (paramCharSequence1 != null)
-		{
-			localTextView1.setText(paramCharSequence1);
-			if (paramCharSequence2 == null)
-				localTextView2.setText(paramCharSequence2);
-		}
-		localButton1.setOnClickListener(paramOnClickListener1);
-		localButton2.setOnClickListener(paramOnClickListener2);
-		localDialog.setContentView(localView);
-		localDialog.setCancelable(true);
-		localDialog.show();
+		if (charsequence != null)
+			textview.setText(charsequence);
+		else
+			textview.setVisibility(8);
+		if (charsequence1 != null)
+			textview1.setText(charsequence1);
+		else
+			textview.setVisibility(8);
+		button.setOnClickListener(onclicklistener);
+		button1.setOnClickListener(onclicklistener1);
+		dialog.setContentView(view);
+		dialog.setCancelable(true);
+		dialog.show();
 		logger.v("show2BtnDialogWithIconTitleMsg() ---> Exit");
-		localTextView1.setVisibility(8);
-		return localDialog;
+		return dialog;
 	}
 
 	public static Dialog show2BtnDialogWithIconTitleMsg(Context paramContext,
@@ -287,7 +300,8 @@ public class DialogUtil
 		View localView = ((LayoutInflater) paramContext
 				.getSystemService("layout_inflater")).inflate(
 				R.layout.dialog_progress_circular, null);
-		TextView localTextView = (TextView) localView.findViewById(android.R.id.text1);   //1020014
+		TextView localTextView = (TextView) localView
+				.findViewById(android.R.id.text1); // 1020014
 		if (paramInt != 0)
 			localTextView.setText(paramInt);
 		localDialog.setContentView(localView);

@@ -3,6 +3,8 @@ package org.ming.center.database;
 import java.util.List;
 import java.util.Set;
 
+import org.ming.center.download.DownloadItem;
+
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -27,6 +29,8 @@ public abstract interface DBController
 	public abstract List<Song> getAllSongs(String[] paramArrayOfString);
 
 	public long addOnlineMusicItem(Song song);
+
+	public abstract int updateDBDownloadItem(DownloadItem paramDownloadItem);
 
 	public abstract void closeDB();
 
@@ -225,5 +229,7 @@ public abstract interface DBController
 			String paramString2, String paramString3);
 
 	public abstract int updateContentId(String paramString1, String paramString2);
+
+	public abstract Song getSongByPath(String paramString);
 
 }

@@ -27,24 +27,21 @@ public class Uiutil
 	public static Dialog mLoadDataDialog;
 	public static Dialog mWlanCloseDialog;
 
-	public static void downloadMusic(Context paramContext, String paramString1,
-			String paramString2)
+	public static void downloadMusic(Context context, String s, String s1)
 	{
-		// logger.v("downloadMusic() ---> Enter");
-		// Intent localIntent = new Intent(paramContext,
+		logger.v("downloadMusic() ---> Enter");
+		// Intent intent = new Intent(context,
 		// MusicOnlineSetRingToneActivity.class);
-		// localIntent
-		// .putExtra(
+		// intent.putExtra(
 		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-		// paramString1);
-		// localIntent
-		// .putExtra(
+		// s);
+		// intent.putExtra(
 		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-		// paramString2);
-		// localIntent.putExtra(
+		// s1);
+		// intent.putExtra(
 		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 3);
-		// paramContext.startActivity(localIntent);
-		// logger.v("downloadMusic() ---> Exit");
+		// context.startActivity(intent);
+		logger.v("downloadMusic() ---> Exit");
 	}
 
 	public static void ifSwitchToWapDialog(Context paramContext)

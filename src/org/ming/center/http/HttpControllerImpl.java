@@ -13,7 +13,7 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 	private static final int ENABLE_CMWAP_TIMEOUT = 10000;
 	private static MyLogger logger = MyLogger.getLogger("HttpControllerImpl");
 	private static HttpControllerImpl sInstance = null;
-	private MobileMusicApplication mApp;
+	private MobileMusicApplication mApp = null;
 	private ConnectivityManager mConnMgr = null;
 	private Dispatcher mDispatcher = null;
 

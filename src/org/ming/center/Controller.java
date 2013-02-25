@@ -91,34 +91,41 @@ public class Controller implements DispatcherEventListener
 
 	private void handleDLEvent(Message paramMessage)
 	{
-		// logger.v("handleDLEvent() ---> Enter");
-		// List<DLEventListener> localList = (List<DLEventListener>)
-		// this.mDLEventListeners
-		// .get(Integer.valueOf(paramMessage.what));
-		//
-		// for (Iterator<DLEventListener> localIterator = localList.iterator();
-		// localIterator
-		// .hasNext();)
-		// {
-		// ((DLEventListener) localIterator.next())
-		// .handleDLEvent(paramMessage);
-		// }
+		logger.v("handleDLEvent() ---> Enter");
+		List<DLEventListener> localList = (List<DLEventListener>) this.mDLEventListeners
+				.get(Integer.valueOf(paramMessage.what));
+		if (localList == null)
+		{
+			logger.v("handlePlayerEvent() ---> Exit");
+			return;
+		} else
+		{
+			for (Iterator<DLEventListener> localIterator = localList.iterator(); localIterator
+					.hasNext();)
+			{
+				((DLEventListener) localIterator.next())
+						.handleDLEvent(paramMessage);
+			}
+		}
 	}
 
 	private void handleHttpEvent(Message paramMessage)
 	{
-		// logger.v("handleHttpEvent() ---> Enter");
-		// List<MMHttpEventListener> localList = (List<MMHttpEventListener>)
-		// this.mHttpEventListeners
-		// .get(Integer.valueOf(paramMessage.what));
-		//
-		// for (Iterator<MMHttpEventListener> localIterator =
-		// localList.iterator(); localIterator
-		// .hasNext();)
-		// {
-		// ((MMHttpEventListener) localIterator.next())
-		// .handleMMHttpEvent(paramMessage);
-		// }
+		logger.v("handleHttpEvent() ---> Enter");
+		List<MMHttpEventListener> localList = (List<MMHttpEventListener>) this.mHttpEventListeners
+				.get(Integer.valueOf(paramMessage.what));
+		if (localList == null)
+		{
+			logger.v("handlePlayerEvent() ---> Exit");
+		} else
+		{
+			for (Iterator<MMHttpEventListener> localIterator = localList
+					.iterator(); localIterator.hasNext();)
+			{
+				((MMHttpEventListener) localIterator.next())
+						.handleMMHttpEvent(paramMessage);
+			}
+		}
 	}
 
 	private void handlePlayerEvent(Message message)
@@ -129,7 +136,6 @@ public class Controller implements DispatcherEventListener
 		if (list == null)
 		{
 			logger.v("handlePlayerEvent() ---> Exit");
-			return;
 		} else
 		{
 			for (Iterator iterator = list.iterator(); iterator.hasNext();)
@@ -142,17 +148,21 @@ public class Controller implements DispatcherEventListener
 
 	private void handleSystemEvent(Message paramMessage)
 	{
-		// logger.v("handleSystemEvent() ---> Enter");
-		// List<SystemEventListener> localList = (List<SystemEventListener>)
-		// this.mSystemEventListeners
-		// .get(Integer.valueOf(paramMessage.what));
-		// for (Iterator<SystemEventListener> localIterator =
-		// localList.iterator(); localIterator
-		// .hasNext();)
-		// {
-		// ((SystemEventListener) localIterator.next())
-		// .handleSystemEvent(paramMessage);
-		// }
+		logger.v("handleSystemEvent() ---> Enter");
+		List<SystemEventListener> localList = (List<SystemEventListener>) this.mSystemEventListeners
+				.get(Integer.valueOf(paramMessage.what));
+		if (localList == null)
+		{
+			logger.v("handlePlayerEvent() ---> Exit");
+		} else
+		{
+			for (Iterator<SystemEventListener> localIterator = localList
+					.iterator(); localIterator.hasNext();)
+			{
+				((SystemEventListener) localIterator.next())
+						.handleSystemEvent(paramMessage);
+			}
+		}
 	}
 
 	private void handleUIEvent(Message paramMessage)
@@ -160,11 +170,17 @@ public class Controller implements DispatcherEventListener
 		logger.v("handleUIEvent() ---> Enter");
 		List<UIEventListener> localList = (List<UIEventListener>) this.mUIEventListeners
 				.get(Integer.valueOf(paramMessage.what));
-		for (Iterator<UIEventListener> localIterator = localList.iterator(); localIterator
-				.hasNext();)
+		if (localList == null)
 		{
-			((UIEventListener) localIterator.next())
-					.handleUIEvent(paramMessage);
+			logger.v("handlePlayerEvent() ---> Exit");
+		} else
+		{
+			for (Iterator<UIEventListener> localIterator = localList.iterator(); localIterator
+					.hasNext();)
+			{
+				((UIEventListener) localIterator.next())
+						.handleUIEvent(paramMessage);
+			}
 		}
 	}
 

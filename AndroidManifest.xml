@@ -91,6 +91,25 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.online.MusicOnlineMusicAlbumDetailActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.online.MusicOnlineInformationDetailActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.online.MusicOnlineRecommendInfoDetailActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.online.MusicOnlineMusicColumnDetailActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.mymigu.MyMiGuActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />

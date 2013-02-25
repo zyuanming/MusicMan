@@ -1,7 +1,3 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-
 package org.ming.center.http;
 
 import org.ming.center.cachedata.CacheDataManager;
@@ -118,20 +114,31 @@ public class MMHttpTask implements Runnable
 		if (mListener != null)
 			mListener.taskStarted(this);
 		int i = 3;
-		for (int j = -1; j != -1 || i <= 0 || mIsTimeOut;)
+		int j;
+		do
 		{
-			if (j == -1)
-				if (mIsTimeOut)
-					mListener.taskTimeOut(this);
-				else
-					mListener.taskFailed(this);
-			if (mListener != null)
-				mListener.taskEnd(this);
+			for (j = -1; j != -1 || i <= 0 || mIsTimeOut;)
+			{
+				if (j == -1)
+					if (mIsTimeOut)
+						mListener.taskTimeOut(this);
+					else
+						mListener.taskFailed(this);
+				if (mListener != null)
+					mListener.taskEnd(this);
+				logger.v("run() ---> Exit");
+				return;
+			}
 			j = doTask();
+			try
+			{
+				Thread.sleep(6000L);
+			} catch (InterruptedException interruptedexception)
+			{
+				interruptedexception.printStackTrace();
+			}
 			i--;
-			logger.v("run() ---> Exit");
-		}
-
+		} while (true);
 	}
 
 	public void setCacheAble(boolean flag)

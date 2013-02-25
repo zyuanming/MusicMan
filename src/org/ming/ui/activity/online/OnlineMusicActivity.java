@@ -71,7 +71,7 @@ public class OnlineMusicActivity extends Activity implements
 		PlayerEventListener
 {
 	private static final MyLogger logger = MyLogger
-			.getLogger("MusicOnlineMusicTempActivity");
+			.getLogger("OnlineMusicActivity");
 	public static ListButtonClickListener mListButtonClickListener;
 	private boolean LOAD_MORE = true;
 	AdView adView;
@@ -761,7 +761,7 @@ public class OnlineMusicActivity extends Activity implements
 					"category", "0", "item", TabItem.class);
 			if (this.tabInfoList == null)
 			{
-				this.mCurrentDialog = DialogUtil.show1BtnDialogWithTitleMsg(
+				mCurrentDialog = DialogUtil.show1BtnDialogWithTitleMsg(
 						getParent(),
 						getText(R.string.fail_to_parse_xml_common),
 						getText(R.string.server_data_empty_common),
@@ -773,6 +773,32 @@ public class OnlineMusicActivity extends Activity implements
 							}
 						});
 			}
+
+			String s = null;
+			int k = tabInfoList.size();
+			for (int j = 0; j < k; j++)
+			{
+				if (((TabItem) tabInfoList.get(j)).category_type.equals("0"))
+					s = ((TabItem) tabInfoList.get(j)).url;
+				createBtListView();
+				if (s == null)
+				{
+					mCurrentDialog = DialogUtil.show1BtnDialogWithTitleMsg(
+							getParent(),
+							getText(R.string.title_information_common),
+							getText(R.string.fail_to_parse_xml_common),
+							new View.OnClickListener()
+							{
+								public void onClick(View view)
+								{
+									mCurrentDialog.dismiss();
+								}
+							});
+				}
+			}
+			refreshADContentUI(xmlparser);
+			requestRecommendContentListData(s);
+			mIsInital = true;
 		}
 			break;
 		case 1006:
@@ -921,21 +947,21 @@ public class OnlineMusicActivity extends Activity implements
 					});
 		} else
 		{
-
-		}
-		this.adView.setTotalPage(this.mADContentList.size());
-		if ((this.mADContentList != null) && (this.mADContentList.size() > 0))
-		{
-			for (int i = 0; i > mADContentList.size(); i++)
+			adView.setTotalPage(this.mADContentList.size());
+			if ((this.mADContentList != null)
+					&& (this.mADContentList.size() > 0))
 			{
-				this.adView.addBmpByKey(
-						((AdListItem) this.mADContentList.get(i)).img,
-						((AdListItem) this.mADContentList.get(i)).groupcode);
+				for (int i = 0; i < mADContentList.size(); i++)
+				{
+					adView.addBmpByKey(
+							((AdListItem) this.mADContentList.get(i)).img,
+							((AdListItem) this.mADContentList.get(i)).groupcode);
+				}
+			} else
+			{
+				adView.checkImage();
+				adView.resume();
 			}
-		} else
-		{
-			this.adView.checkImage();
-			this.adView.resume();
 		}
 	}
 
@@ -1613,7 +1639,6 @@ public class OnlineMusicActivity extends Activity implements
 						.getTransId()))
 		{
 			logger.v("Thus http message is not for this activity");
-			return;
 		} else
 		{
 			if ((this.mRetryLayout != null)

@@ -6,6 +6,7 @@ import org.ming.R;
 import org.ming.center.GlobalSettingParameter;
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.system.SystemEventListener;
+import org.ming.center.ui.AsyncToastDialogController;
 import org.ming.ui.activity.local.LocalMusicActivity;
 import org.ming.ui.activity.mymigu.MyMiGuActivity;
 import org.ming.ui.activity.online.OnlineMusicActivity;
@@ -49,66 +50,79 @@ public class MobileMusicMainActivity extends TabActivity implements
 {
 	private static final MyLogger logger = MyLogger
 			.getLogger("MobileMusicMainActivity");
-	private int CMD_CANCEL_ALARMMANAGER = 1;
-	private int CMD_START_ALARMMANAGER = 3;
-	private int CMD_STOP_SERVICE = 2;
+	private int CMD_CANCEL_ALARMMANAGER;
+	private int CMD_START_ALARMMANAGER;
+	private int CMD_STOP_SERVICE;
 	private Dialog ShortCutDialog;
 	AlarmManager alarmManager;
-	private LayoutInflater mInflater;
-	private boolean mIsFromLocalScan = false;
 	private SharedPreferences allowPushPreferences;
-	private int mLastCurrentTab;
-	private Intent newIntent;
-	private boolean mTurnMiGu = false;
-	private boolean mStartFromNotification = false;
 	private ClosePushReceiver cpReceiver;
 	private Handler handler;
-	private Dialog mCurrentDialog = null;
-	private TabHost.OnTabChangeListener mOnTabChangeListener = new TabHost.OnTabChangeListener()
+	private Dialog mCurrentDialog;
+	private LayoutInflater mInflater;
+	private boolean mIsFromLocalScan;
+	private int mLastCurrentTab;
+	private PlayerStatusBar mPlayerStatusBar;
+	private boolean mStartFromNotification;
+	private TabHost mTabHost;
+	private boolean mTurnMiGu;
+	private Intent newIntent;
+	PendingIntent pIntent;
+	boolean requestRoot;
+	private SharedPreferences shortCutSharedPreferences;
+	private TabHost.OnTabChangeListener mOnTabChangeListener;
+
+	public MobileMusicMainActivity()
 	{
-		public void onTabChanged(String s)
+		mTurnMiGu = false;
+		mIsFromLocalScan = false;
+		mStartFromNotification = false;
+		mPlayerStatusBar = null;
+		requestRoot = true;
+		mCurrentDialog = null;
+		CMD_CANCEL_ALARMMANAGER = 1;
+		CMD_STOP_SERVICE = 2;
+		CMD_START_ALARMMANAGER = 3;
+		pIntent = null;
+		mOnTabChangeListener = new TabHost.OnTabChangeListener()
 		{
-			MobileMusicMainActivity.logger.v("onTabChanged() ---> Enter");
-			requestRoot = true;
-			if (s.equalsIgnoreCase("TAB_MIGU"))
+
+			public void onTabChanged(String s)
 			{
-				if (OnlineMusicActivity.mListButtonClickListener != null)
-					OnlineMusicActivity.mListButtonClickListener
-							.closePopupWindow();
-				if (GlobalSettingParameter.useraccount == null)
+				logger.v("onTabChanged() ---> Enter");
+				requestRoot = true;
+				if (s.equalsIgnoreCase("TAB_MIGU"))
 				{
-					mTurnMiGu = true;
-					Uiutil.login(MobileMusicMainActivity.this, 0);
-					mTabHost.setCurrentTab(mLastCurrentTab);
+					if (OnlineMusicActivity.mListButtonClickListener != null)
+						OnlineMusicActivity.mListButtonClickListener
+								.closePopupWindow();
+					if (GlobalSettingParameter.useraccount == null)
+					{
+						mTurnMiGu = true;
+						Uiutil.login(MobileMusicMainActivity.this, 0);
+						mTabHost.setCurrentTab(mLastCurrentTab);
+					} else
+					{
+						mLastCurrentTab = mTabHost.getCurrentTab();
+						Intent intent1 = getIntent();
+						intent1.putExtra("TABINDEX", mTabHost.getCurrentTab());
+						setIntent(intent1);
+					}
 				} else
 				{
-					mLastCurrentTab = mTabHost.getCurrentTab();
-					Intent intent1 = getIntent();
-					intent1.putExtra("TABINDEX", mTabHost.getCurrentTab());
-					setIntent(intent1);
-				}
-			} else
-			{
-				if (s.equalsIgnoreCase("TAB_LOCAL")
-						&& OnlineMusicActivity.mListButtonClickListener != null)
-				{
-					OnlineMusicActivity.mListButtonClickListener
-							.closePopupWindow();
+					if (s.equalsIgnoreCase("TAB_LOCAL")
+							&& OnlineMusicActivity.mListButtonClickListener != null)
+						OnlineMusicActivity.mListButtonClickListener
+								.closePopupWindow();
 					mLastCurrentTab = mTabHost.getCurrentTab();
 					Intent intent = getIntent();
 					intent.putExtra("TABINDEX", mTabHost.getCurrentTab());
 					setIntent(intent);
 				}
+				logger.v("onTabChanged() ---> Exit");
 			}
-			MobileMusicMainActivity.logger.v("onTabChanged() ---> Exit");
-
-		}
-	};
-	private TabHost mTabHost;
-	PendingIntent pIntent = null;
-	boolean requestRoot = true;
-	private SharedPreferences shortCutSharedPreferences;
-	private PlayerStatusBar mPlayerStatusBar = null;
+		};
+	}
 
 	private void addShortcut()
 	{
@@ -389,6 +403,8 @@ public class MobileMusicMainActivity extends TabActivity implements
 					"startFromNotification", false);
 		}
 
+		alarmManager = (AlarmManager) getSystemService("alarm");
+
 		// 如果网络连接上了，而且没有通知启动标志，就开始轮询
 		if ((NetUtil.isConnection()) && (!this.mStartFromNotification))
 			startPollService();
@@ -400,6 +416,15 @@ public class MobileMusicMainActivity extends TabActivity implements
 				.addAction("cmccwm.mobilemusic.ui.util.NotificationService");
 		registerReceiver(this.cpReceiver, localIntentFilter);
 
+		if (GlobalSettingParameter.IsMonthCheck
+				&& getSharedPreferences(
+						"cmccwm.mobilemusic.MusicOnlineMusicActivity", 0)
+						.getString("currentVersion", "0").compareTo(
+								GlobalSettingParameter.LOCAL_PARAM_VERSION) < 0)
+		{
+			AsyncToastDialogController.writeUpdateTime(this,
+					System.currentTimeMillis());
+		}
 		showDilaogForShortCutInLaunch();
 		logger.v("onCreate() ---> Exit");
 	}
@@ -506,8 +531,8 @@ public class MobileMusicMainActivity extends TabActivity implements
 
 	protected void onPause()
 	{
-		this.mPlayerStatusBar.unRegistEventListener();
 		super.onPause();
+		this.mPlayerStatusBar.unRegistEventListener();
 	}
 
 	private class ClosePushReceiver extends BroadcastReceiver
@@ -536,7 +561,7 @@ public class MobileMusicMainActivity extends TabActivity implements
 		{
 			long l = System.currentTimeMillis();
 			this.pIntent = PendingIntent.getService(this, 0, new Intent(this,
-					NotificationService.class), 268435456);
+					NotificationService.class), 10000000);
 			this.alarmManager.setRepeating(0, l, 1800000L, this.pIntent);
 			this.allowPushPreferences.edit().putBoolean("isallowpush", true)
 					.commit();

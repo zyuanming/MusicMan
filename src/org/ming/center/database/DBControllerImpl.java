@@ -11,6 +11,7 @@ import java.util.Set;
 import org.ming.center.ConfigSettingParameter;
 import org.ming.center.GlobalSettingParameter;
 import org.ming.center.MobileMusicApplication;
+import org.ming.center.download.DownloadItem;
 import org.ming.util.MyLogger;
 
 import android.content.ContentResolver;
@@ -166,8 +167,7 @@ public class DBControllerImpl implements DBController
 					.execSQL("create table ratelist( _id integer primary key autoincrement, user_id integer not null, contentid integer not null, point integer not null)");
 			sqlitedatabase
 					.execSQL("create table radiogarbagelist( _id integer primary key autoincrement, user_id integer not null, contentid integer not null, groupconde integer not null)");
-			sqlitedatabase
-					.execSQL("create table T_APPINFO( CHANNELID text not null,SUBCHANNELID text not null)");
+			sqlitedatabase.execSQL(CREATE_APPINFO);
 			mDb = sqlitedatabase;
 			writeChannelId(ConfigSettingParameter.CONSTANT_CHANNEL_VALUE,
 					ConfigSettingParameter.CONSTANT_SUBCHANNEL_VALUE);
@@ -275,18 +275,61 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public long addCacheData(String paramString1, String paramString2,
-			String paramString3, String paramString4)
+	public long addCacheData(String s, String s1, String s2, String s3)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (s == null)
+			throw new NullPointerException("null downloadItem");
+		String s4 = s.replaceAll("'", "'");
+		long l;
+		if (isCacheDataExist(s4))
+		{
+			l = updateCacheData(s4, s2, s3);
+		} else
+		{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(CACHEDATA_COLUMNS[0], s4);
+			if (s1 == null || "".equals(s1.trim()))
+				s1 = "-1";
+			contentvalues.put(CACHEDATA_COLUMNS[1], s1);
+			if (s2 != null)
+				contentvalues.put(CACHEDATA_COLUMNS[2], s2);
+			contentvalues.put(CACHEDATA_COLUMNS[3], s3);
+			l = mDb.insert("T_CACHEDATA", null, contentvalues);
+		}
+		return l;
 	}
 
 	@Override
-	public long addContentId(String paramString1, String paramString2)
+	public long addContentId(String s, String s1)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		if (s == null)
+			throw new NullPointerException("null downloadItem");
+		String s2 = s.replaceAll("'", "''");
+		long l;
+		if (isContentIdExist(s2))
+		{
+			l = updateContentId(s2, s1);
+		} else
+		{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(CONTENTID_COLUMNS[1], s2);
+			contentvalues.put(CONTENTID_COLUMNS[2], s1);
+			l = mDb.insert("cotentidmap", null, contentvalues);
+		}
+		return l;
+	}
+
+	private boolean isContentIdExist(String s)
+	{
+		boolean flag = true;
+		String s1 = s.replaceAll("'", "''");
+		Cursor cursor = mDb.query("cotentidmap", null, (new StringBuilder(
+				String.valueOf(CONTENTID_COLUMNS[1]))).append("='").append(s1)
+				.append("'").toString(), null, null, null, null);
+		if (cursor.getCount() == 0)
+			flag = false;
+		cursor.close();
+		return flag;
 	}
 
 	@Override
@@ -1013,10 +1056,17 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public boolean isCacheDataExist(String paramString)
+	public boolean isCacheDataExist(String s)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		boolean flag = true;
+		String s1 = s.replaceAll("'", "'");
+		Cursor cursor = mDb.query("T_CACHEDATA", null, (new StringBuilder(
+				String.valueOf(CACHEDATA_COLUMNS[0]))).append("='").append(s1)
+				.append("'").toString(), null, null, null, null);
+		if (cursor.getCount() == 0)
+			flag = false;
+		cursor.close();
+		return flag;
 	}
 
 	@Override
@@ -1110,10 +1160,28 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public String queryCacheData(String paramString)
+	public String queryCacheData(String s)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String s1 = null;
+		if (s == null)
+			throw new NullPointerException("null downloadItem");
+		String s2 = s.replaceAll("'", "''");
+		Cursor cursor = mDb.query("T_CACHEDATA", CACHEDATA_COLUMNS,
+				(new StringBuilder(String.valueOf(CACHEDATA_COLUMNS[0])))
+						.append("='").append(s2).append("'").toString(), null,
+				null, null, null);
+		if (cursor.getCount() == 0)
+		{
+			cursor.close();
+		} else
+		{
+			cursor.moveToNext();
+			String s3 = cursor.getString(cursor
+					.getColumnIndexOrThrow(CACHEDATA_COLUMNS[3]));
+			cursor.close();
+			s1 = s3;
+		}
+		return s1;
 	}
 
 	@Override
@@ -1916,5 +1984,75 @@ public class DBControllerImpl implements DBController
 		}
 		logger.v("getAllSongs(Projection) ---> Exit");
 		return arraylist;
+	}
+
+	@Override
+	public Song getSongByPath(String s)
+	{
+		String s1 = s.replaceAll("'", "''");
+		String s2 = (new StringBuilder("_data='")).append(s1).append("'")
+				.toString();
+		Cursor cursor = query(
+				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				null, s2, null, null);
+		Song song;
+		if (cursor != null && cursor.getCount() > 0)
+		{
+			song = new Song();
+			cursor.moveToFirst();
+			song.mAlbum = cursor.getString(cursor
+					.getColumnIndexOrThrow("album"));
+			song.mAlbumId = cursor.getInt(cursor
+					.getColumnIndexOrThrow("album_id"));
+			song.mArtist = cursor.getString(cursor
+					.getColumnIndexOrThrow("artist"));
+			song.mUrl = cursor.getString(cursor.getColumnIndexOrThrow("_data"));
+			song.mContentId = queryContentId(song.mUrl);
+			song.mDuration = cursor.getInt(cursor
+					.getColumnIndexOrThrow("duration"));
+			song.mId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+			song.mMusicType = MusicType.LOCALMUSIC.ordinal();
+			song.mLyric = null;
+			song.mTrack = cursor.getString(cursor
+					.getColumnIndexOrThrow("title"));
+			song.mSize = cursor.getLong(cursor.getColumnIndexOrThrow("_size"));
+			if (song.mUrl.toLowerCase().endsWith(".mp4"))
+				song.isDolby = true;
+			cursor.close();
+		} else
+		{
+			if (cursor != null && !cursor.isClosed())
+				cursor.close();
+			song = null;
+		}
+		return song;
+	}
+
+	@Override
+	public int updateDBDownloadItem(DownloadItem downloaditem)
+	{
+		ContentValues contentvalues = new ContentValues();
+		contentvalues.put(DOWNLOAD_COLUMNS[1],
+				Integer.valueOf(downloaditem.getStatus()));
+		contentvalues.put(DOWNLOAD_COLUMNS[2], downloaditem.getUrl());
+		contentvalues.put(DOWNLOAD_COLUMNS[3],
+				Long.valueOf(downloaditem.getTimeStep()));
+		contentvalues.put(DOWNLOAD_COLUMNS[4],
+				Long.valueOf(downloaditem.getTimeStartDL()));
+		contentvalues.put(DOWNLOAD_COLUMNS[5], downloaditem.getFilePath());
+		contentvalues.put(DOWNLOAD_COLUMNS[6], downloaditem.getFileName());
+		contentvalues.put(DOWNLOAD_COLUMNS[7], downloaditem.getShowName());
+		if (downloaditem.getContentType() == -300)
+			contentvalues.put(DOWNLOAD_COLUMNS[8],
+					Long.valueOf(downloaditem.getFileSize()));
+		contentvalues.put(DOWNLOAD_COLUMNS[9],
+				Long.valueOf(downloaditem.getDownloadSize()));
+		contentvalues.put(DOWNLOAD_COLUMNS[10],
+				Long.valueOf(downloaditem.getSizeFromStart()));
+		contentvalues.put(DOWNLOAD_COLUMNS[16], downloaditem.getArtist());
+		return mDb.update("downloadlist", contentvalues,
+				(new StringBuilder(String.valueOf(DOWNLOAD_COLUMNS[0])))
+						.append("=").append(downloaditem.getItemId())
+						.toString(), null);
 	}
 }

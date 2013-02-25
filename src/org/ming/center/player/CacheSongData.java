@@ -6,10 +6,14 @@ import org.ming.center.database.MusicType;
 import org.ming.center.database.Song;
 import org.ming.center.http.HttpController;
 import org.ming.center.http.MMHttpEventListener;
+import org.ming.center.http.MMHttpRequest;
+import org.ming.center.http.MMHttpRequestBuilder;
 import org.ming.center.http.MMHttpTask;
 import org.ming.center.ui.UIEventListener;
 import org.ming.util.MyLogger;
+import org.ming.util.NetUtil;
 import org.ming.util.Util;
+import org.ming.util.XMLParser;
 
 import android.os.Message;
 import android.util.Log;
@@ -20,59 +24,72 @@ public class CacheSongData implements PlayerEventListener, UIEventListener,
 	private static final MyLogger logger = MyLogger
 			.getLogger("MusicPlayerActivity");
 	private static CacheSongData sInstance = null;
-	private CacheSongDataSource cacheSongDataSource = null;
-	private MobileMusicApplication mApp = null;
-	private boolean mBCurrPlayingCacheComplate = false;
-	private MMHttpTask mCurrentTask = null;
-	private HttpController mHttpController = null;
-	private int mICacheDBLength = 0;
-	private int mICurrPlayIndex = -1;
-	private long mIFileAllLength = 0L;
-	private int mINextPlayIndex = -1;
-	private int mRepeatMode = 0;
-	private Song mSongCache = null;
-	private String mStrCacheFilePath = "";
-	private String mStrCacheXml = "";
-	private boolean mbPlayed = false;
+	private CacheSongDataSource cacheSongDataSource;
+	private MobileMusicApplication mApp;
+	private boolean mBCurrPlayingCacheComplate;
+	private MMHttpTask mCurrentTask;
+	private HttpController mHttpController;
+	private int mICacheDBLength;
+	private int mICurrPlayIndex;
+	private long mIFileAllLength;
+	private int mINextPlayIndex;
+	private int mRepeatMode;
+	private Song mSongCache;
+	private String mStrCacheFilePath;
+	private String mStrCacheXml;
+	private boolean mbPlayed;
 
 	private CacheSongData()
 	{
-		this.mApp.getController().addPlayerEventListener(1021, this);
-		this.mApp.getController().addPlayerEventListener(1020, this);
-		this.mApp.getController().addPlayerEventListener(1022, this);
-		this.mApp.getController().addPlayerEventListener(1023, this);
-		this.mApp.getController().addPlayerEventListener(1024, this);
-		this.mApp.getController().addUIEventListener(4017, this);
-		this.mApp.getController().addUIEventListener(4014, this);
-		this.mApp.getController().addUIEventListener(4015, this);
-		this.mApp.getController().addUIEventListener(4016, this);
-		Controller.getInstance(this.mApp).addHttpEventListener(3003, this);
-		this.mRepeatMode = this.mApp.getController().getDBController()
-				.getRepeatMode();
-		this.mHttpController = this.mApp.getController().getHttpController();
+		mApp = null;
+		mCurrentTask = null;
+		mHttpController = null;
+		mbPlayed = false;
+		cacheSongDataSource = null;
+		mRepeatMode = 0;
+		mICurrPlayIndex = -1;
+		mINextPlayIndex = -1;
+		mICacheDBLength = 0;
+		mIFileAllLength = 0L;
+		mBCurrPlayingCacheComplate = false;
+		mStrCacheFilePath = "";
+		mSongCache = null;
+		mStrCacheXml = "";
+		mApp = MobileMusicApplication.getInstance();
+		mApp.getController().addPlayerEventListener(1021, this);
+		mApp.getController().addPlayerEventListener(1020, this);
+		mApp.getController().addPlayerEventListener(1022, this);
+		mApp.getController().addPlayerEventListener(1023, this);
+		mApp.getController().addPlayerEventListener(1024, this);
+		mApp.getController().addUIEventListener(4017, this);
+		mApp.getController().addUIEventListener(4014, this);
+		mApp.getController().addUIEventListener(4015, this);
+		mApp.getController().addUIEventListener(4016, this);
+		Controller.getInstance(mApp).addHttpEventListener(3003, this);
+		mRepeatMode = mApp.getController().getDBController().getRepeatMode();
+		mHttpController = mApp.getController().getHttpController();
 	}
 
-	private void askSongInfo(Song paramSong)
+	private void askSongInfo(Song song)
 	{
-		// CacheSongDataSource.stopCacheDB();
-		// if (paramSong.mGroupCode == "<unknown>")
-		// paramSong.mGroupCode = "null";
-		// if (paramSong.mContentId == "<unknown>")
-		// paramSong.mContentId = "null";
-		// if (NetUtil.isNetStateWap())
-		// ;
-		// for (int i = 1002;; i = 5005)
-		// {
-		// MMHttpRequest localMMHttpRequest = MMHttpRequestBuilder
-		// .buildRequest(i);
-		// localMMHttpRequest.addUrlParams("contentid", paramSong.mContentId);
-		// localMMHttpRequest.addUrlParams("groupcode", paramSong.mGroupCode);
-		// Log.v("cache db", "sendRequest" + paramSong.mContentId
-		// + paramSong.mTrack);
-		// this.mCurrentTask = this.mHttpController
-		// .sendRequest(localMMHttpRequest);
-		// return;
-		// }
+		CacheSongDataSource.stopCacheDB();
+		if (song.mGroupCode == "<unknown>")
+			song.mGroupCode = "null";
+		if (song.mContentId == "<unknown>")
+			song.mContentId = "null";
+		char c;
+		MMHttpRequest mmhttprequest;
+		if (NetUtil.isNetStateWap())
+			c = '\u03EA';
+		else
+			c = '\u138D';
+		mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
+		mmhttprequest.addUrlParams("contentid", song.mContentId);
+		mmhttprequest.addUrlParams("groupcode", song.mGroupCode);
+		Log.v("cache db",
+				(new StringBuilder("sendRequest")).append(song.mContentId)
+						.append(song.mTrack).toString());
+		mCurrentTask = mHttpController.sendRequest(mmhttprequest);
 	}
 
 	private void cacheNextSong(Song paramSong)
@@ -102,19 +119,22 @@ public class CacheSongData implements PlayerEventListener, UIEventListener,
 		switch (i)
 		{
 		default:
+			break;
 		case 1002:
 		case 5005:
+			String str = new String(arrayOfByte);
+			Song localSong = makeOnlineSong(str);
+			if (localSong != null)
+			{
+				this.mSongCache = makeOnlineSong(this.mStrCacheXml);
+				this.mStrCacheXml = str;
+				this.cacheSongDataSource = CacheSongDataSource.startHandle(
+						localSong, this, this.mApp);
+			}
+			logger.v("nw---->" + str);
+			break;
 		}
-		String str = new String(arrayOfByte);
-		Song localSong = makeOnlineSong(str);
-		if (localSong != null)
-		{
-			this.mSongCache = makeOnlineSong(this.mStrCacheXml);
-			this.mStrCacheXml = str;
-			this.cacheSongDataSource = CacheSongDataSource.startHandle(
-					localSong, this, this.mApp);
-		}
-		logger.v("nw---->" + str);
+
 	}
 
 	public int GetNextSongPosition()
@@ -153,229 +173,187 @@ public class CacheSongData implements PlayerEventListener, UIEventListener,
 		switch (paramMessage.what)
 		{
 		default:
+			break;
 		case 3003:
+			if ((this.mCurrentTask != null)
+					&& (localMMHttpTask.getTransId() == this.mCurrentTask
+							.getTransId()))
+			{
+				onHttpResponse(localMMHttpTask);
+				logger.v("get url complete");
+			}
+			break;
 		}
-		if ((this.mCurrentTask != null)
-				&& (localMMHttpTask.getTransId() == this.mCurrentTask
-						.getTransId()))
-		{
-			onHttpResponse(localMMHttpTask);
-			logger.v("get url complete");
-		}
+
 	}
 
-	public void handlePlayerEvent(Message paramMessage)
+	public void handlePlayerEvent(Message message)
 	{
-		// switch (paramMessage.what)
-		// {
-		// default:
-		// case 1021:
-		// case 1020:
-		// case 1022:
-		// case 1023:
-		// case 1024:
-		// }
-		// this.mBCurrPlayingCacheComplate = false;
-		// this.mbPlayed = true;
-		// if (this.mApp.getController().getPlayerController()
-		// .isPlayRecommendSong())
-		// {
-		// this.mICurrPlayIndex = this.mApp.getController()
-		// .getPlayerController().getNowPlayingItemPosition();
-		// this.mINextPlayIndex = this.mICurrPlayIndex;
-		// this.mINextPlayIndex = (1 + this.mINextPlayIndex);
-		// if (this.mINextPlayIndex >= -1
-		// + this.mApp.getController().getPlayerController()
-		// .getRecommendPlayList().size())
-		// this.mINextPlayIndex = 0;
-		// } else
-		// {
-		// this.mICurrPlayIndex = this.mApp.getController()
-		// .getPlayerController().getNowPlayingItemPosition();
-		// this.mApp.getController().getPlayerController().setNextItem();
-		// this.mINextPlayIndex = this.mApp.getController()
-		// .getPlayerController().getNowPlayingNextItem();
-		// if (!Util.isOnlineMusic((Song) paramMessage.obj))
-		// {
-		// this.mBCurrPlayingCacheComplate = true;
-		// if ((this.mRepeatMode != 1)
-		// && (Util.isOnlineMusic((Song) this.mApp.getController()
-		// .getPlayerController().getNowPlayingList()
-		// .get(this.mINextPlayIndex))))
-		// {
-		// cacheNextSong((Song) this.mApp.getController()
-		// .getPlayerController().getNowPlayingList()
-		// .get(this.mINextPlayIndex));
-		// continue;
-		// this.mBCurrPlayingCacheComplate = true;
-		// if (this.mApp.getController().getPlayerController()
-		// .isPlayRecommendSong())
-		// {
-		// if ((this.mINextPlayIndex > -1)
-		// && (this.mINextPlayIndex < this.mApp
-		// .getController().getPlayerController()
-		// .getRecommendPlayList().size()))
-		// cacheNextSong((Song) this.mApp.getController()
-		// .getPlayerController()
-		// .getRecommendPlayList()
-		// .get(this.mINextPlayIndex));
-		// } else if ((this.mRepeatMode != 1)
-		// && (this.mINextPlayIndex > -1)
-		// && (this.mINextPlayIndex < this.mApp
-		// .getController().getPlayerController()
-		// .getNowPlayingList().size())
-		// && (this.mICurrPlayIndex > -1)
-		// && (this.mICurrPlayIndex < this.mApp
-		// .getController().getPlayerController()
-		// .getNowPlayingList().size())
-		// && (Util.isOnlineMusic((Song) this.mApp
-		// .getController().getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex)))
-		// && (!((Song) this.mApp.getController()
-		// .getPlayerController().getNowPlayingList()
-		// .get(this.mINextPlayIndex)).mContentId
-		// .equals(((Song) this.mApp.getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mICurrPlayIndex)).mContentId)))
-		// {
-		// cacheNextSong((Song) this.mApp.getController()
-		// .getPlayerController().getNowPlayingList()
-		// .get(this.mINextPlayIndex));
-		// continue;
-		// this.mRepeatMode = this.mApp.getController()
-		// .getDBController().getRepeatMode();
-		// Log.v("cache", "play mode id:" + this.mRepeatMode);
-		// if ((this.mbPlayed)
-		// && (!this.mApp.getController()
-		// .getPlayerController()
-		// .isPlayRecommendSong()))
-		// {
-		// this.mApp.getController().getPlayerController()
-		// .setNextItem();
-		// this.mINextPlayIndex = this.mApp.getController()
-		// .getPlayerController()
-		// .getNowPlayingNextItem();
-		// Log.v("cache", "next song index:"
-		// + this.mINextPlayIndex);
-		// this.mICurrPlayIndex = this.mApp.getController()
-		// .getPlayerController()
-		// .getNowPlayingItemPosition();
-		// Log.v("cache", "current song index:"
-		// + this.mICurrPlayIndex);
-		// if ((this.mINextPlayIndex > -1)
-		// && (this.mINextPlayIndex < this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList().size())
-		// && (this.mBCurrPlayingCacheComplate)
-		// && (this.mRepeatMode != 1)
-		// && (Util.isOnlineMusic((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex))))
-		// if (this.mSongCache != null)
-		// {
-		// Log.v("CacheDb", "pre item "
-		// + this.mSongCache.mContentId);
-		// Log.v("CacheDb",
-		// "Next item "
-		// + ((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex)).mContentId);
-		// if (!((Song) this.mApp.getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex)).mContentId
-		// .equals(this.mSongCache.mContentId))
-		// cacheNextSong((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex));
-		// } else if ((this.mRepeatMode != 1)
-		// && (this.mBCurrPlayingCacheComplate))
-		// {
-		// cacheNextSong((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex));
-		// continue;
-		// if ((this.mbPlayed)
-		// && (!this.mApp.getController()
-		// .getPlayerController()
-		// .isPlayRecommendSong()))
-		// {
-		// this.mApp.getController()
-		// .getPlayerController()
-		// .setNextItem();
-		// this.mINextPlayIndex = this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingNextItem();
-		// this.mICurrPlayIndex = this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingItemPosition();
-		// if ((this.mINextPlayIndex > -1)
-		// && (this.mINextPlayIndex < this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .size())
-		// && (this.mBCurrPlayingCacheComplate)
-		// && (this.mRepeatMode != 1)
-		// && (Util.isOnlineMusic((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex))))
-		// if (this.mSongCache != null)
-		// {
-		// Log.v("CacheDb",
-		// "pre item "
-		// + this.mSongCache.mContentId);
-		// Log.v("CacheDb",
-		// "Next item "
-		// + ((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex)).mContentId);
-		// if (!((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex)).mContentId
-		// .equals(this.mSongCache.mContentId))
-		// cacheNextSong((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex));
-		// } else if ((this.mRepeatMode != 1)
-		// && (this.mBCurrPlayingCacheComplate))
-		// {
-		// cacheNextSong((Song) this.mApp
-		// .getController()
-		// .getPlayerController()
-		// .getNowPlayingList()
-		// .get(this.mINextPlayIndex));
-		// continue;
-		// this.mSongCache = ((Song) paramMessage.obj);
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
+		switch (message.what)
+		{
+		default:
+		case 1021:
+			mBCurrPlayingCacheComplate = false;
+			mbPlayed = true;
+			if (mApp.getController().getPlayerController()
+					.isPlayRecommendSong())
+			{
+				mICurrPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingItemPosition();
+				mINextPlayIndex = mICurrPlayIndex;
+				mINextPlayIndex = 1 + mINextPlayIndex;
+				if (mINextPlayIndex >= -1
+						+ mApp.getController().getPlayerController()
+								.getRecommendPlayList().size())
+					mINextPlayIndex = 0;
+			} else
+			{
+				mICurrPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingItemPosition();
+				mApp.getController().getPlayerController().setNextItem();
+				mINextPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingNextItem();
+				if (!Util.isOnlineMusic((Song) message.obj))
+				{
+					mBCurrPlayingCacheComplate = true;
+					if (mRepeatMode != 1
+							&& Util.isOnlineMusic((Song) mApp.getController()
+									.getPlayerController().getNowPlayingList()
+									.get(mINextPlayIndex)))
+						cacheNextSong((Song) mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.get(mINextPlayIndex));
+				}
+			}
+			break;
+		case 1020:
+			mBCurrPlayingCacheComplate = true;
+			if (mApp.getController().getPlayerController()
+					.isPlayRecommendSong())
+			{
+				if (mINextPlayIndex > -1
+						&& mINextPlayIndex < mApp.getController()
+								.getPlayerController().getRecommendPlayList()
+								.size())
+					cacheNextSong((Song) mApp.getController()
+							.getPlayerController().getRecommendPlayList()
+							.get(mINextPlayIndex));
+			} else if (mRepeatMode != 1
+					&& mINextPlayIndex > -1
+					&& mINextPlayIndex < mApp.getController()
+							.getPlayerController().getNowPlayingList().size()
+					&& mICurrPlayIndex > -1
+					&& mICurrPlayIndex < mApp.getController()
+							.getPlayerController().getNowPlayingList().size()
+					&& Util.isOnlineMusic((Song) mApp.getController()
+							.getPlayerController().getNowPlayingList()
+							.get(mINextPlayIndex))
+					&& !((Song) mApp.getController().getPlayerController()
+							.getNowPlayingList().get(mINextPlayIndex)).mContentId
+							.equals(((Song) mApp.getController()
+									.getPlayerController().getNowPlayingList()
+									.get(mICurrPlayIndex)).mContentId))
+				cacheNextSong((Song) mApp.getController().getPlayerController()
+						.getNowPlayingList().get(mINextPlayIndex));
+			break;
+		case 1022:
+			mRepeatMode = mApp.getController().getDBController()
+					.getRepeatMode();
+			Log.v("cache",
+					(new StringBuilder("play mode id:")).append(mRepeatMode)
+							.toString());
+			if (mbPlayed
+					&& !mApp.getController().getPlayerController()
+							.isPlayRecommendSong())
+			{
+				mApp.getController().getPlayerController().setNextItem();
+				mINextPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingNextItem();
+				Log.v("cache",
+						(new StringBuilder("next song index:")).append(
+								mINextPlayIndex).toString());
+				mICurrPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingItemPosition();
+				Log.v("cache", (new StringBuilder("current song index:"))
+						.append(mICurrPlayIndex).toString());
+				if (mINextPlayIndex > -1
+						&& mINextPlayIndex < mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.size()
+						&& mBCurrPlayingCacheComplate
+						&& mRepeatMode != 1
+						&& Util.isOnlineMusic((Song) mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.get(mINextPlayIndex)))
+					if (mSongCache != null)
+					{
+						Log.v("CacheDb", (new StringBuilder("pre item "))
+								.append(mSongCache.mContentId).toString());
+						Log.v("CacheDb",
+								(new StringBuilder("Next item "))
+										.append(((Song) mApp.getController()
+												.getPlayerController()
+												.getNowPlayingList()
+												.get(mINextPlayIndex)).mContentId)
+										.toString());
+						if (!((Song) mApp.getController().getPlayerController()
+								.getNowPlayingList().get(mINextPlayIndex)).mContentId
+								.equals(mSongCache.mContentId))
+							cacheNextSong((Song) mApp.getController()
+									.getPlayerController().getNowPlayingList()
+									.get(mINextPlayIndex));
+					} else if (mRepeatMode != 1 && mBCurrPlayingCacheComplate)
+						cacheNextSong((Song) mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.get(mINextPlayIndex));
+			}
+			break;
+		case 1023:
+			if (mbPlayed
+					&& !mApp.getController().getPlayerController()
+							.isPlayRecommendSong())
+			{
+				mApp.getController().getPlayerController().setNextItem();
+				mINextPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingNextItem();
+				mICurrPlayIndex = mApp.getController().getPlayerController()
+						.getNowPlayingItemPosition();
+				if (mINextPlayIndex > -1
+						&& mINextPlayIndex < mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.size()
+						&& mBCurrPlayingCacheComplate
+						&& mRepeatMode != 1
+						&& Util.isOnlineMusic((Song) mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.get(mINextPlayIndex)))
+					if (mSongCache != null)
+					{
+						Log.v("CacheDb", (new StringBuilder("pre item "))
+								.append(mSongCache.mContentId).toString());
+						Log.v("CacheDb",
+								(new StringBuilder("Next item "))
+										.append(((Song) mApp.getController()
+												.getPlayerController()
+												.getNowPlayingList()
+												.get(mINextPlayIndex)).mContentId)
+										.toString());
+						if (!((Song) mApp.getController().getPlayerController()
+								.getNowPlayingList().get(mINextPlayIndex)).mContentId
+								.equals(mSongCache.mContentId))
+							cacheNextSong((Song) mApp.getController()
+									.getPlayerController().getNowPlayingList()
+									.get(mINextPlayIndex));
+					} else if (mRepeatMode != 1 && mBCurrPlayingCacheComplate)
+						cacheNextSong((Song) mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.get(mINextPlayIndex));
+			}
+			break;
+		case 1024:
+			mSongCache = (Song) message.obj;
+			break;
+		}
 	}
 
 	public void handleUIEvent(Message paramMessage)
@@ -383,134 +361,140 @@ public class CacheSongData implements PlayerEventListener, UIEventListener,
 		switch (paramMessage.what)
 		{
 		default:
+			return;
 		case 4014:
 		case 4015:
+			if (mApp.getController().getPlayerController()
+					.isPlayRecommendSong())
+			{
+				if (mINextPlayIndex > -1
+						&& mINextPlayIndex < mApp.getController()
+								.getPlayerController().getRecommendPlayList()
+								.size())
+					cacheNextSong((Song) mApp.getController()
+							.getPlayerController().getRecommendPlayList()
+							.get(mINextPlayIndex));
+			} else if (mRepeatMode != 1
+					&& mBCurrPlayingCacheComplate
+					&& mINextPlayIndex > -1
+					&& mINextPlayIndex < mApp.getController()
+							.getPlayerController().getNowPlayingList().size()
+					&& Util.isOnlineMusic((Song) mApp.getController()
+							.getPlayerController().getNowPlayingList()
+							.get(mINextPlayIndex))
+					&& !((Song) mApp.getController().getPlayerController()
+							.getNowPlayingList().get(mINextPlayIndex)).mContentId
+							.equals(((Song) mApp.getController()
+									.getPlayerController().getNowPlayingList()
+									.get(mICurrPlayIndex)).mContentId))
+				cacheNextSong((Song) mApp.getController().getPlayerController()
+						.getNowPlayingList().get(mINextPlayIndex));
+			Log.v("cache", "UI_EVENT_LOGIN_SUCCESSED");
+			break;
 		case 4016:
 		case 4017:
-		}
-		if (this.mApp.getController().getPlayerController()
-				.isPlayRecommendSong())
-			if ((this.mINextPlayIndex > -1)
-					&& (this.mINextPlayIndex < this.mApp.getController()
+			if (mApp.getController().getPlayerController()
+					.isPlayRecommendSong())
+			{
+				if (mINextPlayIndex > -1
+						&& mINextPlayIndex < mApp.getController()
+								.getPlayerController().getRecommendPlayList()
+								.size())
+					cacheNextSong((Song) mApp.getController()
 							.getPlayerController().getRecommendPlayList()
-							.size()))
-				cacheNextSong((Song) this.mApp.getController()
-						.getPlayerController().getRecommendPlayList()
-						.get(this.mINextPlayIndex));
-		Log.v("cache", "UI_EVENT_LOGIN_SUCCESSED");
-		if ((this.mRepeatMode != 1)
-				&& (this.mBCurrPlayingCacheComplate)
-				&& (this.mINextPlayIndex > -1)
-				&& (this.mINextPlayIndex < this.mApp.getController()
-						.getPlayerController().getNowPlayingList().size())
-				&& (Util.isOnlineMusic((Song) this.mApp.getController()
-						.getPlayerController().getNowPlayingList()
-						.get(this.mINextPlayIndex)))
-				&& (!((Song) this.mApp.getController().getPlayerController()
-						.getNowPlayingList().get(this.mINextPlayIndex)).mContentId
-						.equals(((Song) this.mApp.getController()
+							.get(mINextPlayIndex));
+			} else
+			{
+				Log.v("cache",
+						(new StringBuilder("next song is dolby")).append(
+								((Song) mApp.getController()
+										.getPlayerController()
+										.getNowPlayingList()
+										.get(mINextPlayIndex)).isDolby)
+								.toString());
+				if (mRepeatMode != 1
+						&& mBCurrPlayingCacheComplate
+						&& mINextPlayIndex > -1
+						&& mINextPlayIndex < mApp.getController()
 								.getPlayerController().getNowPlayingList()
-								.get(this.mICurrPlayIndex)).mContentId)))
-			cacheNextSong((Song) this.mApp.getController()
-					.getPlayerController().getNowPlayingList()
-					.get(this.mINextPlayIndex));
-		if (this.mApp.getController().getPlayerController()
-				.isPlayRecommendSong())
-		{
-			if ((this.mINextPlayIndex > -1)
-					&& (this.mINextPlayIndex < this.mApp.getController()
-							.getPlayerController().getRecommendPlayList()
-							.size()))
-				cacheNextSong((Song) this.mApp.getController()
-						.getPlayerController().getRecommendPlayList()
-						.get(this.mINextPlayIndex));
-		} else
-		{
-			Log.v("cache",
-					"next song is dolby"
-							+ ((Song) this.mApp.getController()
-									.getPlayerController().getNowPlayingList()
-									.get(this.mINextPlayIndex)).isDolby);
-			if ((this.mRepeatMode != 1)
-					&& (this.mBCurrPlayingCacheComplate)
-					&& (this.mINextPlayIndex > -1)
-					&& (this.mINextPlayIndex < this.mApp.getController()
-							.getPlayerController().getNowPlayingList().size())
-					&& (Util.isOnlineMusic((Song) this.mApp.getController()
+								.size()
+						&& Util.isOnlineMusic((Song) mApp.getController()
+								.getPlayerController().getNowPlayingList()
+								.get(mINextPlayIndex))
+						&& !((Song) mApp.getController().getPlayerController()
+								.getNowPlayingList().get(mINextPlayIndex)).mContentId
+								.equals(((Song) mApp.getController()
+										.getPlayerController()
+										.getNowPlayingList()
+										.get(mICurrPlayIndex)).mContentId))
+					cacheNextSong((Song) mApp.getController()
 							.getPlayerController().getNowPlayingList()
-							.get(this.mINextPlayIndex)))
-					&& (!((Song) this.mApp.getController()
-							.getPlayerController().getNowPlayingList()
-							.get(this.mINextPlayIndex)).mContentId
-							.equals(((Song) this.mApp.getController()
-									.getPlayerController().getNowPlayingList()
-									.get(this.mICurrPlayIndex)).mContentId)))
-				cacheNextSong((Song) this.mApp.getController()
-						.getPlayerController().getNowPlayingList()
-						.get(this.mINextPlayIndex));
+							.get(mINextPlayIndex));
+			}
+			break;
 		}
 	}
 
-	public Song makeOnlineSong(String paramString)
+	public Song makeOnlineSong(String s)
 	{
-		return null;
-		// Song localSong;
-		// if (paramString == null)
-		// localSong = null;
-		//
-		// XMLParser localXMLParser = new XMLParser(paramString.getBytes());
-		// if ((localXMLParser.getRoot() == null)
-		// || (localXMLParser.getValueByTag("code") == null))
-		// {
-		// localSong = null;
-		// } else if ((localXMLParser.getValueByTag("code") != null)
-		// && (!localXMLParser.getValueByTag("code").equals("000000")))
-		// {
-		// localSong = null;
-		// } else if ((localXMLParser.getValueByTag("durl1") == null)
-		// || (localXMLParser.getValueByTag("contentid") == null))
-		// {
-		// localXMLParser.getValueByTag("des");
-		// logger.e("PlaySelectedSong() : data from server is null");
-		// localSong = null;
-		// } else
-		// {
-		// localXMLParser.getValueByTag("contentid");
-		// localSong = new Song();
-		// localSong.mAlbum = localXMLParser.getValueByTag("album");
-		// localSong.mAlbumId = -1;
-		// localSong.mArtist = localXMLParser.getValueByTag("singer");
-		// localSong.mContentId = localXMLParser.getValueByTag("contentid");
-		// localSong.mDuration = -1;
-		// localSong.mId = -1L;
-		// localSong.mMusicType = MusicType.ONLINEMUSIC.ordinal();
-		// localSong.mLyric = null;
-		// localSong.mArtUrl = localXMLParser.getValueByTag("img");
-		// localSong.mTrack = localXMLParser.getValueByTag("songname");
-		// localSong.mUrl = localXMLParser.getValueByTag("durl1");
-		// localSong.mUrl2 = localXMLParser.getValueByTag("durl2");
-		// localSong.mUrl3 = localXMLParser.getValueByTag("durl3");
-		// if ((!"".equals(localXMLParser.getValueByTag("filesize1")))
-		// && (localXMLParser.getValueByTag("filesize1") != null))
-		// localSong.mSize = Long.valueOf(
-		// localXMLParser.getValueByTag("filesize1")).longValue();
-		// if ((!"".equals(localXMLParser.getValueByTag("filesize2")))
-		// && (localXMLParser.getValueByTag("filesize2") != null))
-		// localSong.mSize2 = Long.valueOf(
-		// localXMLParser.getValueByTag("filesize2")).longValue();
-		// if ((!"".equals(localXMLParser.getValueByTag("filesize3")))
-		// && (localXMLParser.getValueByTag("filesize3") != null))
-		// localSong.mSize3 = Long.valueOf(
-		// localXMLParser.getValueByTag("filesize3")).longValue();
-		// localSong.isDolby = Util.isDolby(localSong);
-		// localSong.mGroupCode = localXMLParser.getValueByTag("groupcode");
-		// String str = localXMLParser.getValueByTag("point");
-		// if ((str != null) && (!str.trim().equals("")))
-		// localSong.mPoint = Integer.parseInt(str);
-		// else
-		// localSong.mPoint = 0;
-		// }
-		// return localSong;
+		Song song;
+		if (s == null)
+		{
+			song = null;
+		} else
+		{
+			XMLParser xmlparser = new XMLParser(s.getBytes());
+			if (xmlparser.getRoot() == null
+					|| xmlparser.getValueByTag("code") == null)
+				song = null;
+			else if (xmlparser.getValueByTag("code") != null
+					&& !xmlparser.getValueByTag("code").equals("000000"))
+				song = null;
+			else if (xmlparser.getValueByTag("durl1") == null
+					|| xmlparser.getValueByTag("contentid") == null)
+			{
+				xmlparser.getValueByTag("des");
+				logger.e("PlaySelectedSong() : data from server is null");
+				song = null;
+			} else
+			{
+				xmlparser.getValueByTag("contentid");
+				song = new Song();
+				song.mAlbum = xmlparser.getValueByTag("album");
+				song.mAlbumId = -1;
+				song.mArtist = xmlparser.getValueByTag("singer");
+				song.mContentId = xmlparser.getValueByTag("contentid");
+				song.mDuration = -1;
+				song.mId = -1L;
+				song.mMusicType = MusicType.ONLINEMUSIC.ordinal();
+				song.mLyric = null;
+				song.mArtUrl = xmlparser.getValueByTag("img");
+				song.mTrack = xmlparser.getValueByTag("songname");
+				song.mUrl = xmlparser.getValueByTag("durl1");
+				song.mUrl2 = xmlparser.getValueByTag("durl2");
+				song.mUrl3 = xmlparser.getValueByTag("durl3");
+				if (!"".equals(xmlparser.getValueByTag("filesize1"))
+						&& xmlparser.getValueByTag("filesize1") != null)
+					song.mSize = Long.valueOf(
+							xmlparser.getValueByTag("filesize1")).longValue();
+				if (!"".equals(xmlparser.getValueByTag("filesize2"))
+						&& xmlparser.getValueByTag("filesize2") != null)
+					song.mSize2 = Long.valueOf(
+							xmlparser.getValueByTag("filesize2")).longValue();
+				if (!"".equals(xmlparser.getValueByTag("filesize3"))
+						&& xmlparser.getValueByTag("filesize3") != null)
+					song.mSize3 = Long.valueOf(
+							xmlparser.getValueByTag("filesize3")).longValue();
+				song.isDolby = Util.isDolby(song);
+				song.mGroupCode = xmlparser.getValueByTag("groupcode");
+				String s1 = xmlparser.getValueByTag("point");
+				if (s1 != null && !s1.trim().equals(""))
+					song.mPoint = Integer.parseInt(s1);
+				else
+					song.mPoint = 0;
+			}
+		}
+		return song;
 	}
 
 	public void setCacheDBLength(long paramLong)

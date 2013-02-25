@@ -1,5 +1,12 @@
 package org.ming.util;
 
+import java.security.SecureRandom;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+
 import org.ming.center.MobileMusicApplication;
 
 import android.content.Context;
@@ -105,5 +112,27 @@ public class NetUtil
 			return true;
 		}
 		return false;
+	}
+
+	public static String encryptDES(String paramString1, String paramString2)
+	{
+		try
+		{
+			SecureRandom localSecureRandom = new SecureRandom();
+			DESKeySpec localDESKeySpec = new DESKeySpec(paramString2.getBytes());
+			SecretKey localSecretKey = SecretKeyFactory.getInstance("DES")
+					.generateSecret(localDESKeySpec);
+			Cipher localCipher = Cipher.getInstance("DES");
+			localCipher.init(1, localSecretKey, localSecureRandom);
+			String str2 = new String(EncodeBase64.encodeToChar(
+					localCipher.doFinal(paramString1.getBytes()), false))
+					+ ":p1";
+			return str2;
+		} catch (Exception localException)
+		{
+			localException.printStackTrace();
+			String str1 = null;
+			return str1;
+		}
 	}
 }

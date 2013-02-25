@@ -35,6 +35,7 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.ming.center.GlobalSettingParameter;
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.MobileMusicService;
 import org.ming.center.business.MusicBusinessDefine_WAP;
@@ -662,5 +663,65 @@ public class Util
 			l = l1 * (long) i - 0x200000L;
 		}
 		return l;
+	}
+
+	public static final String getRingtoneStoreDir(long l)
+	{
+		String s;
+		if (getFreeSpace(GlobalSettingParameter.LOCAL_PARAM_RINGTONE_STORE_SD_DIR) > l)
+			s = GlobalSettingParameter.LOCAL_PARAM_RINGTONE_STORE_SD_DIR;
+		else
+			s = null;
+		return s;
+	}
+
+	public static final String getMVStoreDir(long l)
+	{
+		String s;
+		if (getFreeSpace(GlobalSettingParameter.LOCAL_PARAM_MV_STORE_SD_DIR) > l)
+			s = GlobalSettingParameter.LOCAL_PARAM_MV_STORE_SD_DIR;
+		else
+			s = null;
+		return s;
+	}
+
+	public static final String getUpdateStoreDir(long l)
+	{
+		String s;
+		if (getFreeSpace(GlobalSettingParameter.LOCAL_PARAM_UPDATE_STORE_SD_DIR) > l)
+			s = GlobalSettingParameter.LOCAL_PARAM_UPDATE_STORE_SD_DIR;
+		else
+			s = null;
+		return s;
+	}
+
+	public static final String getSkinStoreDir(long l)
+	{
+		String s;
+		if (getFreeSpace(GlobalSettingParameter.LOCAL_PARAM_SKIN_STORE_SD_DIR) > l)
+			s = GlobalSettingParameter.LOCAL_PARAM_SKIN_STORE_SD_DIR;
+		else
+			s = null;
+		return s;
+	}
+
+	public static final String getDoblySongStoreDir(long l)
+	{
+		String s;
+		if (getFreeSpace(GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR) > l)
+			s = GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR;
+		else
+			s = null;
+		return s;
+	}
+
+	public static final String getSongStoreDir(long l)
+	{
+		String s;
+		if (getFreeSpace(GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR) > l)
+			s = GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR;
+		else
+			s = null;
+		return s;
 	}
 }
