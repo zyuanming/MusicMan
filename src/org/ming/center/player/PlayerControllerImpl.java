@@ -1,5 +1,6 @@
 package org.ming.center.player;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -580,6 +581,9 @@ public class PlayerControllerImpl implements PlayerController,
 		logger.v("next() ---> Exit");
 	}
 
+	/**
+	 * 开始播放音乐
+	 */
 	@Override
 	public boolean open(int paramInt)
 	{
@@ -666,10 +670,11 @@ public class PlayerControllerImpl implements PlayerController,
 					mDispatcher
 							.sendMessage(mDispatcher
 									.obtainMessage(DispatcherEventEnum.UI_EVENT_DOWNSONGINF_START));
-					// if (mCurrentTask != null) {
-					// mHttpController.cancelTask(mCurrentTask);
-					// mCurrentTask = null;
-					// }
+					if (mCurrentTask != null)
+					{
+						mHttpController.cancelTask(mCurrentTask);
+						mCurrentTask = null;
+					}
 					if (song.mUrl == null
 							|| song.mUrl.equalsIgnoreCase("<unknown>"))
 					{
@@ -797,11 +802,224 @@ public class PlayerControllerImpl implements PlayerController,
 		logger.v("pause() ---> Exit");
 	}
 
+	/**
+	 * 播放在线音乐
+	 */
 	@Override
-	public void playOnlineSong(String paramString)
+	public void playOnlineSong(String s)
 	{
-		// TODO Auto-generated method stub
+		Song song = makeOnlineSong(s, MobileMusicApplication.getInstance());
+		if (song != null)
+		{
+			if (mIsCmwapToWlan)
+			{
+				queryMonth(song);
+				int i = mNowPlayingList.indexOf(song);
+				if (-1 != i)
+				{
+					mNowPlayingList.remove(i);
+					mNowPlayingList.add(i, song);
+					open(i);
+				}
+				mIsCmwapToWlan = false;
+			} else if (-1 != mNowPlayingList.indexOf(song))
+			{
+				queryMonth(song);
+				playOnlineSong(song);
+			}
+		} else
+		{
+			setNextItem();
+		}
 
+	}
+
+	private void queryMonth(Song song)
+	{
+		logger.v("nw---->queryMonth");
+		char c;
+		MMHttpRequest mmhttprequest;
+		String s;
+		long l;
+		String s1;
+		String s2;
+		if (NetUtil.isNetStateWap())
+			c = '\u0421';
+		else
+			c = '\u13C5';
+		mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
+		s = GlobalSettingParameter.SERVER_INIT_PARAM_MDN;
+		l = System.currentTimeMillis();
+		s1 = (new SimpleDateFormat("yyyyMMddhhmmss")).format(Long.valueOf(l));
+		s2 = Util.getRandKey(s, s1, song.mContentId);
+		mmhttprequest.addHeader("mdn",
+				GlobalSettingParameter.SERVER_INIT_PARAM_MDN);
+		mmhttprequest.addHeader("mode", "chinamobile");
+		mmhttprequest.addHeader("timestep", s1);
+		mmhttprequest.addHeader("randkey", s2);
+		mmhttprequest.addUrlParams("ua",
+				GlobalSettingParameter.LOCAL_PARAM_USER_AGENT);
+		mmhttprequest.addUrlParams("contentid", song.mContentId);
+		mmhttprequest.addUrlParams("groupcode", song.mGroupCode);
+		if (Util.isDolby(song))
+			mmhttprequest.addUrlParams("size", String.valueOf(song.mSize3));
+		else if (NetUtil.isNetStateWLAN())
+			mmhttprequest.addUrlParams("size", String.valueOf(song.mSize2));
+		else
+			mmhttprequest.addUrlParams("size", String.valueOf(song.mSize));
+		mCurrentTask = mHttpController.sendRequest(mmhttprequest);
+	}
+
+	public void playOnlineSong(Song song)
+	{
+		Song song1 = getCurrentPlayingItem();
+		if (song1 == null
+				|| song1.mUrl != null
+				&& (song1.mUrl == null || !song1.mUrl
+						.equalsIgnoreCase("<unknown>")))
+		{
+			if (song1 != null && song1.mUrl != null && song.mUrl != null
+					&& !song1.mUrl.equalsIgnoreCase(song.mUrl))
+			{
+				int j = add2NowPlayingList(song);
+				if (isPlayRecommendSong())
+					openRecommendSong(j);
+				else
+					open(j);
+				addCurrentTrack2OnlineMusicTable();
+				addCurrentTrack2RecentPlaylist();
+			} else if (song1 == null)
+			{
+				int i = add2NowPlayingList(song);
+				if (isPlayRecommendSong())
+					openRecommendSong(i);
+				else
+					open(i);
+				addCurrentTrack2OnlineMusicTable();
+				addCurrentTrack2RecentPlaylist();
+			}
+		} else
+		{
+			song1.limit1 = song.limit1;
+			song1.limit2 = song.limit2;
+			song1.mAlbum = song.mAlbum;
+			song1.mAlbumId = song.mAlbumId;
+			song1.mArtist = song.mArtist;
+			song1.mArtUrl = song.mArtUrl;
+			song1.mContentId = song.mContentId;
+			song1.mDuration = song.mDuration;
+			song1.mGroupCode = song.mGroupCode;
+			song1.mLyric = song.mLyric;
+			song1.mPoint = song.mPoint;
+			song1.mSize = song.mSize;
+			song1.mSize2 = song.mSize2;
+			song1.mTrack = song.mTrack;
+			song1.mUrl = song.mUrl;
+			song1.mUrl2 = song.mUrl2;
+			song1.mUrl3 = song.mUrl3;
+			song1.mMusicType = MusicType.ONLINEMUSIC.ordinal();
+			song1.isDolby = song.isDolby;
+			updateCurrentTrack2OnlineMusicTable();
+			if (isPlayRecommendSong())
+				openRecommendSong(mPlayingItemPosition);
+			else
+				open(mPlayingItemPosition);
+		}
+	}
+
+	private void updateCurrentTrack2OnlineMusicTable()
+	{
+		Song localSong;
+		long l;
+		logger.v("updateCurrentTrack2OnlineMusicTable() ---> Enter");
+		localSong = getCurrentPlayingItem();
+		if (localSong != null)
+		{
+			boolean bool = Util.isOnlineMusic(localSong);
+			if (bool)
+			{
+				l = this.mDBController.updateOnlineMusicItem(localSong);
+				if (l == -1L)
+				{
+					logger.d("Fail to add song to DB.");
+				} else
+				{
+					localSong.mId = l;
+					logger.d("================================");
+					logger.d("Item id: " + localSong.mId);
+					logger.d("Item name: " + localSong.mTrack);
+					logger.d("Item artist: " + localSong.mArtist);
+					logger.d("================================");
+					logger.v("updateCurrentTrack2OnlineMusicTable() ---> Exit");
+				}
+			}
+		}
+	}
+
+	private void addCurrentTrack2RecentPlaylist()
+	{
+		logger.v("addCurrentTrack2RecentPlaylist() ---> Enter");
+		Song localSong = getCurrentPlayingItem();
+		if (localSong == null)
+			logger.e("Current playing item is null !!");
+		else
+		{
+			Playlist localPlaylist = this.mDBController
+					.getPlaylistByName(
+							"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
+							2);
+			if (!this.mDBController.isSongInMixPlaylist(
+					localPlaylist.mExternalId, localSong.mId,
+					Util.isOnlineMusic(localSong)))
+			{
+				if (this.mDBController.countSongNumInPlaylist(
+						localPlaylist.mExternalId, 2) >= 20)
+				{
+					long l2 = this.mDBController.getFirstSongInPlaylist(
+							localPlaylist.mExternalId, 2);
+					if (l2 != -1L)
+						this.mDBController
+								.deleteSongsFromMixPlaylist(
+										localPlaylist.mExternalId,
+										new long[] { l2 }, 2);
+				}
+				DBController localDBController = this.mDBController;
+				long l1 = localPlaylist.mExternalId;
+				long[] arrayOfLong = new long[1];
+				arrayOfLong[0] = localSong.mId;
+				localDBController.addSongs2MixPlaylist(l1, arrayOfLong,
+						Util.isOnlineMusic(localSong));
+			}
+			logger.v("addCurrentTrack2RecentPlaylist() ---> Exit");
+		}
+	}
+
+	private void addCurrentTrack2OnlineMusicTable()
+	{
+		Song localSong;
+		long l;
+		logger.v("addCurrentTrack2OnlineMusicTable() ---> Enter");
+		localSong = getCurrentPlayingItem();
+		if ((localSong == null) || (!Util.isOnlineMusic(localSong)))
+		{
+			logger.e("Should NOT record local music!!!");
+		} else
+		{
+			l = this.mDBController.addOnlineMusicItem(localSong);
+			if (l == -1L)
+			{
+				logger.d("Fail to add song to DB.");
+			} else
+			{
+				localSong.mId = l;
+				logger.d("================================");
+				logger.d("Item id: " + localSong.mId);
+				logger.d("Item name: " + localSong.mTrack);
+				logger.d("Item artist: " + localSong.mArtist);
+				logger.d("================================");
+				logger.v("addCurrentTrack2OnlineMusicTable() ---> Exit");
+			}
+		}
 	}
 
 	@Override
@@ -1498,13 +1716,6 @@ public class PlayerControllerImpl implements PlayerController,
 		return null;
 	}
 
-	@Override
-	public void playOnlineSong(Song paramSong)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 	private void requestRadioSongInfo()
 	{
 		if (mNowPlayingList.size() != 0)
@@ -1574,17 +1785,77 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public long addCurrentTrack2OnlineMusicTable(SongListItem paramSongListItem)
+	public long addCurrentTrack2OnlineMusicTable(SongListItem songlistitem)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		long l;
+		logger.v("addCurrentTrack2OnlineMusicTable() ---> Enter");
+		if (songlistitem != null)
+		{
+			l = mDBController.addOnlineMusicItem(songlistitem);
+			if (l == -1L)
+				logger.d("Fail to add song to DB.");
+			logger.v("addCurrentTrack2OnlineMusicTable() ---> Exit");
+		} else
+		{
+			logger.e("Should NOT record local music!!!");
+			l = -1L;
+		}
+		return l;
 	}
 
 	@Override
-	public void addCurrentTrack2RecentPlaylist(SongListItem paramSongListItem,
-			long paramLong)
+	public void addCurrentTrack2RecentPlaylist(SongListItem songlistitem, long l)
 	{
-		// TODO Auto-generated method stub
+		boolean flag;
+		logger.v("addCurrentTrack2RecentPlaylist() ---> Enter");
+		if (songlistitem != null)
+		{
+			Playlist playlist;
+			DBController dbcontroller;
+			long l1;
+			playlist = mDBController
+					.getPlaylistByName(
+							"cmccwm.mobilemusic.database.default.mix.playlist.recent.play",
+							2);
+			dbcontroller = mDBController;
+			l1 = playlist.mExternalId;
+			if (songlistitem.mMusicType != MusicType.ONLINEMUSIC.ordinal())
+			{
+				flag = false;
+				if (dbcontroller.isSongInMixPlaylist(l1, l, flag))
+				{
+					logger.v("addCurrentTrack2RecentPlaylist() ---> Exit");
+				} else
+				{
+					DBController dbcontroller1;
+					long l2 = playlist.mExternalId;
+					long al[] = (new long[] { l });
+					boolean flag1 = false;
+					if (mDBController.countSongNumInPlaylist(
+							playlist.mExternalId, 2) >= 20)
+					{
+						long l3 = mDBController.getFirstSongInPlaylist(
+								playlist.mExternalId, 2);
+						if (l3 != -1L)
+							mDBController.deleteSongsFromMixPlaylist(
+									playlist.mExternalId, new long[] { l3 }, 2);
+					}
+					dbcontroller1 = mDBController;
+					if (songlistitem.mMusicType == MusicType.ONLINEMUSIC
+							.ordinal())
+					{
+						flag1 = true;
+					}
+					dbcontroller1.addSongs2MixPlaylist(l2, al, flag1);
+				}
+			} else
+			{
+				flag = true;
+			}
+		} else
+		{
+			logger.e("Current playing item is null !!");
+		}
 
 	}
 }

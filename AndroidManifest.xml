@@ -16,12 +16,20 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:name="org.ming.center.MobileMusicApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/launch" >
+
+        <!-- 应用appid -->
+        <meta-data
+            android:name="appid"
+            android:value="appid:008122551771936451" />
+
         <activity
             android:name=".ui.activity.PreSplashActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -86,8 +94,14 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <!--
         <activity
             android:name=".ui.activity.online.OnlineMusicActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        -->
+        <activity
+            android:name=".ui.activity.online.MingOnlineMusic"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity

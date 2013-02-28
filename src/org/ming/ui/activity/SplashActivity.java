@@ -167,6 +167,7 @@ public class SplashActivity extends Activity implements MMHttpEventListener
 				{
 					mDispatcher.sendMessage(mDispatcher.obtainMessage(4019));
 				}
+				enterMonbileMusicMainActivty();
 			} else
 			{
 				// 在移动网络下显示收费提示框
@@ -228,7 +229,7 @@ public class SplashActivity extends Activity implements MMHttpEventListener
 						});
 			}
 		}
-		enterMonbileMusicMainActivty();
+		// enterMonbileMusicMainActivty();
 		logger.v("onCreate() ---> Exit");
 	}
 

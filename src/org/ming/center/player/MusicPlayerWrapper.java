@@ -156,6 +156,7 @@ public class MusicPlayerWrapper
 			}
 				break;
 			case 2:
+				break;
 			}
 			super.handleMessage(message);
 			logger.v("handleMessage() ---> Exit");

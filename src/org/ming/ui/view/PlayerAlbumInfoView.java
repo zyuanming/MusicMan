@@ -412,4 +412,11 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 		else
 			nothingView.setVisibility(8);
 	}
+
+	@Override
+	public void getDataFromURL()
+	{
+		// TODO Auto-generated method stub
+
+	}
 }

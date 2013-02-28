@@ -12,6 +12,7 @@ import org.ming.center.ConfigSettingParameter;
 import org.ming.center.GlobalSettingParameter;
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.download.DownloadItem;
+import org.ming.center.http.item.SongListItem;
 import org.ming.util.MyLogger;
 
 import android.content.ContentResolver;
@@ -2054,5 +2055,103 @@ public class DBControllerImpl implements DBController
 				(new StringBuilder(String.valueOf(DOWNLOAD_COLUMNS[0])))
 						.append("=").append(downloaditem.getItemId())
 						.toString(), null);
+	}
+
+	@Override
+	public long updateOnlineMusicItem(Song song)
+	{
+		logger.v("updateOnlineMusicItem() ---> Enter");
+		long l;
+		if (!isOnlineMusicInDB(song))
+		{
+			logger.v((new StringBuilder(
+					"updateOnlineMusicItem() ---> item already exsits, Just Exit. Item id is: "))
+					.append(song.mId).toString());
+			l = -1L;
+		} else
+		{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put("_data", song.mUrl);
+			contentvalues.put("album", song.mAlbum);
+			contentvalues.put("album_id", Integer.valueOf(song.mAlbumId));
+			contentvalues.put("artist", song.mArtist);
+			contentvalues.put("title", song.mTrack);
+			contentvalues.put("duration", Integer.valueOf(song.mDuration));
+			contentvalues.put("_size", Long.valueOf(song.mSize));
+			song.mId = mDb.update("online_music_audio_info", contentvalues,
+					(new StringBuilder("_id='")).append(song.mId).append("'")
+							.toString(), null);
+			logger.d((new StringBuilder("new item id is: ")).append(song.mId)
+					.toString());
+			logger.v("updateOnlineMusicItem() ---> Exit");
+			l = song.mId;
+		}
+		return l;
+	}
+
+	@Override
+	public long addOnlineMusicItem(SongListItem songlistitem)
+	{
+		logger.v("addOnlineMusicItem() ---> Enter");
+		long l = isOnlineMusicInDB(songlistitem.contentid,
+				songlistitem.groupcode);
+		long l2;
+		if (l != -1L)
+		{
+			l2 = l;
+		} else
+		{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put("artist", songlistitem.singer);
+			contentvalues.put("date_added",
+					Long.valueOf(System.currentTimeMillis()));
+			contentvalues.put("title", songlistitem.title);
+			contentvalues.put("contentid", songlistitem.contentid);
+			contentvalues.put("groupcode", songlistitem.groupcode);
+			contentvalues.put("_data", songlistitem.url);
+			contentvalues.put("url2", songlistitem.url2);
+			contentvalues.put("url3", songlistitem.url3);
+			contentvalues.put("filesize2", songlistitem.filesize2);
+			contentvalues.put("filesize3", songlistitem.filesize3);
+			String s;
+			long l1;
+			if (GlobalSettingParameter.useraccount != null)
+				contentvalues.put("user_id",
+						Long.valueOf(GlobalSettingParameter.useraccount.mId));
+			else
+				contentvalues.put("user_id", Integer.valueOf(-1));
+			contentvalues.put("point", songlistitem.point);
+			contentvalues.put("img", songlistitem.img);
+			if (songlistitem.isdolby != null
+					&& songlistitem.isdolby.equals("1"))
+				s = "1";
+			else
+				s = "0";
+			contentvalues.put("isdolby", s);
+			l1 = mDb.insert("online_music_audio_info", null, contentvalues);
+			logger.d((new StringBuilder("new item id is: ")).append(l1)
+					.toString());
+			logger.v("addOnlineMusicItem() ---> Exit");
+			l2 = l1;
+		}
+		return l2;
+	}
+
+	private int isOnlineMusicInDB(String s, String s1)
+	{
+		logger.v("isOnlineMusicInDB() ---> Enter");
+		int i = -1;
+		Cursor cursor = mDb.query("online_music_audio_info", null,
+				(new StringBuilder("contentid='")).append(s).append("' and ")
+						.append("groupcode").append("='").append(s1)
+						.append("'").toString(), null, null, null, null);
+		if (cursor.getCount() > 0)
+		{
+			cursor.moveToFirst();
+			i = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+		}
+		cursor.close();
+		logger.v("isOnlineMusicInDB() ---> Exit");
+		return i;
 	}
 }

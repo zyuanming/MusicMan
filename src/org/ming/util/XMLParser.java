@@ -111,70 +111,58 @@ public class XMLParser
 		// }
 	}
 
-	public List getListByTag(String paramString, Class paramClass)
+	public List getListByTag(String s, Class class1)
 	{
-		return null;
-		// ArrayList localArrayList = new ArrayList();
-		// if (this.root == null)
-		// localArrayList = null;
-		// NodeList localNodeList;
-		// int i;
-		// int j;
-		// label63:
-		// do
-		// {
-		// while (true)
-		// {
-		// return localArrayList;
-		// localNodeList = this.root.getElementsByTagName(paramString);
-		// if ((localNodeList != null) && (localNodeList.getLength() != 0))
-		// break;
-		// localArrayList = null;
-		// }
-		// i = localNodeList.getLength();
-		// j = 0;
-		// }
-		// while (j >= i);
-		// while (true)
-		// {
-		// int k;
-		// Node localNode2;
-		// try
-		// {
-		// Object localObject1 = paramClass.newInstance();
-		// Element localElement = (Element)localNodeList.item(j);
-		// Field[] arrayOfField = paramClass.getDeclaredFields();
-		// k = 0;
-		// if (k >= arrayOfField.length)
-		// {
-		// localArrayList.add(localObject1);
-		// j++;
-		// break label63;
-		// }
-		// Field localField = arrayOfField[k];
-		// if (Modifier.isFinal(localField.getModifiers()))
-		// break label230;
-		// Node localNode1 =
-		// localElement.getElementsByTagName(localField.getName()).item(0);
-		// if (localNode1 == null)
-		// break label230;
-		// localNode2 = localNode1.getFirstChild();
-		// if (localNode2 != null)
-		// break label214;
-		// localObject2 = null;
-		// localField.set(localObject1, localObject2);
-		// }
-		// catch (Exception localException)
-		// {
-		// logger.e("getListByTag(), error: ", localException);
-		// localArrayList = null;
-		// }
-		// break;
-		// label214: String str = localNode2.getNodeValue();
-		// Object localObject2 = str;
-		// continue;
-		// label230: k++;
-		// }
+		ArrayList arraylist = new ArrayList();
+		NodeList nodelist;
+		if (root == null)
+		{
+			arraylist = null;
+		} else
+		{
+			nodelist = root.getElementsByTagName(s);
+			if (nodelist != null && nodelist.getLength() != 0)
+				arraylist = null;
+			int i = nodelist.getLength();
+			try
+			{
+			for (int j = 0; j < i; j++)
+			{
+				Object obj = class1.newInstance();
+				Element element = (Element) nodelist.item(j);
+				Field afield[];
+				afield = class1.getDeclaredFields();
+				String s2 = null;
+				for (int k = 0; k < afield.length; k++)
+				{
+					Field field;
+					Node node1;
+					field = afield[k];
+					if (Modifier.isFinal(field.getModifiers()))
+					{
+						Node node = element.getElementsByTagName(
+								field.getName()).item(0);
+						if (node != null)
+						{
+							node1 = node.getFirstChild();
+							if (node1 != null)
+							{
+								String s1 = node1.getNodeValue();
+								s2 = s1;
+							}
+						}
+					}
+					field.set(obj, s2);
+				}
+				arraylist.add(obj);
+			}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return arraylist;
 	}
 
 	public List getListByTagAndAttribute(String paramString, Class paramClass)
@@ -318,80 +306,95 @@ public class XMLParser
 		// }
 	}
 
-	public List getListByTagsAndAttributeID(String paramString1,
-			String paramString2, String paramString3, String paramString4,
-			Class paramClass)
+	public List getListByTagsAndAttributeID(String s, String s1, String s2,
+			String s3, Class class1)
 	{
 		return null;
-		// Object localObject1;
-		// if (this.root == null)
-		// localObject1 = null;
-		// NodeList localNodeList1;
-		// int i;
-		// int j;
-		// label86: do
+		// Object obj;
+		// NodeList nodelist;
+		// if(root == null)
 		// {
-		// while (true)
-		// {
-		// return localObject1;
-		// localObject1 = new ArrayList();
-		// if (this.root.getElementsByTagName(paramString1) == null)
-		// {
-		// localObject1 = null;
+		// obj = null;
 		// } else
 		// {
-		// localNodeList1 = this.root
-		// .getElementsByTagName(paramString1);
-		// if ((localNodeList1 != null)
-		// && (localNodeList1.getLength() != 0))
-		// break;
-		// localObject1 = null;
+		// obj = new ArrayList();
+		// if(root.getElementsByTagName(s) == null)
+		// {
+		// obj = null;
+		// } else
+		// {
+		// label0:
+		// {
+		// nodelist = root.getElementsByTagName(s);
+		// if(nodelist != null && nodelist.getLength() != 0)
+		// break label0;
+		// obj = null;
 		// }
 		// }
-		// i = localNodeList1.getLength();
+		// }
+		// _L2:
+		//
+		// _L3:
+		// if(j >= i) goto _L2; else goto _L1
+		// {
+		// return ((List) (obj));
+		// int i;
+		// int j;
+		// i = nodelist.getLength();
 		// j = 0;
-		// } while (j >= i);
-		// while (true)
+		// }
+		// else
 		// {
-		// int n;
-		// try
+		// Element element;
+		// label1:
 		// {
-		// Element localElement1 = (Element) localNodeList1.item(j);
-		// if (!localElement1.getAttribute(paramString2).equalsIgnoreCase(
-		// paramString3))
-		// {
+		// element = (Element)nodelist.item(j);
+		// if(element.getAttribute(s1).equalsIgnoreCase(s2))
+		// break label1;
 		// j++;
-		// break label86;
 		// }
-		// NodeList localNodeList2 = localElement1
-		// .getElementsByTagName(paramString4);
-		// int k = localNodeList2.getLength();
-		// int m = 0;
-		// if (m >= k)
-		// break;
-		// Object localObject2 = paramClass.newInstance();
-		// Element localElement2 = (Element) localNodeList2.item(m);
-		// Field[] arrayOfField = paramClass.getDeclaredFields();
-		// n = 0;
-		// if (n >= arrayOfField.length)
+		// goto _L3
+		// }
+		// _L1:
+		//
+		// NodeList nodelist1;
+		// int k;
+		// int l;
+		// nodelist1 = element.getElementsByTagName(s3);
+		// k = nodelist1.getLength();
+		// l = 0;
+		// _L7:
+		// if(l >= k) goto _L2; else goto _L4
 		// {
-		// ((List) localObject1).add(localObject2);
-		// m++;
-		// continue;
+		//
 		// }
-		// Field localField = arrayOfField[n];
-		// if (Modifier.isFinal(localField.getModifiers()))
-		// break label274;
-		// localField.set(localObject2,
-		// localElement2.getAttribute(localField.getName()));
-		// } catch (Exception localException)
-		// {
-		// logger.e("getListByTagsAndID() error: ", localException);
-		// localObject1 = null;
-		// }
-		// break;
-		// label274: n++;
-		// }
+		// _L4:
+		// Object obj1;
+		// Element element1;
+		// Field afield[];
+		// int i1;
+		// obj1 = class1.newInstance();
+		// element1 = (Element)nodelist1.item(l);
+		// afield = class1.getDeclaredFields();
+		// i1 = 0;
+		// _L8:
+		// if(i1 < afield.length) goto _L6; else goto _L5
+		// _L5:
+		// ((List) (obj)).add(obj1);
+		// l++;
+		// goto _L7
+		// _L6:
+		// Field field = afield[i1];
+		// if(!Modifier.isFinal(field.getModifiers()))
+		// field.set(obj1, element1.getAttribute(field.getName()));
+		// break MISSING_BLOCK_LABEL_274;
+		// Exception exception;
+		// exception;
+		// logger.e("getListByTagsAndID() error: ", exception);
+		// obj = null;
+		// goto _L2
+		// i1++;
+		// goto _L8
 	}
 
 	public List getListByTagsAndID(String paramString1, String paramString2,

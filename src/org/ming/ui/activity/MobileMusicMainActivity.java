@@ -9,6 +9,7 @@ import org.ming.center.system.SystemEventListener;
 import org.ming.center.ui.AsyncToastDialogController;
 import org.ming.ui.activity.local.LocalMusicActivity;
 import org.ming.ui.activity.mymigu.MyMiGuActivity;
+import org.ming.ui.activity.online.MingOnlineMusic;
 import org.ming.ui.activity.online.OnlineMusicActivity;
 import org.ming.ui.util.DialogUtil;
 import org.ming.ui.util.NotificationService;
@@ -93,9 +94,9 @@ public class MobileMusicMainActivity extends TabActivity implements
 				requestRoot = true;
 				if (s.equalsIgnoreCase("TAB_MIGU"))
 				{
-					if (OnlineMusicActivity.mListButtonClickListener != null)
-						OnlineMusicActivity.mListButtonClickListener
-								.closePopupWindow();
+//					if (OnlineMusicActivity.mListButtonClickListener != null)
+//						OnlineMusicActivity.mListButtonClickListener
+//								.closePopupWindow();
 					if (GlobalSettingParameter.useraccount == null)
 					{
 						mTurnMiGu = true;
@@ -110,10 +111,10 @@ public class MobileMusicMainActivity extends TabActivity implements
 					}
 				} else
 				{
-					if (s.equalsIgnoreCase("TAB_LOCAL")
-							&& OnlineMusicActivity.mListButtonClickListener != null)
-						OnlineMusicActivity.mListButtonClickListener
-								.closePopupWindow();
+					// if (s.equalsIgnoreCase("TAB_LOCAL")
+					// && OnlineMusicActivity.mListButtonClickListener != null)
+					// OnlineMusicActivity.mListButtonClickListener
+					// .closePopupWindow();
 					mLastCurrentTab = mTabHost.getCurrentTab();
 					Intent intent = getIntent();
 					intent.putExtra("TABINDEX", mTabHost.getCurrentTab());
@@ -176,13 +177,17 @@ public class MobileMusicMainActivity extends TabActivity implements
 		// this.handler.sendEmptyMessage(i);
 	}
 
+	/**
+	 * 初始化主界面三个主标签
+	 */
 	private void initTab()
 	{
 		logger.v("initTab() ---> Enter");
 		this.mInflater = LayoutInflater.from(this);
 		this.mTabHost = ((TabHost) findViewById(android.R.id.tabhost));
 		this.mTabHost.setup(getLocalActivityManager());
-		Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
+		// Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
+		Intent localIntent1 = new Intent(this, MingOnlineMusic.class);
 		this.mTabHost.addTab(createTabSpec("TAB_ONLINE",
 				R.layout.tab_online_music_layout, localIntent1));
 		Intent localIntent2 = new Intent(this, LocalMusicActivity.class);
@@ -292,6 +297,9 @@ public class MobileMusicMainActivity extends TabActivity implements
 				.putBoolean("appcation_first_start", false).commit();
 	}
 
+	/**
+	 * 显示建立桌面快捷方式对话框
+	 */
 	private void showDilaogForShortCutInLaunch()
 	{
 		logger.v("showDialogForShortCutInLaunch()------>enter");
@@ -329,6 +337,12 @@ public class MobileMusicMainActivity extends TabActivity implements
 		}
 	}
 
+	/**
+	 * 判断是否已经有桌面快捷方式了
+	 * 
+	 * @param paramContext
+	 * @return
+	 */
 	public boolean hasShortCut(Context paramContext)
 	{
 		logger.v("hasShortCut()------->call");
@@ -434,9 +448,11 @@ public class MobileMusicMainActivity extends TabActivity implements
 		boolean flag = true;
 		if (keyevent.getKeyCode() == KeyEvent.KEYCODE_BACK)
 		{
-			if (keyevent.getAction() == KeyEvent.ACTION_DOWN
-					&& (OnlineMusicActivity.mListButtonClickListener == null || !OnlineMusicActivity.mListButtonClickListener
-							.closePopupWindow()))
+			// if (keyevent.getAction() == KeyEvent.ACTION_DOWN
+			// && (OnlineMusicActivity.mListButtonClickListener == null ||
+			// !OnlineMusicActivity.mListButtonClickListener
+			// .closePopupWindow()))
+			if(keyevent.getAction() == KeyEvent.ACTION_DOWN)
 			{
 				List list = ((ActivityManager) getSystemService("activity"))
 						.getRunningTasks(2);
@@ -535,6 +551,12 @@ public class MobileMusicMainActivity extends TabActivity implements
 		this.mPlayerStatusBar.unRegistEventListener();
 	}
 
+	/**
+	 * 关闭的推送通知接收者，定时关闭应用
+	 * 
+	 * @author lkh
+	 * 
+	 */
 	private class ClosePushReceiver extends BroadcastReceiver
 	{
 		private ClosePushReceiver()

@@ -35,6 +35,13 @@ public class SongListItem implements Parcelable
 	public String url1;
 	public String url2;
 	public String url3;
+	public String musicid;
+	public String count;
+	public String crbtValidity;
+	public String price;
+	public String songName;
+	public String singerId;
+	public String singerName;
 
 	public SongListItem()
 	{}
@@ -57,6 +64,13 @@ public class SongListItem implements Parcelable
 		this.filesize2 = paramParcel.readString();
 		this.url3 = paramParcel.readString();
 		this.filesize3 = paramParcel.readString();
+		this.musicid = paramParcel.readString();
+		this.count = paramParcel.readString();
+		this.crbtValidity = paramParcel.readString();
+		this.price = paramParcel.readString();
+		this.songName = paramParcel.readString();
+		this.singerId = paramParcel.readString();
+		this.singerName = paramParcel.readString();
 	}
 
 	public int describeContents()
@@ -89,5 +103,12 @@ public class SongListItem implements Parcelable
 		paramParcel.writeString(this.filesize2);
 		paramParcel.writeString(this.url3);
 		paramParcel.writeString(this.filesize3);
+		paramParcel.writeString(this.musicid);
+		paramParcel.writeString(this.count);
+		paramParcel.writeString(this.crbtValidity);
+		paramParcel.writeString(this.price);
+		paramParcel.writeString(this.songName);
+		paramParcel.writeString(this.singerId);
+		paramParcel.writeString(this.singerName);
 	}
 }

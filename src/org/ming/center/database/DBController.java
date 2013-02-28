@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ming.center.download.DownloadItem;
+import org.ming.center.http.item.SongListItem;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,9 +27,13 @@ public abstract interface DBController
 	public abstract boolean addSongs2Playlist(long paramLong,
 			long[] paramArrayOfLong, int paramInt);
 
+	public abstract long addOnlineMusicItem(Song paramSong);
+
+	public abstract long addOnlineMusicItem(SongListItem paramSongListItem);
+
 	public abstract List<Song> getAllSongs(String[] paramArrayOfString);
 
-	public long addOnlineMusicItem(Song song);
+	public abstract long updateOnlineMusicItem(Song paramSong);
 
 	public abstract int updateDBDownloadItem(DownloadItem paramDownloadItem);
 

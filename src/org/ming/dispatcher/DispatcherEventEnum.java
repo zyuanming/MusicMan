@@ -114,24 +114,30 @@ public class DispatcherEventEnum
 	public static final int UPDATE_EVENT_WAP_CLOSED = 2020;
 	public static final int WLAN_EVENT_WLAN_CLOSE = 3008;
 
+	public static final int UI_INITIAL_SUCCESS = 4400;
+	public static final int UI_INITIAL_FAIL = 4401;
+	public static final int Http_UpdateData_Begin = 3300;
+	public static final int Http_UpdateData_Fail = 3301;
+	public static final int Http_UpdateData_Sucess = 3302;
+
 	public static String getString(int paramInt)
 	{
 		Field[] arrayOfField = DispatcherEventEnum.class.getDeclaredFields();
 		int i = arrayOfField.length;
 		String result = "false";
-		if(i > 0)
+		if (i > 0)
 		{
 			for (int j = 0; j < i; j++)
 			{
 				Field field = arrayOfField[j];
 				try
 				{
-					if(field.getType() == Integer.TYPE && field.getInt(null) == paramInt)
+					if (field.getType() == Integer.TYPE
+							&& field.getInt(null) == paramInt)
 					{
 						result = field.getName();
 					}
-				}
-				catch(IllegalAccessException localIllegalAccessException)
+				} catch (IllegalAccessException localIllegalAccessException)
 				{
 					localIllegalAccessException.printStackTrace();
 				}

@@ -234,13 +234,13 @@ public class OnlineMusicActivity extends Activity implements
 					if (mCurShortClickSelectedItem != (int) l)
 					{
 						logger.v("onItemClick() ---> Enter");
-						char c;
+						int g;
 						MMHttpRequest mmhttprequest;
 						if (NetUtil.isNetStateWap())
-							c = '\u03EF';
+							g = 1007;
 						else
-							c = '\u1392';
-						mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
+							g = 5010;
+						mmhttprequest = MMHttpRequestBuilder.buildRequest(g);
 						mmhttprequest
 								.addUrlParams("groupcode",
 										((ContentItem) mInfoItemData
@@ -565,89 +565,89 @@ public class OnlineMusicActivity extends Activity implements
 			localArrayList.add(localButton);
 			localButton.setOnClickListener(new View.OnClickListener()
 			{
-				public void onClick(View paramAnonymousView)
+				public void onClick(View view)
 				{
-					int j = 0;
 					String str;
-					if (j >= localArrayList.size())
+					for (int j = 0; j < localArrayList.size(); j++)
 					{
-						((View) localArrayList
-								.get(((Integer) paramAnonymousView.getTag())
-										.intValue()))
-								.setBackgroundResource(R.drawable.main_column_navigation_lable_hl);
-						((View) localArrayList
-								.get(((Integer) paramAnonymousView.getTag())
-										.intValue())).setSelected(true);
-						((Button) localArrayList
-								.get(((Integer) paramAnonymousView.getTag())
-										.intValue())).setTextColor(-1);
-						if (mButtonPosition != ((Integer) paramAnonymousView
-								.getTag()).intValue())
+						((View) localArrayList.get(j))
+								.setBackgroundDrawable(getResources()
+										.getDrawable(
+												R.drawable.main_column_navigation_lable_nor));
+						((Button) localArrayList.get(j))
+								.setTextColor(0xffc5e1ff);
+					}
+					((View) localArrayList.get(((Integer) view.getTag())
+							.intValue()))
+							.setBackgroundResource(R.drawable.main_column_navigation_lable_hl);
+					((View) localArrayList.get(((Integer) view.getTag())
+							.intValue())).setSelected(true);
+					((Button) localArrayList.get(((Integer) view.getTag())
+							.intValue())).setTextColor(-1);
+					if (mButtonPosition != ((Integer) view.getTag()).intValue())
+					{
+						System.gc();
+						mEmpty.setVisibility(0);
+						mInital = false;
+						mPageTotalCount = -1;
+						mCurrentPageNo = 1;
+						mTargetPageNo = 1;
+						CancelPreviousReq();
+						mRecommendSongItemData.clear();
+						mAlbumItemData.clear();
+						mColumnItemData.clear();
+						mInfoItemData.clear();
+						if (mMobileMusicRecommendListItemAdapter != null)
+							mMobileMusicRecommendListItemAdapter
+									.releaseAdapterResource();
+						mMobileMusicRecommendListItemAdapter = null;
+						if (mMobileMusicColumnListItemAdapter != null)
+							mMobileMusicColumnListItemAdapter
+									.releaseAdapterResource();
+						mMobileMusicColumnListItemAdapter = null;
+						if (mAlbumAdapter != null)
+							mAlbumAdapter.releaseAdapterResource();
+						mAlbumAdapter = null;
+						if (mMobileMusicContentListItemAdapter != null)
+							mMobileMusicContentListItemAdapter
+									.releaseAdapterResource();
+						mMobileMusicContentListItemAdapter = null;
+						mButtonPosition = ((Integer) view.getTag()).intValue();
+						str = ((TabItem) tabInfoList.get(mButtonPosition)).url;
+						switch (Integer.parseInt(((TabItem) tabInfoList
+								.get(mButtonPosition)).category_type))
 						{
-							System.gc();
-							mEmpty.setVisibility(0);
-							mInital = false;
-							mPageTotalCount = -1;
-							mCurrentPageNo = 1;
-							mTargetPageNo = 1;
-							CancelPreviousReq();
-							mRecommendSongItemData.clear();
-							mAlbumItemData.clear();
-							mColumnItemData.clear();
-							mInfoItemData.clear();
-							if (mMobileMusicRecommendListItemAdapter != null)
-								mMobileMusicRecommendListItemAdapter
-										.releaseAdapterResource();
-							mMobileMusicRecommendListItemAdapter = null;
-							if (mMobileMusicColumnListItemAdapter != null)
-								mMobileMusicColumnListItemAdapter
-										.releaseAdapterResource();
-							mMobileMusicColumnListItemAdapter = null;
-							if (mAlbumAdapter != null)
-								mAlbumAdapter.releaseAdapterResource();
-							mAlbumAdapter = null;
-							if (mMobileMusicContentListItemAdapter != null)
-								mMobileMusicContentListItemAdapter
-										.releaseAdapterResource();
-							mMobileMusicContentListItemAdapter = null;
-							mButtonPosition = ((Integer) paramAnonymousView
-									.getTag()).intValue();
-							str = ((TabItem) tabInfoList.get(mButtonPosition)).url;
-							switch (Integer.parseInt(((TabItem) tabInfoList
-									.get(mButtonPosition)).category_type))
-							{
-							case 3:
-							default:
-								mRecommendContentListView.setVisibility(8);
-								mColumnContentListView.setVisibility(0);
-								mAlbumGridView.setVisibility(8);
-								requestColumnGpoup(str);
-							case 0:
-								mRecommendContentListView.setVisibility(0);
-								mColumnContentListView.setVisibility(8);
-								mAlbumGridView.setVisibility(8);
-								requestRecommendContentListData(str);
-								return;
-							case 1:
-							case 5:
-								mRecommendContentListView.setVisibility(8);
-								mColumnContentListView.setVisibility(0);
-								mAlbumGridView.setVisibility(8);
-								requestColumnGpoup(str);
-								return;
-							case 2:
-								mRecommendContentListView.setVisibility(8);
-								mColumnContentListView.setVisibility(0);
-								mAlbumGridView.setVisibility(8);
-								requestInfoGroup(str);
-								return;
-							case 4:
-								mRecommendContentListView.setVisibility(8);
-								mColumnContentListView.setVisibility(8);
-								mAlbumGridView.setVisibility(0);
-								requestAlbumGpoup(str);
-								return;
-							}
+						case 3:
+						default:
+							mRecommendContentListView.setVisibility(8);
+							mColumnContentListView.setVisibility(0);
+							mAlbumGridView.setVisibility(8);
+							requestColumnGpoup(str);
+						case 0:
+							mRecommendContentListView.setVisibility(0);
+							mColumnContentListView.setVisibility(8);
+							mAlbumGridView.setVisibility(8);
+							requestRecommendContentListData(str);
+							return;
+						case 1:
+						case 5:
+							mRecommendContentListView.setVisibility(8);
+							mColumnContentListView.setVisibility(0);
+							mAlbumGridView.setVisibility(8);
+							requestColumnGpoup(str);
+							return;
+						case 2:
+							mRecommendContentListView.setVisibility(8);
+							mColumnContentListView.setVisibility(0);
+							mAlbumGridView.setVisibility(8);
+							requestInfoGroup(str);
+							return;
+						case 4:
+							mRecommendContentListView.setVisibility(8);
+							mColumnContentListView.setVisibility(8);
+							mAlbumGridView.setVisibility(0);
+							requestAlbumGpoup(str);
+							return;
 						}
 					}
 				}
@@ -2009,9 +2009,12 @@ public class OnlineMusicActivity extends Activity implements
 
 	protected void onResume()
 	{
+		logger.v("onResume() ----> Enter");
 		if ((this.mCurrentTask == null) && (!this.mIsInital))
+		{
+			logger.v("CurrentTask == null && mIsInital == false");
 			requestService();
-		else
+		} else
 		{
 			if (mPlayerLoveRadio
 					&& (GlobalSettingParameter.useraccount != null))
@@ -2023,5 +2026,6 @@ public class OnlineMusicActivity extends Activity implements
 		if (mListButtonClickListener != null)
 			mListButtonClickListener.doUnCompleteTask();
 		super.onResume();
+		logger.v("onResume() ----> Exit");
 	}
 }
