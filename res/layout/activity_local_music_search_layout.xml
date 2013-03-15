@@ -53,7 +53,7 @@
             android:layout_marginTop="10.0dip"
             android:src="@drawable/image_local_plaese_in_put_thing" />
 
-        <cmccwm.mobilemusic.ui.view.LocalSongListView
+        <org.ming.ui.view.LocalSongListView
             android:id="@id/local_music_search_playerlist_songlistview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

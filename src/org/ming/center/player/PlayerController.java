@@ -7,7 +7,8 @@ import org.ming.center.http.item.SongListItem;
 
 import android.content.Context;
 
-public abstract interface PlayerController {
+public abstract interface PlayerController
+{
 	public static final String CMCCWM_MOBILEMUSIC_ACTION_PLAYER_START = "cmccwm.mobilemusic.action.PLAYER_START";
 
 	public abstract int add2NowPlayingList(Song paramSong);
@@ -85,6 +86,9 @@ public abstract interface PlayerController {
 	public abstract void next();
 
 	public abstract boolean open(int paramInt);
+
+	// 自己加上的自定义方法
+	public abstract boolean open2(int paramInt);
 
 	public abstract boolean openRecommendSong(int paramInt);
 

@@ -29,17 +29,16 @@ public class CacheDataManager
 	public long saveCacheData(String paramString1, String paramString2,
 			String paramString3, String paramString4)
 	{
+		long l = 0;
 		try
 		{
-			long l = this.mDBController.addCacheData(paramString1,
-					paramString2, paramString3, paramString4);
+			l = this.mDBController.addCacheData(paramString1, paramString2,
+					paramString3, paramString4);
 			return l;
 		} catch (Exception ex)
 		{
 			ex.printStackTrace();
-		} finally
-		{
-			return 0;
 		}
+		return l;
 	}
 }

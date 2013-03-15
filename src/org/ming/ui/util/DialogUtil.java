@@ -254,14 +254,22 @@ public class DialogUtil
 		return localDialog;
 	}
 
+	/**
+	 * 登录对话框
+	 * 
+	 * @param paramContext
+	 * @param paramView
+	 * @param paramOnClickListener
+	 * @return
+	 */
 	public static Object[] show2BtnDialogWithMoreMicrobolView(
 			Context paramContext, View paramView,
 			View.OnClickListener paramOnClickListener)
 	{
-		Dialog localDialog = new Dialog(paramContext, 2131296261);
-		View localView = LayoutInflater.from(paramContext).inflate(2130903097,
-				null);
-		Button localButton = (Button) localView.findViewById(2131034343);
+		Dialog localDialog = new Dialog(paramContext, R.style.CustomDialogTheme);
+		View localView = LayoutInflater.from(paramContext).inflate(
+				R.layout.dialog_more_miroc_view_two_view, null);
+		Button localButton = (Button) localView.findViewById(R.id.micro_button);
 		localDialog.setContentView(localView);
 		Object[] arrayOfObject = { localDialog, localView };
 		localButton.setOnClickListener(paramOnClickListener);

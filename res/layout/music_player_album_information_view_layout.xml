@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white_color"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@id/album_show_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@id/nothing_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/local_abluminfo_nothing" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/album_info_show_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white_color"
+        android:orientation="vertical" >
+
+        <RadioGroup
+            android:id="@id/tab"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|center"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@id/info_view_btn_ablum_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_player_activity_info_album_selector"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:paddingLeft="20.0dip"
+                android:text="@string/text_player_activity_tab_album"
+                android:textColor="@drawable/text_play_album_info_selector"
+                android:textSize="16.0dip" />
+
+            <RadioButton
+                android:id="@id/info_view_btn_artist_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_player_activity_info_artist_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:paddingLeft="20.0dip"
+                android:text="@string/text_player_activity_tab_singer"
+                android:textColor="@drawable/text_play_songer_info_selector"
+                android:textSize="16.0dip" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@id/info_for_album_or_artist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10.0dip"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@id/info_view_img_li"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:id="@id/bg_info_view_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_album_list_selector" >
+
+                    <ImageView
+                        android:id="@id/info_view_album_img"
+                        android:layout_width="100.0dip"
+                        android:layout_height="100.0dip"
+                        android:layout_marginLeft="18.0dip"
+                        android:layout_marginTop="6.0dip"
+                        android:scaleType="fitXY" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@id/bg_info_view_singer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_singer_image_list"
+                    android:visibility="gone" >
+
+                    <ImageView
+                        android:id="@id/info_view_singer_img"
+                        android:layout_width="100.0dip"
+                        android:layout_height="100.0dip"
+                        android:layout_marginLeft="18.0dip"
+                        android:layout_marginTop="6.0dip"
+                        android:scaleType="fitXY" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@id/info_view_info_li"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@id/info_view_songer_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20.0dip"
+                    android:text=" "
+                    android:textColor="@color/gray_eighty_percent"
+                    android:textSize="14.0sp" />
+
+                <TextView
+                    android:id="@id/info_view_summary_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20.0dip"
+                    android:text=" "
+                    android:textColor="@color/gray_eighty_percent"
+                    android:textSize="14.0sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/long_line" />
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none" >
+
+            <FrameLayout
+                android:id="@id/detail"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <TextView
+                    android:id="@id/info_view_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:padding="15.0dip"
+                    android:text="暂无内容"
+                    android:textColor="@color/hint_color"
+                    android:textSize="16.0sp" />
+
+                <ProgressBar
+                    android:id="@id/info_view_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminateDrawable="@drawable/dialog_progress_layer"
+                    android:max="100"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</LinearLayout>

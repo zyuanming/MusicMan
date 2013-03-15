@@ -20,11 +20,11 @@
     <string name="garbage_song_success">以后不再推荐此歌曲</string>
     <string name="radio_song_add_love">歌曲已经加入红心电台</string>
     <string name="radio_song_remove_love">歌曲已经从红心电台删除</string>
-    <string name="orderwindow_settone">下载彩铃</string>
+    <string name="orderwindow_settone">设置振铃</string>
     <string name="fail_to_set_ringtone_util">设置铃声失败!</string>
-    <string name="orderwindow_setring">来电铃声</string>
+    <string name="orderwindow_setring">设置彩铃</string>
     <string name="orderwindow_download">下载歌曲</string>
-    <string name="orderwindow_sendsong">赠送歌曲</string>
+    <string name="orderwindow_sendsong">赠送铃声</string>
     <string name="orderwindow_recommand">免费推荐</string>
     <string name="orderwindow_addsongtoplaylist">添加到播放列表</string>
     <string name="orderwindow_recommand_success">推荐成功</string>
@@ -37,7 +37,7 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="confirm">确定</string>
-    <string name="cancel">取消</string>
+    <string name="cancel">返回</string>
     <string name="commit">提交</string>
     <string name="play_need_login">请登录后继续试听</string>
     <string name="player_status_default_tile">请选择歌曲</string>
@@ -85,7 +85,7 @@
     <string name="tone_subscription_common">彩铃订制</string>
     <string name="getting_rights_fail_common">下载歌曲权限失败</string>
     <string name="recommend_friend_common">推荐好友加入音乐俱乐部</string>
-    <string name="recommend_mobilemusic_common">推荐音乐随身听给好友</string>
+    <string name="recommend_mobilemusic_common">推荐MusicMan给好友</string>
     <string name="getfail_data_error_common">获取数据失败</string>
     <string name="pls_select_items_common">您还未选中任何歌曲</string>
     <string name="playlist_myfav_common">我的最爱</string>
@@ -155,7 +155,7 @@
     <string name="loading_for_business">业务申请中，请稍侯...</string>
     <string name="recommend_song_name">歌曲： %s</string>
     <string name="recommend_singer">歌手： %s</string>
-    <string name="recommend_price">资费： %s</string>
+    <string name="recommend_price">资费： 每首歌曲 %s 元</string>
     <string name="recommend_copyright">版权： %s</string>
     <string name="networker_change_is_other_net">您当前使用的移动网络将产生网络流量费用，是否确定继续？</string>
     <string name="wlan_disconnect_cmwap_open_util">您的网络已发生变化，请点击确定退出客户端重新登录</string>
@@ -206,7 +206,7 @@
     <string name="set_to_ringtone_playback_activity">设为铃声</string>
     <string name="add_to_playlist_playback_activity">添加到</string>
     <string name="online_music_cannot_set_ringtone_playback_activity">在线音乐无法设置为来电铃声</string>
-    <string name="network_changed_playback_activity">网络发生变化，请重新登录音乐随身听</string>
+    <string name="network_changed_playback_activity">网络发生变化，请重新登录MusicMan</string>
     <string name="network_error_playback_activity">播放发生网络错误,正在重试...</string>
     <string name="playback_activity_information_ablum">专辑介绍</string>
     <string name="playback_activity_information_singer">歌手介绍</string>
@@ -443,7 +443,7 @@
     <string name="user_qita">其他</string>
     <string name="user_feeb_back">意见反馈</string>
     <string name="user_member_flow">免流量说明</string>
-    <string name="user_flow_">使用CMWAP网络登录音乐随身听4.0，特级会员使用所产生的流量费参考本地GPRS实际收费标准，其他会员通过CMWAP网络产生的GPRS流量全免费。</string>
+    <string name="user_flow_">使用CMWAP网络登录MusicMan，特级会员使用所产生的流量费参考本地GPRS实际收费标准，其他会员通过CMWAP网络产生的GPRS流量全免费。</string>
     <string name="user_member_update_version">检查新版本</string>
     <string name="app_about">关于</string>
     <string name="app_version">版本号: </string>
@@ -467,13 +467,13 @@
     <string name="mobile_music_sms_clent">消息发送中...</string>
     <string name="title_confirm_logout_activity">确认注销？</string>
     <string name="weibo_authed">已绑定新浪微博账号</string>
-    <string name="share_url">,我正在使用#音乐随身听#分享#《%s》#</string>
+    <string name="share_url">,我正在使用#MusicMan#分享#《%s》#</string>
     <string name="share_url_10086_link">（下载软件:http://music.10086.cn/）</string>
     <string name="feedback_send">请写下你的使用建议</string>
     <string name="feedback_ok">发送成功</string>
     <string name="btn_recommend_friend_song">推荐给好友</string>
     <string name="hint_recommend_friend_song">选择好友推荐歌曲后，对方将通过短信接收到歌曲试听地址</string>
-    <string name="hint_send_friend_song">选择好友赠送歌曲后，对方将通过短信接收到歌曲下载地址</string>
+    <string name="hint_send_friend_song">选择好友赠送铃声后，对方的个人铃声库会自动增加你所赠送的铃声</string>
     <string name="please_input_phone_number_recommend_activity">请添加联系人</string>
     <string name="error_format_phone_number_recommend_activity">非法联系人，内容中不能包含空格</string>
     <string name="phone_number_recommend_more_240">选择的联系人总数超过240人,请重新选择</string>
@@ -498,7 +498,7 @@
     <string name="text_main_tab_mymigu">我的咪咕</string>
     <string name="text_player_activity_tab_album">专辑介绍</string>
     <string name="text_player_activity_tab_singer">艺人介绍</string>
-    <string name="text_check_older_version_text">您手机存在不同版本音乐随身听，是否删除旧版本</string>
+    <string name="text_check_older_version_text">您手机存在不同版本MusicMan，是否删除旧版本</string>
     <string name="text_no_warn_text">不再提示</string>
     <string name="text_my_migu_text">我的咪咕</string>
     <string name="text_my_normal_member_text">普通会员</string>

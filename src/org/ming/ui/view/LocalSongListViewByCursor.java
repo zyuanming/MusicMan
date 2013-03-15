@@ -296,7 +296,7 @@ public class LocalSongListViewByCursor extends LinearLayout implements
 				obj = mContext;
 			else
 				obj = (Activity) mContext;
-			Uiutil.ifSwitchToWapDialog(((Context) (obj)));
+			//Uiutil.ifSwitchToWapDialog(((Context) (obj)));
 		}
 			break;
 		case DispatcherEventEnum.PLAYER_EVENT_TRACK_ENDED:

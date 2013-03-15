@@ -24,11 +24,13 @@ import org.ming.dispatcher.DispatcherEventEnum;
 import org.ming.util.MyLogger;
 import org.ming.util.NetUtil;
 import org.ming.util.Util;
+import org.ming.util.XMLParser;
 
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Message;
+import android.os.Parcel;
 import android.util.Log;
 
 public class PlayerControllerImpl implements PlayerController,
@@ -371,29 +373,38 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public void clearNowPlayingList()
 	{
-		// TODO Auto-generated method stub
-
+		if (mCurrentTask != null)
+		{
+			mHttpController.cancelTask(mCurrentTask);
+			mCurrentTask = null;
+		}
+		stop();
+		mNowPlayingList.clear();
+		mDispatcher.sendMessage(mDispatcher.obtainMessage(1023));
+		mBackUpList.clear();
+		mPlayingItemPosition = 0;
+		mIsLoadingData = false;
+		mDispatcher.sendMessage(mDispatcher.obtainMessage(4008));
 	}
 
 	@Override
 	public boolean get51CHStatus()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		boolean flag = m51CHStatus;
+		return flag;
 	}
 
 	@Override
 	public int getDuration()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return wrapper.getDuration();
 	}
 
 	@Override
 	public int getEQMode()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int i = mEQMode;
+		return i;
 	}
 
 	@Override
@@ -414,22 +425,8 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public int getNowPlayingItemPosition()
 	{
-		int i = -1;
-		try
-		{
-			i = this.mPlayingItemPosition;
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		int i = mPlayingItemPosition;
 		return i;
-	}
-
-	@Override
-	public int getNowPlayingNextItem()
-	{
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -447,29 +444,27 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public int getRepeatMode()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int i = mRepeatMode;
+		return i;
 	}
 
 	@Override
 	public int getShuffleMode()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int i = mShuffleMode;
+		return i;
 	}
 
 	@Override
 	public int getTransId()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return mTransId;
 	}
 
 	@Override
 	public boolean isFileOnExternalStorage()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return wrapper.isFileOnExternalStorage();
 	}
 
 	@Override
@@ -505,8 +500,7 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public boolean isPlayEnd()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return mIsplayEnd;
 	}
 
 	@Override
@@ -529,8 +523,10 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public void loadAllLocalTracks2NowPlayingList()
 	{
-		// TODO Auto-generated method stub
-
+		logger.v("loadAllLocalTracks2NowPlayingList() ---> Enter");
+		if (mFullPlayList != null)
+			setNowPlayingList(mFullPlayList, false);
+		logger.v("loadAllLocalTracks2NowPlayingList() ---> Exit");
 	}
 
 	// 还有bug没有清理--------------》 等待清理
@@ -585,19 +581,18 @@ public class PlayerControllerImpl implements PlayerController,
 	 * 开始播放音乐
 	 */
 	@Override
-	public boolean open(int paramInt)
+	public boolean open2(int paramInt)
 	{
 		boolean bool1 = false;
 		try
 		{
 			logger.v("open(position) ---> Enter");
-			this.ISOPENLOCALMUSIC = true;
+			this.ISOPENLOCALMUSIC = false;
 			if (paramInt == -1)
 				return bool1;
 			if (Util.checkWapStatus())
 			{
-				boolean bool2 = doHandOpen(paramInt);
-				bool1 = bool2;
+				bool1 = doHandOpen(paramInt);
 				return bool1;
 			}
 			if ((this.mNowPlayingList == null)
@@ -609,9 +604,62 @@ public class PlayerControllerImpl implements PlayerController,
 			{
 				logger.v("------------------------");
 				bool1 = doHandOpen(paramInt);
+				return bool1;
 			}
 			if (((Song) this.mNowPlayingList.get(paramInt)).mUrl
-					.contains("218.200.160.30"))
+					.contains("218.200.230.142"))
+			{
+				if (this.mRecommendPlayList != null)
+				{
+					this.mRecommendPlayList.clear();
+					this.mRecommendPlayList = null;
+					this.mPlayingItemPosition = 0;
+				}
+				this.wrapper.stopInternal();
+				mIsCmwapToWlan = true;
+				bool1 = doHandOpen(paramInt);
+				return bool1;
+			}
+			bool1 = doHandOpen(paramInt);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		logger.v("open(position) ---> Exit");
+		return bool1;
+	}
+
+	/**
+	 * 开始播放音乐
+	 */
+	@Override
+	public boolean open(int paramInt)
+	{
+		boolean bool1 = false;
+		try
+		{
+			logger.v("open(position) ---> Enter");
+			this.ISOPENLOCALMUSIC = true;
+			if (paramInt == -1)
+				return bool1;
+			if (Util.checkWapStatus())
+			{
+				bool1 = doHandOpen(paramInt);
+				return bool1;
+			}
+			if ((this.mNowPlayingList == null)
+					|| (this.mNowPlayingList.get(paramInt) == null)
+					|| (((Song) this.mNowPlayingList.get(paramInt)).mUrl == null)
+					|| ("<unknown>".equals(((Song) this.mNowPlayingList
+							.get(paramInt)).mUrl))
+					|| ("".equals(((Song) this.mNowPlayingList.get(paramInt)).mUrl)))
+			{
+				logger.v("------------------------");
+				bool1 = doHandOpen(paramInt);
+				return bool1;
+			}
+			if (((Song) this.mNowPlayingList.get(paramInt)).mUrl
+					.contains("218.200.230.142"))
 			{
 				if (this.mRecommendPlayList != null)
 				{
@@ -631,6 +679,7 @@ public class PlayerControllerImpl implements PlayerController,
 				} else
 				{
 					bool1 = doHandOpen(paramInt);
+					return bool1;
 				}
 			}
 			bool1 = doHandOpen(paramInt);
@@ -717,6 +766,58 @@ public class PlayerControllerImpl implements PlayerController,
 		return flag;
 	}
 
+	private boolean doHandOpen2(int i)
+	{
+		logger.v("doHandlOpen ----> enter");
+		boolean flag = false;
+		if (mNowPlayingList != null && !mNowPlayingList.isEmpty())
+		{
+			if (i < 0 || i > -1 + mNowPlayingList.size())
+			{
+				logger.e("open(position), position is invalid");
+			} else
+			{
+				if (mRecommendPlayList != null)
+				{
+					mRecommendPlayList.clear();
+					mRecommendPlayList = null;
+					mPlayingItemPosition = 0;
+				}
+				setIsLoadingData(true);
+				mDispatcher
+						.sendMessage(mDispatcher
+								.obtainMessage(DispatcherEventEnum.UI_EVENT_PLAY_NEWSONG));
+				Song song = (Song) mNowPlayingList.get(i);
+				flag = false;
+				if (song != null)
+				{
+					mDispatcher
+							.sendMessage(mDispatcher
+									.obtainMessage(DispatcherEventEnum.UI_EVENT_DOWNSONGINF_START));
+					if (mCurrentTask != null)
+					{
+						mHttpController.cancelTask(mCurrentTask);
+						mCurrentTask = null;
+					}
+					if (song.mUrl != null
+							&& !song.mUrl.equalsIgnoreCase("<unknown>"))
+					{
+						mPlayingItemPosition = i;
+						wrapper.stop();
+						wrapper.start((Song) mNowPlayingList.get(i));
+						mPlayingItemPosition = i;
+						logger.v("open(position) ---> Exit");
+						flag = true;
+					}
+				}
+			}
+		} else
+		{
+			logger.e("open(position), now playing list is empty");
+		}
+		return flag;
+	}
+
 	private void askSongInfo(Song paramSong)
 	{
 		// if (paramSong.mGroupCode == "<unknown>")
@@ -794,6 +895,9 @@ public class PlayerControllerImpl implements PlayerController,
 		return flag;
 	}
 
+	/**
+	 * 暂停播放
+	 */
 	@Override
 	public void pause()
 	{
@@ -870,6 +974,9 @@ public class PlayerControllerImpl implements PlayerController,
 		mCurrentTask = mHttpController.sendRequest(mmhttprequest);
 	}
 
+	/**
+	 * 播放在线音乐
+	 */
 	public void playOnlineSong(Song song)
 	{
 		Song song1 = getCurrentPlayingItem();
@@ -1061,7 +1168,6 @@ public class PlayerControllerImpl implements PlayerController,
 	@Override
 	public boolean renewOnlinePlay(int paramInt)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1074,17 +1180,27 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void set51CHStatus(boolean paramBoolean)
+	public void set51CHStatus(boolean flag)
 	{
-		// TODO Auto-generated method stub
-
+		mDBController.set51CHStatus(flag);
+		m51CHStatus = flag;
 	}
 
 	@Override
-	public void setEQMode(int paramInt)
+	public void setEQMode(int i)
 	{
-		// TODO Auto-generated method stub
-
+		logger.v("setEQMode() ---> Enter");
+		Parcel parcel = Parcel.obtain();
+		parcel.writeInterfaceToken("android.media.IMediaPlayer");
+		parcel.writeInt(0x7fff0000);
+		parcel.writeInt(2);
+		parcel.writeInt(i);
+		if (0x40000 != i)
+		{
+			mDBController.setEQMode(i);
+			mEQMode = i;
+		}
+		logger.v("setEQMode() ---> Exit");
 	}
 
 	@Override
@@ -1228,7 +1344,6 @@ public class PlayerControllerImpl implements PlayerController,
 			if (i != 0)
 			{
 				int j = this.mPayingNextItem;
-				bool = false;
 				if (j >= 0)
 				{
 					this.mPayingNextItem = (1 + this.mPayingNextItem);
@@ -1247,10 +1362,9 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void setNowPlayingItemPosition(int paramInt)
+	public void setNowPlayingItemPosition(int i)
 	{
-		// TODO Auto-generated method stub
-
+		mPlayingItemPosition = i;
 	}
 
 	@Override
@@ -1321,12 +1435,14 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void setTransId(int paramInt)
+	public void setTransId(int i)
 	{
-		// TODO Auto-generated method stub
-
+		mTransId = i;
 	}
 
+	/**
+	 * 开始播放音乐
+	 */
 	@Override
 	public void start()
 	{
@@ -1335,6 +1451,9 @@ public class PlayerControllerImpl implements PlayerController,
 		logger.v("start() ---> Exit");
 	}
 
+	/**
+	 * 停止播放音乐
+	 */
 	@Override
 	public void stop()
 	{
@@ -1344,21 +1463,24 @@ public class PlayerControllerImpl implements PlayerController,
 		logger.v("stop() ---> Exit");
 	}
 
+	/**
+	 * 把音乐添加到当前播放列表中
+	 */
 	@Override
 	public int add2NowPlayingList(Song paramSong)
 	{
 		logger.d("add2NowPlayingList(song) ----> enter");
+		int i = -1;
 		try
 		{
-			int i = add2NowPlayingList(paramSong, false);
+			i = add2NowPlayingList(paramSong, false);
 			logger.d("i ----> " + i);
 			logger.d("add2NowPlayingList(song) ----> exit");
-			return i;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return 0;
+		return i;
 	}
 
 	@Override
@@ -1432,31 +1554,9 @@ public class PlayerControllerImpl implements PlayerController,
 							.sendMessage(mDispatcher
 									.obtainMessage(DispatcherEventEnum.PLAYER_EVENT_SONGLIST_CHANGE));
 				}
-				// else
-				// // 当前的播放列表中存在这首歌
-				// {
-				// if ((this.mNowPlayingList.size() == 0)
-				// || (this.mPlayingItemPosition == -1
-				// + this.mNowPlayingList.size()))
-				// {
-				// this.mNowPlayingList.add(song);
-				// this.mBackUpList.add(song);
-				// } else
-				// {
-				// int k = 1 + this.mPlayingItemPosition;
-				// int m = 1 + this.mPlayingItemPosition;
-				// if (this.mNowPlayingList.size() < 1 +
-				// this.mPlayingItemPosition)
-				// k = this.mNowPlayingList.size();
-				// this.mNowPlayingList.add(k, song);
-				// if (this.mBackUpList.size() < 1 + this.mPlayingItemPosition)
-				// m = this.mBackUpList.size();
-				// this.mBackUpList.add(m, song);
-				// }
-				// }
 			}
+			i = mNowPlayingList.indexOf(song);
 		}
-		i = mNowPlayingList.indexOf(song);
 		logger.d("i ----> " + i);
 		logger.v("add2NowPlayingList(song, flag) ---> Exit");
 		return i;
@@ -1514,10 +1614,13 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void addRecommendSongList(List<Song> paramList)
+	public void addRecommendSongList(List<Song> list)
 	{
-		// TODO Auto-generated method stub
-
+		if (!ISOPENLOCALMUSIC && list != null && list.size() > 0)
+		{
+			mRecommendPlayList = new ArrayList<Song>();
+			mRecommendPlayList.addAll(list);
+		}
 	}
 
 	@Override
@@ -1552,10 +1655,29 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public void delDownloadSong(Song paramSong)
+	public void delDownloadSong(Song song)
 	{
-		// TODO Auto-generated method stub
-
+		Song song1 = getCurrentPlayingItem();
+		if (mNowPlayingList.size() <= 0 || mNowPlayingList.indexOf(song) == -1)
+		{
+			return;
+		} else
+		{
+			for (int i = 0; i < mNowPlayingList.size(); i++)
+			{
+				if (mNowPlayingList.get(i) != null
+						&& ((Song) mNowPlayingList.get(i)).mUrl != null
+						&& ((Song) mNowPlayingList.get(i)).mUrl
+								.equals(song.mUrl))
+				{
+					mNowPlayingList.remove(i);
+					mDispatcher.sendMessage(mDispatcher.obtainMessage(1023));
+					mBackUpList.remove(i);
+				}
+			}
+			if (song1 != null && mNowPlayingList.indexOf(song1) != -1)
+				mPlayingItemPosition = mNowPlayingList.indexOf(song1);
+		}
 	}
 
 	@Override
@@ -1710,10 +1832,78 @@ public class PlayerControllerImpl implements PlayerController,
 	}
 
 	@Override
-	public Song makeOnlineSong(String paramString, Context paramContext)
+	public Song makeOnlineSong(String s, Context context)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Song song;
+		if (s == null)
+		{
+			song = null;
+		} else
+		{
+			XMLParser xmlparser = new XMLParser(s.getBytes());
+			if (xmlparser.getRoot() == null
+					|| xmlparser.getValueByTag("code") == null)
+			{
+				Message message = mDispatcher.obtainMessage(4009);
+				message.arg1 = 3;
+				mDispatcher.sendMessage(message);
+				setIsLoadingData(false);
+				song = null;
+			} else if (xmlparser.getValueByTag("code") != null
+					&& !xmlparser.getValueByTag("code").equals("000000"))
+			{
+				Message message1 = mDispatcher.obtainMessage(4009);
+				message1.arg1 = 4;
+				message1.obj = new String(xmlparser.getValueByTag("info"));
+				mDispatcher.sendMessage(message1);
+				setIsLoadingData(false);
+				song = null;
+			} else if (xmlparser.getValueByTag("durl1") == null
+					|| xmlparser.getValueByTag("contentid") == null)
+			{
+				xmlparser.getValueByTag("des");
+				setIsLoadingData(false);
+				logger.e("PlaySelectedSong() : data from server is null");
+				song = null;
+			} else
+			{
+				xmlparser.getValueByTag("contentid");
+				song = new Song();
+				song.mAlbum = xmlparser.getValueByTag("album");
+				song.mAlbumId = -1;
+				song.mArtist = xmlparser.getValueByTag("singer");
+				song.mContentId = xmlparser.getValueByTag("contentid");
+				song.mDuration = -1;
+				song.mId = -1L;
+				song.mMusicType = MusicType.ONLINEMUSIC.ordinal();
+				song.mLyric = null;
+				song.mArtUrl = xmlparser.getValueByTag("img");
+				song.mTrack = xmlparser.getValueByTag("songname");
+				song.mUrl = xmlparser.getValueByTag("durl1");
+				song.mUrl2 = xmlparser.getValueByTag("durl2");
+				song.mUrl3 = xmlparser.getValueByTag("durl3");
+				if (!"".equals(xmlparser.getValueByTag("filesize1"))
+						&& xmlparser.getValueByTag("filesize1") != null)
+					song.mSize = Long.valueOf(
+							xmlparser.getValueByTag("filesize1")).longValue();
+				if (!"".equals(xmlparser.getValueByTag("filesize2"))
+						&& xmlparser.getValueByTag("filesize2") != null)
+					song.mSize2 = Long.valueOf(
+							xmlparser.getValueByTag("filesize2")).longValue();
+				if (!"".equals(xmlparser.getValueByTag("filesize3"))
+						&& xmlparser.getValueByTag("filesize3") != null)
+					song.mSize3 = Long.valueOf(
+							xmlparser.getValueByTag("filesize3")).longValue();
+				song.isDolby = Util.isDolby(song);
+				song.mGroupCode = xmlparser.getValueByTag("groupcode");
+				String s1 = xmlparser.getValueByTag("point");
+				if (s1 != null && !s1.trim().equals(""))
+					song.mPoint = Integer.parseInt(s1);
+				else
+					song.mPoint = 0;
+			}
+		}
+		return song;
 	}
 
 	private void requestRadioSongInfo()
@@ -1857,5 +2047,12 @@ public class PlayerControllerImpl implements PlayerController,
 			logger.e("Current playing item is null !!");
 		}
 
+	}
+
+	@Override
+	public int getNowPlayingNextItem()
+	{
+		int i = mPayingNextItem;
+		return i;
 	}
 }

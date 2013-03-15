@@ -7,6 +7,10 @@ import java.io.RandomAccessFile;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.ming.center.ConfigSettingParameter;
 import org.ming.center.GlobalSettingParameter;
 import org.ming.center.MobileMusicApplication;
@@ -140,31 +144,28 @@ public class MusicPlayerWrapper
 			switch (message.what)
 			{
 			default:
+				super.handleMessage(message);
+				break;
 			case 0:
-			{
 				mSong = ((Song) message.obj);
-
-				Message localMessage = mDispatcher.obtainMessage(1021, mSong);
+				Message localMessage = mDispatcher.obtainMessage(
+						DispatcherEventEnum.PLAYER_EVENT_CACHE_STRAT_PLAYING,
+						mSong);
 				mDispatcher.sendMessage(localMessage);
 				startInternal((Song) message.obj);
-			}
 				break;
 			case 1:
-			{
 				stopInternal();
-				removeMessages(2);
-			}
 				break;
 			case 2:
+				removeMessages(2);
+				if (GlobalSettingParameter.useraccount == null)
+					mDispatcher.sendMessage(mDispatcher.obtainMessage(1013));
+				else
+					mDispatcher.sendMessage(mDispatcher.obtainMessage(1013));
 				break;
 			}
-			super.handleMessage(message);
 			logger.v("handleMessage() ---> Exit");
-
-			if (GlobalSettingParameter.useraccount == null)
-				mDispatcher.sendMessage(mDispatcher.obtainMessage(1013));
-			else
-				mDispatcher.sendMessage(mDispatcher.obtainMessage(1013));
 		}
 	};
 	private volatile State state = State.END;
@@ -184,14 +185,15 @@ public class MusicPlayerWrapper
 				switch (paramAnonymousInt)
 				{
 				default:
+					break;
 				case 1:
 				case 2:
+					if (state != State.PAUSED)
+						interruptBy(2);
+					break;
 				case 0:
-				}
-				if (MusicPlayerWrapper.this.state != MusicPlayerWrapper.State.PAUSED)
-				{
-					MusicPlayerWrapper.this.interruptBy(2);
-					MusicPlayerWrapper.this.resumeInterruptBy(2);
+					resumeInterruptBy(2);
+					break;
 				}
 			}
 		}, 32);
@@ -320,6 +322,7 @@ public class MusicPlayerWrapper
 				doOpen(paramDataSourceHandler, this.currentSongMilliSecPlayed);
 			} else if (paramDataSourceHandler.isError())
 			{
+				logger.v("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 				doOnError(1, -102);
 			} else
 			{
@@ -474,8 +477,60 @@ public class MusicPlayerWrapper
 			}
 		} else
 		{
-			mDispatcher
-					.sendMessage(mDispatcher.obtainMessage(1004, 0, 0, null));
+			logger.v("******************************************************************************");
+			// mDispatcher
+			// .sendMessage(mDispatcher.obtainMessage(
+			// DispatcherEventEnum.PLAYER_EVENT_ERROR_OCCURED, 0,
+			// 0, null));
+			/**
+			 * 就是因为这个发送错误信息代码导致程序死机。。。
+			 */
+			if (player != null && player.isPlaying())
+			{
+				player.stop();
+				player = null;
+			} else
+			{
+				player = new MediaPlayer();
+				state = State.IDLE;
+				player.setWakeMode(mApp, 1);
+				player.setOnErrorListener(new android.media.MediaPlayer.OnErrorListener()
+				{
+
+					public boolean onError(MediaPlayer mediaplayer, int i, int j)
+					{
+						return true;
+					}
+				});
+			}
+			try
+			{
+				player.setDataSource(mApp, Uri.parse(currentSong.mUrl));
+				currentSongBytesPlayed = currentHandler.getBytes();
+				state = State.INITIALIZED;
+				player.setAudioStreamType(3);
+				player.setOnPreparedListener(new android.media.MediaPlayer.OnPreparedListener()
+				{
+					public void onPrepared(MediaPlayer mediaplayer)
+					{
+						doOnPrepared(msec);
+					}
+				});
+				player.setOnCompletionListener(new android.media.MediaPlayer.OnCompletionListener()
+				{
+					public void onCompletion(MediaPlayer mediaplayer)
+					{
+						doComplete(handler);
+					}
+
+				});
+				player.prepareAsync();
+				state = State.PREPARING;
+				logger.v("doOpen() ---> Exit");
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -586,6 +641,7 @@ public class MusicPlayerWrapper
 		{
 			e.printStackTrace();
 		}
+		logger.v("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		doOpen(localDataSourceHandler, this.currentSongMilliSecPlayed);
 		logger.v("doUpdate() ---> Exit");
 		return bool1;
@@ -785,25 +841,33 @@ public class MusicPlayerWrapper
 		if (!flag && song != null)
 		{
 			stopInternal();
-			if (song != null && currentSong == null || song == null
-					&& currentSong != null || song != null
-					&& currentSong != null
-					&& !song.mUrl.equals(currentSong.mUrl))
+			if (((song != null) && (this.currentSong == null))
+					|| ((song == null) && (this.currentSong != null))
+					|| ((song != null) && (this.currentSong != null) && (!song.mUrl
+							.equals(this.currentSong.mUrl))))
+			{
+				logger.v("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
 				currentHandler = null;
+			}
 			currentSong = song;
 			currentSongDuration = currentSong.mDuration;
 			currentSongBytesPlayed = 0L;
 			currentSongMilliSecPlayed = 0;
 			state = State.INITIALING;
 			interruptState = 0;
-			mDispatcher.sendMessage(mDispatcher.obtainMessage(1009));
-			if (!Util.isOnlineMusic(currentSong)
-					|| (NetUtil.netState != 3 || SystemControllerImpl
-							.getInstance(mApp).checkWapStatus())
-					&& NetUtil.isConnection())
+			mDispatcher
+					.sendMessage(mDispatcher
+							.obtainMessage(DispatcherEventEnum.PLAYER_EVENT_PREPARE_START));
+			if ((Util.isOnlineMusic(this.currentSong))
+					&& (!((NetUtil.netState != 3) || (SystemControllerImpl
+							.getInstance(this.mApp).checkWapStatus())) && (NetUtil
+							.isConnection())))
+			{
 				mApp.getEventDispatcher().sendMessage(
-						mApp.getEventDispatcher().obtainMessage(1014));
-			doOnError(1, -102);
+						mApp.getEventDispatcher().obtainMessage(
+								DispatcherEventEnum.PLAYER_EVENT_WAP_CLOSED));
+				doOnError(1, -102);
+			}
 
 			if (currentHandler != null)
 			{
@@ -829,14 +893,16 @@ public class MusicPlayerWrapper
 					} else
 					{
 						mSong.isDolby = false;
+						logger.v("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
 						doOpen(currentHandler, 0);
 					}
 				}
 			} else
 			{
-				logger.v(">>>>>>>>>>>>>>>>>>>>>>");
+				logger.v(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 				currentHandler = DataSourceHandler
 						.startHandle(song, this, mApp);
+				logger.v("currentHandler = " + currentHandler);
 				doOpen(currentHandler, 0);
 			}
 			logger.v("startInternal() ---> Exit");
@@ -965,6 +1031,11 @@ public class MusicPlayerWrapper
 		return f;
 	}
 
+	/**
+	 * 检查文件路径是否是在外部存储，如SD卡
+	 * 
+	 * @return
+	 */
 	public boolean isFileOnExternalStorage()
 	{
 		boolean bool = false;
@@ -1212,6 +1283,7 @@ public class MusicPlayerWrapper
 					}
 				} else
 				{
+
 					start(this.currentSong);
 				}
 			} else

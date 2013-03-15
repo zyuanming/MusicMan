@@ -5,6 +5,8 @@ import java.util.List;
 import org.ming.R;
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.system.SystemControllerImpl;
+import org.ming.ui.activity.online.MusicOnlineRecommendFriend;
+import org.ming.ui.activity.online.MusicOnlineSetRingToneActivity;
 import org.ming.util.MyLogger;
 import org.ming.util.NetUtil;
 import org.ming.util.Util;
@@ -27,20 +29,24 @@ public class Uiutil
 	public static Dialog mLoadDataDialog;
 	public static Dialog mWlanCloseDialog;
 
-	public static void downloadMusic(Context context, String s, String s1)
+	public static void downloadMusic(Context context, String s, String s1,
+			String s2)
 	{
 		logger.v("downloadMusic() ---> Enter");
-		// Intent intent = new Intent(context,
-		// MusicOnlineSetRingToneActivity.class);
-		// intent.putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-		// s);
-		// intent.putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-		// s1);
-		// intent.putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 3);
-		// context.startActivity(intent);
+		Intent intent = new Intent(context,
+				MusicOnlineSetRingToneActivity.class);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.musicid",
+				s);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.singername",
+				s1);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.songname",
+				s2);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 3);
+		context.startActivity(intent);
 		logger.v("downloadMusic() ---> Exit");
 	}
 
@@ -91,11 +97,10 @@ public class Uiutil
 									});
 			}
 
-			if (((NetUtil.netState == 2) || (NetUtil.netState == 7) || (NetUtil.netState == 5))
-					&& ((i == 3) || (i == 6) || (i == 1)))
+			if ((NetUtil.netState == 2 || NetUtil.netState == 7 || NetUtil.netState == 5)
+					&& (i == 3 || i == 6 || i == 1))
 			{
-				if ((mWlanCloseDialog != null)
-						&& (mWlanCloseDialog.isShowing()))
+				if (mWlanCloseDialog != null && mWlanCloseDialog.isShowing())
 				{
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
@@ -107,15 +112,18 @@ public class Uiutil
 										.getText(R.string.title_information_common),
 								paramContext
 										.getString(R.string.wlan_disconnect_cmwap_open_util),
-								new View.OnClickListener()
+								new android.view.View.OnClickListener()
 								{
-									public void onClick(View paramAnonymousView)
+
+									public void onClick(View view)
 									{
 										Util.exitMobileMusicApp(false);
 									}
-								}, new View.OnClickListener()
+
+								}, new android.view.View.OnClickListener()
 								{
-									public void onClick(View paramAnonymousView)
+
+									public void onClick(View view)
 									{
 										if (Uiutil.mWlanCloseDialog != null)
 										{
@@ -123,11 +131,11 @@ public class Uiutil
 											Uiutil.mWlanCloseDialog = null;
 										}
 									}
+
 								});
 			} else if (NetUtil.netState == 8)
 			{
-				if ((mWlanCloseDialog != null)
-						&& (mWlanCloseDialog.isShowing()))
+				if (mWlanCloseDialog != null && mWlanCloseDialog.isShowing())
 				{
 					mWlanCloseDialog.dismiss();
 					mWlanCloseDialog = null;
@@ -139,9 +147,10 @@ public class Uiutil
 										.getText(R.string.network_error_common),
 								paramContext
 										.getString(R.string.wlan_disconnect_title_util),
-								new View.OnClickListener()
+								new android.view.View.OnClickListener()
 								{
-									public void onClick(View paramAnonymousView)
+
+									public void onClick(View view)
 									{
 										if (Uiutil.mWlanCloseDialog != null)
 										{
@@ -149,6 +158,7 @@ public class Uiutil
 											Uiutil.mWlanCloseDialog = null;
 										}
 									}
+
 								});
 			}
 		}
@@ -386,56 +396,66 @@ public class Uiutil
 	// }
 
 	/**
-	 * 设置声音的音调
+	 * 设置振铃
 	 * 
 	 * @param paramContext
 	 * @param paramString1
 	 * @param paramString2
 	 */
-	public static void setTone(Context paramContext, String paramString1,
-			String paramString2)
+	public static void setTone(Context paramContext, String s1, String s2,
+			String s3)
 	{
 		logger.v("setTone() ---> Enter");
-		// Intent localIntent = new Intent(paramContext,
-		// MusicOnlineSetRingToneActivity.class);
-		// localIntent
-		// .putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-		// paramString1);
-		// localIntent
-		// .putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-		// paramString2);
-		// localIntent.putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 1);
-		// paramContext.startActivity(localIntent);
+		Intent localIntent = new Intent(paramContext,
+				MusicOnlineSetRingToneActivity.class);
+		localIntent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.musicid",
+				s1);
+		localIntent
+				.putExtra(
+						"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.singername",
+						s2);
+		localIntent
+				.putExtra(
+						"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.songname",
+						s3);
+		localIntent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 1);
+		paramContext.startActivity(localIntent);
 		logger.v("setTone() ---> Exit");
 	}
 
 	/**
-	 * 设置振动
+	 * 设置来电铃声
 	 * 
 	 * @param paramContext
 	 * @param paramString1
 	 * @param paramString2
 	 */
-	public static void setViberate(Context paramContext, String paramString1,
-			String paramString2)
+	public static void setViberate(Context context, String s, String s1,
+			String s2, String s3, String s4)
 	{
 		logger.v("setViberate() ---> Enter");
-		// Intent localIntent = new Intent(paramContext,
-		// MusicOnlineSetRingToneActivity.class);
-		// localIntent
-		// .putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-		// paramString1);
-		// localIntent
-		// .putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-		// paramString2);
-		// localIntent.putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 2);
-		// paramContext.startActivity(localIntent);
+		Intent intent = new Intent(context,
+				MusicOnlineSetRingToneActivity.class);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.musicid",
+				s);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.singername",
+				s1);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.songname",
+				s2);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.ringsongprice",
+				s3);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.crbtValidity",
+				s4);
+		intent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 2);
+		context.startActivity(intent);
 		logger.v("setViberate() ---> Exit");
 	}
 
@@ -471,23 +491,30 @@ public class Uiutil
 		return mLoadDataDialog;
 	}
 
-	public static void sendMusic(Context paramContext, String paramString1,
-			String paramString2)
+	public static void sendMusic(Context paramContext, String s1, String s2,
+			String s3, String s4)
 	{
 		logger.v("sendMusic() ---> Enter");
-		// Intent localIntent = new Intent(paramContext,
-		// MusicOnlineRecommendFriend.class);
-		// localIntent
-		// .putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.cotentid",
-		// paramString1);
-		// localIntent
-		// .putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.groupcode",
-		// paramString2);
-		// localIntent.putExtra(
-		// "mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 4);
-		// paramContext.startActivity(localIntent);
+		Intent localIntent = new Intent(paramContext,
+				MusicOnlineRecommendFriend.class);
+		localIntent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.musicid",
+				s1);
+		localIntent
+				.putExtra(
+						"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.singerName",
+						s2);
+		localIntent
+				.putExtra(
+						"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.songName",
+						s3);
+		localIntent
+				.putExtra(
+						"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.ringsongprice",
+						s4);
+		localIntent.putExtra(
+				"mobi.redcloud.mobilemusic.MusicOnlineRecommendFriend.type", 4);
+		paramContext.startActivity(localIntent);
 		logger.v("sendMusic() ---> Exit");
 	}
 

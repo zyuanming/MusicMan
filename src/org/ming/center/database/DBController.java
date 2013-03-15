@@ -46,6 +46,8 @@ public abstract interface DBController
 
 	public abstract Song getSongById(long paramLong);
 
+	public abstract List<Song> getSongByKey(String paramString);
+
 	public abstract Playlist getPlaylistByName(String paramString, int paramInt);
 
 	public abstract int countSongNumInPlaylist(long paramLong, int paramInt);

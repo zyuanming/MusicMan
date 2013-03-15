@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@id/bg_album"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_album_list_selector" >
+
+        <ProgressBar
+            android:id="@id/album_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="44.0dip"
+            android:layout_marginTop="33.0dip"
+            android:indeterminateDrawable="@drawable/dialog_progress_layer"
+            android:max="100"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@id/album"
+            android:layout_width="102.0dip"
+            android:layout_height="102.0dip"
+            android:layout_marginLeft="17.0dip"
+            android:layout_marginTop="5.0dip"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@id/album_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="5.0dip"
+        android:text="1111111"
+        android:textColor="@color/gray_eighty_percent"
+        android:textSize="16.0sp" />
+
+    <TextView
+        android:id="@id/songer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12.0sp" />
+
+</LinearLayout>

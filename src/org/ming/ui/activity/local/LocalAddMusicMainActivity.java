@@ -16,7 +16,6 @@ import org.ming.center.system.SystemEventListener;
 import org.ming.center.ui.UIEventListener;
 import org.ming.center.ui.UIGlobalSettingParameter;
 import org.ming.dispatcher.Dispatcher;
-import org.ming.ui.activity.MobileMusicMainActivity;
 import org.ming.ui.util.DialogUtil;
 import org.ming.ui.view.TitleBarView;
 import org.ming.ui.widget.PlayerStatusBar;
@@ -51,8 +50,7 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 	{
 		public void onClick(View paramAnonymousView)
 		{
-			LocalAddMusicMainActivity.logger
-					.v("mAddAllMusicOnClickListener--onclick() ---> Enter");
+			logger.v("mAddAllMusicOnClickListener--onclick() ---> Enter");
 			ToggleButton localToggleButton = mToggleAddAll;
 			if (mToggleAddAll.isChecked())
 				localToggleButton.setChecked(false);
@@ -65,8 +63,7 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 	{
 		public void onClick(View paramAnonymousView)
 		{
-			LocalAddMusicMainActivity.logger
-					.v("mCompleteOnClickListener--onclick() ---> Enter");
+			logger.v("mCompleteOnClickListener--onclick() ---> Enter");
 			if (mCurrentDialog != null)
 			{
 				mCurrentDialog.dismiss();
@@ -119,8 +116,7 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 				new LocalAddMusicMainActivity.AddAllTask()
 						.execute(new String[0]);
 			}
-			LocalAddMusicMainActivity.logger
-					.v("mCompleteOnClickListener--onclick() ---> Exit");
+			logger.v("mCompleteOnClickListener--onclick() ---> Exit");
 		}
 	};
 	private Controller mController = null;
@@ -271,15 +267,20 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 		switch (paramMessage.what)
 		{
 		default:
+			return;
 		case 4:
+			if (this.mCurrentDialog != null)
+			{
+				this.mCurrentDialog.dismiss();
+				this.mCurrentDialog = null;
+			}
+			finish();
+			break;
 		case 22:
+			finish();
+			break;
+
 		}
-		if (this.mCurrentDialog != null)
-		{
-			this.mCurrentDialog.dismiss();
-			this.mCurrentDialog = null;
-		}
-		finish();
 	}
 
 	public void handleUIEvent(Message paramMessage)
@@ -287,14 +288,16 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 		switch (paramMessage.what)
 		{
 		default:
+			return;
 		case 4012:
+			if (this.mCurrentDialog != null)
+			{
+				this.mCurrentDialog.dismiss();
+				this.mCurrentDialog = null;
+			}
+			finish();
 		}
-		if (this.mCurrentDialog != null)
-		{
-			this.mCurrentDialog.dismiss();
-			this.mCurrentDialog = null;
-		}
-		finish();
+
 	}
 
 	protected void onCreate(Bundle paramBundle)
@@ -387,70 +390,65 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 		switch ((int) paramLong)
 		{
 		default:
-		case 0:
+		case LIST_ITEM_ID_ALL_SONG:
 		{
-			// this.intent = new Intent(this,
-			// LocalAddMusicSongListActivity.class);
-			// this.intent.putExtra("title",
-			// getText(R.string.local_music_all_song).toString());
-			// this.intent.putExtra("playlistid", this.mPlaylistId);
-			// this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
-			// this.intent.putExtra("type", 0);
-			// startActivity(this.intent);
+			this.intent = new Intent(this, LocalAddMusicSongListActivity.class);
+			this.intent.putExtra("title",
+					getText(R.string.local_music_all_song).toString());
+			this.intent.putExtra("playlistid", this.mPlaylistId);
+			this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
+			this.intent.putExtra("type", 0);
+			startActivity(this.intent);
 		}
 			break;
-		case 1:
+		case LIST_ITEM_ID_BROWSE_BY_SINGER:
 		{
-			// this.intent = new Intent(this,
-			// LocalAddMusicColumnActivity.class);
-			// this.intent.putExtra("title",
-			// getText(R.string.local_music_browse_by_singer).toString());
-			// this.intent.putExtra("TYPE", 1);
-			// this.intent.putExtra("playlistid", this.mPlaylistId);
-			// this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
-			// startActivity(this.intent);
+			this.intent = new Intent(this, LocalAddMusicColumnActivity.class);
+			this.intent.putExtra("title",
+					getText(R.string.local_music_browse_by_singer).toString());
+			this.intent.putExtra("TYPE", 1);
+			this.intent.putExtra("playlistid", this.mPlaylistId);
+			this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
+			startActivity(this.intent);
 		}
 			break;
-		case 2:
+		case LIST_ITEM_ID_BROWSE_BY_CATALOG:
 		{
-			// this.intent = new Intent(this,
-			// LocalAddMusicColumnActivity.class);
-			// this.intent.putExtra("title",
-			// getText(R.string.local_music_browse_by_catalog).toString());
-			// this.intent.putExtra("TYPE", 2);
-			// this.intent.putExtra("playlistid", this.mPlaylistId);
-			// this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
-			// startActivity(this.intent);
+			this.intent = new Intent(this, LocalAddMusicColumnActivity.class);
+			this.intent.putExtra("title",
+					getText(R.string.local_music_browse_by_catalog).toString());
+			this.intent.putExtra("TYPE", 2);
+			this.intent.putExtra("playlistid", this.mPlaylistId);
+			this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
+			startActivity(this.intent);
 		}
 			break;
-		case 3:
+		case LIST_ITEM_ID_DWONLOAD_MUSIC:
 		{
-			// this.intent = new Intent(this,
-			// LocalAddMusicSongListActivity.class);
-			// this.intent.putExtra("type", 4);
-			// this.intent.putExtra("folderpath",
-			// GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR);
-			// this.intent.putExtra("title",
-			// getText(R.string.local_music_download_music).toString());
-			// this.intent.putExtra("playlistid", this.mPlaylistId);
-			// this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
-			// startActivity(this.intent);
+			this.intent = new Intent(this, LocalAddMusicSongListActivity.class);
+			this.intent.putExtra("type", 4);
+			this.intent.putExtra("folderpath",
+					GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR);
+			this.intent.putExtra("title",
+					getText(R.string.local_music_download_music).toString());
+			this.intent.putExtra("playlistid", this.mPlaylistId);
+			this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
+			startActivity(this.intent);
 		}
 			break;
-		case 4:
+		case LIST_ITEM_ID_Dobly_MUSIC:
 		{
-			// this.intent = new Intent(this,
-			// LocalAddMusicSongListActivity.class);
-			// this.intent.putExtra("type", 4);
-			// this.intent
-			// .putExtra(
-			// "folderpath",
-			// GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR);
-			// this.intent.putExtra("title",
-			// getText(R.string.local_music_download_music).toString());
-			// this.intent.putExtra("playlistid", this.mPlaylistId);
-			// this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
-			// startActivity(this.intent);
+			this.intent = new Intent(this, LocalAddMusicSongListActivity.class);
+			this.intent.putExtra("type", 4);
+			this.intent
+					.putExtra(
+							"folderpath",
+							GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR);
+			this.intent.putExtra("title",
+					getText(R.string.local_music_download_music).toString());
+			this.intent.putExtra("playlistid", this.mPlaylistId);
+			this.intent.putExtra("Selectedmusic", this.mSelectedSongids);
+			startActivity(this.intent);
 		}
 			break;
 		}
@@ -476,9 +474,6 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 
 	class AddAllTask extends AsyncTask<String, Void, Void>
 	{
-		AddAllTask()
-		{}
-
 		protected Void doInBackground(String[] paramArrayOfString)
 		{
 			LocalAddMusicMainActivity.this.completeTask();
@@ -487,10 +482,10 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 
 		public void onPostExecute(Void paramVoid)
 		{
-			if (LocalAddMusicMainActivity.this.mCurrentDialog != null)
+			if (mCurrentDialog != null)
 			{
-				LocalAddMusicMainActivity.this.mCurrentDialog.dismiss();
-				LocalAddMusicMainActivity.this.mCurrentDialog = null;
+				mCurrentDialog.dismiss();
+				mCurrentDialog = null;
 			}
 			super.onPostExecute(null);
 		}
@@ -509,55 +504,44 @@ public class LocalAddMusicMainActivity extends ListActivity implements
 
 		protected List<Song> doInBackground(Integer[] paramArrayOfInteger)
 		{
-			// switch (paramArrayOfInteger[0].intValue())
-			// {
-			// case 1:
-			// case 2:
-			// default:
-			// case 0:
-			// case 3:
-			// case 4:
-			// }
-			// mSong = ((ArrayList) mDBController.getSongsByFolder(
-			// UIGlobalSettingParameter.localmusic_folder_names,
-			// UIGlobalSettingParameter.localmusic_scan_smallfile));
-			// continue;
-			// LocalAddMusicMainActivity localLocalAddMusicMainActivity2 =
-			// LocalAddMusicMainActivity.this;
-			// DBController localDBController2 = mDBController;
-			// String[] arrayOfString2 = new String[1];
-			// arrayOfString2[0] =
-			// GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR;
-			// localLocalAddMusicMainActivity2.mSong = ((ArrayList)
-			// localDBController2
-			// .getSongsByFolder(arrayOfString2,
-			// UIGlobalSettingParameter.localmusic_scan_smallfile));
-			// continue;
-			// LocalAddMusicMainActivity localLocalAddMusicMainActivity1 =
-			// LocalAddMusicMainActivity.this;
-			// DBController localDBController1 = mDBController;
-			// String[] arrayOfString1 = new String[1];
-			// arrayOfString1[0] =
-			// GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR;
-			// localLocalAddMusicMainActivity1.mSong = ((ArrayList)
-			// localDBController1
-			// .getSongsByFolder(arrayOfString1,
-			// UIGlobalSettingParameter.localmusic_scan_smallfile));
-			return null;
+			switch (paramArrayOfInteger[0].intValue())
+			{
+			case 1:
+			case 2:
+			default:
+				return null;
+			case 0:
+				mSong = ((ArrayList<Song>) mDBController.getSongsByFolder(
+						UIGlobalSettingParameter.localmusic_folder_names,
+						UIGlobalSettingParameter.localmusic_scan_smallfile));
+				return mSong;
+			case 3:
+				DBController dbcontroller1 = mDBController;
+				String as1[] = new String[1];
+				as1[0] = GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR;
+				mSong = (ArrayList<Song>) dbcontroller1.getSongsByFolder(as1,
+						UIGlobalSettingParameter.localmusic_scan_smallfile);
+				return mSong;
+			case 4:
+				DBController dbcontroller = mDBController;
+				String as[] = new String[1];
+				as[0] = GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR;
+				mSong = (ArrayList<Song>) dbcontroller.getSongsByFolder(as,
+						UIGlobalSettingParameter.localmusic_scan_smallfile);
+				return mSong;
+			}
 		}
 
 		protected void onPostExecute(List<Song> paramList)
 		{
-			if (LocalAddMusicMainActivity.this.mCurrentDialog != null)
+			if (mCurrentDialog != null)
 			{
-				LocalAddMusicMainActivity.this.mCurrentDialog.dismiss();
-				LocalAddMusicMainActivity.this.mCurrentDialog = null;
+				mCurrentDialog.dismiss();
+				mCurrentDialog = null;
 			}
-			LocalAddMusicMainActivity.this.intent.putParcelableArrayListExtra(
-					"SONGLIST", LocalAddMusicMainActivity.this.mSong);
-			LocalAddMusicMainActivity.this
-					.startActivity(LocalAddMusicMainActivity.this.intent);
-			super.onPostExecute(LocalAddMusicMainActivity.this.mSong);
+			intent.putParcelableArrayListExtra("SONGLIST", mSong);
+			startActivity(intent);
+			super.onPostExecute(mSong);
 		}
 	}
 }

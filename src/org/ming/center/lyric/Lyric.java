@@ -3,11 +3,8 @@ package org.ming.center.lyric;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import org.ming.util.Util;
 
 public class Lyric
 {
@@ -385,8 +382,8 @@ public class Lyric
 				.append("\n").append(mLyricsMap.toString()).toString();
 	}
 
-	private String mCharset;
+	private String mCharset = "UTF-8";
 	private int mCurrentIndex;
-	private Hashtable mLyricsMap;
-	private Vector mTags;
+	private Hashtable<Integer, String> mLyricsMap;
+	private Vector<TimeTag> mTags;
 }

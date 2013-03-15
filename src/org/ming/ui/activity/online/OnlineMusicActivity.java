@@ -43,6 +43,8 @@ import org.ming.util.NetUtil;
 import org.ming.util.Util;
 import org.ming.util.XMLParser;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -1998,18 +2000,21 @@ public class OnlineMusicActivity extends Activity implements
 	protected void onPause()
 	{
 		logger.v("onPause() ---> Enter");
+		super.onPause();
+		MobclickAgent.onPause(this);
 		if (mListButtonClickListener != null)
 			mListButtonClickListener.closePopupWindow();
 		if (adView != null)
 			adView.pause();
 		CancelPreviousReq();
-		super.onPause();
 		logger.v("onPause() ---> Exit");
 	}
 
 	protected void onResume()
 	{
 		logger.v("onResume() ----> Enter");
+		super.onResume();
+		MobclickAgent.onResume(this);
 		if ((this.mCurrentTask == null) && (!this.mIsInital))
 		{
 			logger.v("CurrentTask == null && mIsInital == false");
@@ -2025,7 +2030,6 @@ public class OnlineMusicActivity extends Activity implements
 		mPlayerLoveRadio = false;
 		if (mListButtonClickListener != null)
 			mListButtonClickListener.doUnCompleteTask();
-		super.onResume();
 		logger.v("onResume() ----> Exit");
 	}
 }

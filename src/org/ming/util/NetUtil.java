@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 public class NetUtil
 {
@@ -29,41 +30,45 @@ public class NetUtil
 
 	public static int getDownLoadNetType()
 	{
-		int i = 3;
-		if ((netState == i) || (netState == 5))
-			;
-		while (true)
-		{
-			if ((netState == 1) || (netState == 2) || (netState == 6)
-					|| (netState == 7))
-				i = 1;
-		}
+		int i = 8;
+		if (netState != 3
+				&& netState != 5
+				&& (netState == 1 || netState == 2 || netState == 6 || netState == 7))
+			i = 1;
+		return i;
 	}
 
 	public static int getNetWorkState(Context paramContext)
 	{
 		int i = 3;
 		WifiManager localWifiManager = (WifiManager) MobileMusicApplication
-				.getInstance().getSystemService("wifi");
+				.getInstance().getSystemService(Context.WIFI_SERVICE);
 		NetworkInfo localNetworkInfo;
 		NetworkInfo.State localState;
 		// 如果Wifi不可用
 		if (!localWifiManager.isWifiEnabled())
 		{
 			localNetworkInfo = ((ConnectivityManager) paramContext
-					.getSystemService("connectivity")).getNetworkInfo(0);
+					.getSystemService(Context.CONNECTIVITY_SERVICE))
+					.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 			localState = localNetworkInfo.getState();
 			if ((localNetworkInfo != null)
 					&& (localNetworkInfo.getExtraInfo() != null))
 			{
 				if (localNetworkInfo.getExtraInfo().equalsIgnoreCase("cmwap"))
 				{
-					i = (NetworkInfo.State.CONNECTED != localState) ? 5 : 3;
+					if (NetworkInfo.State.CONNECTED != localState)
+					{
+						i = 5;
+					}
 				} else if (localNetworkInfo.getExtraInfo().equalsIgnoreCase(
 						"cmnet"))
 				{
 					i = (NetworkInfo.State.CONNECTED == localState) ? 6 : 7;
 				}
+			} else
+			{
+				i = 5;
 			}
 		} else
 		{
@@ -78,8 +83,7 @@ public class NetUtil
 
 	public static boolean isConnection()
 	{
-		int i = 1;
-		if ((netState == 3) || (netState == i) || (netState == 6))
+		if ((netState == 3) || (netState == 1) || (netState == 6))
 		{
 			return true;
 		}

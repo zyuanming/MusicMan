@@ -16,6 +16,8 @@ import org.ming.ui.view.LocalSongListViewByCursor;
 import org.ming.ui.view.TitleBarView;
 import org.ming.util.MyLogger;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -323,15 +325,18 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 	protected void onPause()
 	{
 		logger.v("onPause() ---> Enter");
+		super.onPause();
+		MobclickAgent.onPause(this);
 		this.mLocalSongListView.removeEventListner();
 		this.mController.removeSystemEventListener(5, this);
-		super.onPause();
 		logger.v("onPause() ---> Exit");
 	}
 
 	protected void onResume()
 	{
 		logger.v("onResume() ---> Enter");
+		super.onResume();
+		MobclickAgent.onResume(this);
 		this.mLocalSongListView.addEventListner();
 		refreshUI();
 		this.mController.addSystemEventListener(5, this);
@@ -353,7 +358,6 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 						contextMenu.add(1, 1, 0, R.string.local_music_rename);
 					}
 				});
-		super.onResume();
 		logger.v("onResume() ---> Exit");
 	}
 
@@ -378,23 +382,21 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 			{
 			default:
 			case CURSOR_ALL_SONG:
-			{ // 全部歌曲
-			// songids = new long[localCursor.getCount()];
-			//
-			// int j = 0;
-			// int k = localCursor.getColumnIndex("_id");
-			// if (!localCursor.moveToNext())
-			// {
-			// localCursor.moveToPosition(-1);
-			// }
-			// long[] arrayOfLong1 = songids;
-			// int m = j + 1;
-			// arrayOfLong1[j] = localCursor.getInt(k);
-			// j = m;
-			}
+				// 全部歌曲
+				songids = new long[localCursor.getCount()];
+
+				int j = 0;
+				int k = localCursor.getColumnIndex("_id");
+				if (!localCursor.moveToNext())
+				{
+					localCursor.moveToPosition(-1);
+				}
+				long[] arrayOfLong1 = songids;
+				int m = j + 1;
+				arrayOfLong1[j] = localCursor.getInt(k);
+				j = m;
 				break;
 			case CURSOR_REQUERY_AFTER_DELETE:
-			{
 				songids = new long[localCursor.getCount()];
 				int i6 = 0;
 				int i7 = localCursor.getColumnIndex("_id");
@@ -415,19 +417,16 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 					mDBController.deleteDBDlItemByPath(mSong.mUrl);
 					localCursor = null;
 				}
-
 				break;
-			}
 			case CURSOR_SONG_BY_SINGERID:
-			{ // 按歌手浏览
+				// 按歌手浏览
 				localCursor = mDBController.getSongsCursorByFolderAndSinger(
 						UIGlobalSettingParameter.localmusic_folder_names,
 						getIntent().getIntExtra("songid", 0),
 						UIGlobalSettingParameter.localmusic_scan_smallfile);
 				break;
-			}
 			case CURSOR_SONG_BY_FOLDERPATH:
-			{ // 按目录浏览
+				// 按目录浏览
 				songids = new long[localCursor.getCount()];
 
 				int i3 = 0;
@@ -445,9 +444,9 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 				localCursor = mDBController.getSongsCursorByFolder(
 						arrayOfString,
 						UIGlobalSettingParameter.localmusic_scan_smallfile);
-			}
+				break;
 			case CURSOR_SONG_BY_PLAYLIST:
-			{ // 根据播放列表查看
+				// 根据播放列表查看
 				songids = new long[localCursor.getCount()];
 
 				int n = 0;
@@ -462,7 +461,6 @@ public class LocalSongListActivity extends Activity implements UIEventListener,
 				n = i2;
 				localCursor = mDBController.getCursorFromPlaylist(getIntent()
 						.getIntExtra("playlistid", 0), 1);
-			}
 			}
 			logger.d("asyncGetCursor.doInBackground() ----> exit");
 			return localCursor;

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <cmccwm.mobilemusic.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@id/refresh_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/refresh_image" />
+
+            <Button
+                android:id="@id/refresh_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_refresh_selector" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@android:id/list"
+            style="@style/listview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:divider="#ffffcc00"
+            android:dividerHeight="-1.0dip"
+            android:fadingEdge="none"
+            android:focusable="true"
+            android:scrollingCache="false" />
+
+        <ImageView
+            android:id="@id/album_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/operation_button_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_btn_layout_nor"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@id/btn_all_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_all_play_selector"
+            android:gravity="center"
+            android:paddingLeft="20.0dip"
+            android:text="@string/song_all_play"
+            android:textColor="@drawable/text_red_selector" />
+
+        <Button
+            android:id="@id/btn_batch_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_batch_download_selector"
+            android:gravity="center"
+            android:paddingLeft="20.0dip"
+            android:text="@string/song_all_download"
+            android:textColor="@drawable/text_red_selector" />
+    </LinearLayout>
+
+    <org.ming.ui.widget.PlayerStatusBar
+        android:id="@id/playerStatusBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

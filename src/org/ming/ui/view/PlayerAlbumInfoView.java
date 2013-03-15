@@ -157,8 +157,9 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 		Song song = mPlayerController.getCurrentPlayingItem();
 		if (mAlbumImgUrl != null && song != null)
 		{
-			mImageDownloader.download(mAlbumImgUrl, 0x7f0200d1,
-					mInfoViewAlbumImg, song.mGroupCode);
+			mImageDownloader.download(mAlbumImgUrl,
+					R.drawable.image_default_for_play_info, mInfoViewAlbumImg,
+					song.mGroupCode);
 			mInfoViewAlbumImg
 					.setOnClickListener(new android.view.View.OnClickListener()
 					{
@@ -174,8 +175,9 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 					});
 		} else
 		{
-			mImageDownloader
-					.download(null, 0x7f0200d1, mInfoViewAlbumImg, null);
+			mImageDownloader.download(null,
+					R.drawable.image_default_for_play_info, mInfoViewAlbumImg,
+					null);
 		}
 		mInfoLoadingBar.setVisibility(8);
 		if (mInfoViewBtnAblumInfo.isChecked())
@@ -197,8 +199,9 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 		Song song = mPlayerController.getCurrentPlayingItem();
 		if (mSingerImgUrl != null && song != null)
 		{
-			mImageDownloader.download(mSingerImgUrl, 0x7f0200d1,
-					mInfoViewSingerImg, song.mGroupCode);
+			mImageDownloader.download(mSingerImgUrl,
+					R.drawable.image_default_for_play_info, mInfoViewSingerImg,
+					song.mGroupCode);
 			mInfoViewSingerImg
 					.setOnClickListener(new android.view.View.OnClickListener()
 					{
@@ -213,7 +216,8 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 					});
 		} else
 		{
-			mImageDownloader.download(null, 0x7f0200d1, mInfoViewSingerImg,
+			mImageDownloader.download(null,
+					R.drawable.image_default_for_play_info, mInfoViewSingerImg,
 					null);
 		}
 		mInfoLoadingBar.setVisibility(8);
@@ -259,7 +263,8 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 		mInfoViewContent.setText("");
 		mInfoViewSongerInfo.setText("");
 		mInfoViewSummaryInfo.setText("");
-		mImageDownloader.download(null, 0x7f0200d1, mInfoViewAlbumImg, null);
+		mImageDownloader.download(null, R.drawable.image_default_for_play_info,
+				mInfoViewAlbumImg, null);
 		mAlbumInfo = "";
 		mAlbumName = "";
 		mAlbumSumary = "";
@@ -270,14 +275,16 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 		mInfoViewContent.setText("");
 		mInfoViewSongerInfo.setText("");
 		mInfoViewSummaryInfo.setText("");
-		mImageDownloader.download(null, 0x7f0200d1, mInfoViewSingerImg, null);
+		mImageDownloader.download(null, R.drawable.image_default_for_play_info,
+				mInfoViewSingerImg, null);
 		mSingerInfo = "";
 		mSingerName = "";
 		mSingerSumary = "";
 	}
 
 	public void getDataFromURL(int paramInt)
-	{}
+	{
+	}
 
 	public void handleMMHttpEvent(Message message)
 	{
@@ -337,23 +344,26 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 				.getInstance());
 		this.mPlayerController = this.mController.getPlayerController();
 		this.mHttpController = this.mController.getHttpController();
-		LayoutInflater.from(this.mContext).inflate(2130903141, this);
-		this.mInfoViewBtnAblumInfo = ((RadioButton) findViewById(2131034430));
+		LayoutInflater.from(this.mContext).inflate(
+				R.layout.music_player_album_information_view_layout, this);
+		this.mInfoViewBtnAblumInfo = ((RadioButton) findViewById(R.id.info_view_btn_ablum_info));
 		this.mInfoViewBtnAblumInfo
 				.setOnCheckedChangeListener(this.mBtnCheckedChangeListener);
-		this.mInfoViewBtnArtistInfo = ((RadioButton) findViewById(2131034431));
+		this.mInfoViewBtnArtistInfo = ((RadioButton) findViewById(R.id.info_view_btn_artist_info));
 		this.mInfoViewBtnArtistInfo
 				.setOnCheckedChangeListener(this.mBtnCheckedChangeListener);
-		this.mInfoLoadingBar = ((ProgressBar) findViewById(2131034442));
-		this.mBgInfoViewAlbum = ((LinearLayout) findViewById(2131034433));
-		this.mInfoViewAlbumImg = ((ImageView) findViewById(2131034434));
-		this.mInfoViewAlbumImg.setBackgroundResource(2130837713);
-		this.mBgInfoViewSinger = ((LinearLayout) findViewById(2131034435));
-		this.mInfoViewSingerImg = ((ImageView) findViewById(2131034436));
-		this.mInfoViewSingerImg.setBackgroundResource(2130837713);
-		this.mInfoViewSongerInfo = ((TextView) findViewById(2131034438));
-		this.mInfoViewSummaryInfo = ((TextView) findViewById(2131034439));
-		this.mInfoViewContent = ((TextView) findViewById(2131034441));
+		this.mInfoLoadingBar = ((ProgressBar) findViewById(R.id.info_view_loading));
+		this.mBgInfoViewAlbum = ((LinearLayout) findViewById(R.id.bg_info_view_album));
+		this.mInfoViewAlbumImg = ((ImageView) findViewById(R.id.info_view_album_img));
+		this.mInfoViewAlbumImg
+				.setBackgroundResource(R.drawable.image_default_for_play_info);
+		this.mBgInfoViewSinger = ((LinearLayout) findViewById(R.id.bg_info_view_singer));
+		this.mInfoViewSingerImg = ((ImageView) findViewById(R.id.info_view_singer_img));
+		this.mInfoViewSingerImg
+				.setBackgroundResource(R.drawable.image_default_for_play_info);
+		this.mInfoViewSongerInfo = ((TextView) findViewById(R.id.info_view_songer_info));
+		this.mInfoViewSummaryInfo = ((TextView) findViewById(R.id.info_view_summary_info));
+		this.mInfoViewContent = ((TextView) findViewById(R.id.info_view_content));
 	}
 
 	public void removeListner()
@@ -402,11 +412,12 @@ public class PlayerAlbumInfoView extends LinearLayout implements
 	}
 
 	public void setURL(String paramString)
-	{}
+	{
+	}
 
 	public void showNothingImage(boolean flag)
 	{
-		nothingView = (LinearLayout) findViewById(0x7f05013a);
+		nothingView = (LinearLayout) findViewById(R.id.album_show_layout);
 		if (flag)
 			nothingView.setVisibility(0);
 		else

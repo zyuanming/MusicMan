@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="@drawable/list_cell_selector" android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <Button android:textColor="@color/migu_red_color" android:gravity="center" android:layout_gravity="center_vertical" android:id="@id/ablum_NO" android:background="@drawable/bg_default_ablum_derail_for_list" android:focusable="false" android:clickable="false" android:layout_width="55.0dip" android:layout_height="55.0dip" android:layout_margin="1.0dip" android:scaleType="fitXY" android:text="10" />
+        <ImageView android:layout_gravity="right" android:id="@id/dobly_img_for_list_cell" android:background="@drawable/image_dobly_for_list_cell" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </FrameLayout>
+    <ImageView android:id="@id/play_state" android:paddingLeft="5.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/imageview_list_cell_play" />
+    <LinearLayout android:orientation="vertical" android:id="@id/song_info_layout" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_weight="2.0">
+        <TextView android:textSize="16.0sp" android:textColor="@color/gray_eighty_percent" android:id="@id/song_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="111111111111111111111111111111" android:singleLine="true" />
+        <TextView android:textSize="12.0sp" android:textColor="@*android:color/darker_gray" android:id="@id/songer_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="蔡依林" android:singleLine="true" />
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="13.0dip">
+        <ImageView android:layout_gravity="center" android:id="@id/song_ratingbar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" />
+        <CheckBox android:id="@id/btn_select_download" android:focusable="false" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="7.0dip" android:layout_marginRight="5.0dip" android:button="@drawable/common_check_selector" />
+        <ImageView android:id="@id/btn_recommend_add" android:background="@null" android:paddingLeft="5.0dip" android:paddingTop="5.0dip" android:paddingRight="10.0dip" android:paddingBottom="5.0dip" android:focusable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="7.0dip" android:src="@drawable/list_cell_more_button_selector" />
+    </LinearLayout>
+</LinearLayout>

@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.ming.center.MobileMusicApplication;
 import org.ming.center.database.Song;
 import org.ming.dispatcher.Dispatcher;
+import org.ming.dispatcher.DispatcherEventEnum;
 import org.ming.util.MyLogger;
 import org.ming.util.Util;
 
@@ -42,7 +43,7 @@ public class DataSourceHandler extends Thread
 			MusicPlayerWrapper musicplayerwrapper,
 			MobileMusicApplication mobilemusicapplication)
 	{
-		logger.v("startHandler ----> enter");
+		logger.v("startHandler ----> Enter");
 		handlersLock.lock();
 		DataSourceHandler datasourcehandler = null;
 		DataSourceHandler datasourcehandler1;
@@ -68,7 +69,7 @@ public class DataSourceHandler extends Thread
 			return datasourcehandler;
 		}
 		handlersLock.unlock();
-		logger.v("startHandler ----> exit");
+		logger.v("startHandler ----> Exit");
 		return datasourcehandler;
 	}
 
@@ -108,17 +109,15 @@ public class DataSourceHandler extends Thread
 
 	private int doTask()
 	{
-		int i;
+		int i = 0;
 		if (!Util.isOnlineMusic(song))
 		{
 			mFile = new File(song.mUrl);
 			boolean flag = stopped;
-			i = 0;
 			if (!flag)
 			{
 				observed.change(song.mSize, song.mSize);
 				state = State.SUCCESS;
-				i = 0;
 			}
 		} else
 		{
@@ -132,7 +131,7 @@ public class DataSourceHandler extends Thread
 
 	private int downonlinemusic(Song song1, int i)
 	{
-		return 0;
+		return -1;
 		// String s;
 		// byte byte0;
 		// int k;
@@ -812,17 +811,15 @@ public class DataSourceHandler extends Thread
 		i = doTask();
 		if (i == -1)
 			logger.w("dolbymobile3 --> Try downloading duby file faile");
-		if (i != -1)
+		else if (i == -3)
 		{
-			if (i == -3)
-			{
-				mDispatcher.sendMessage(mDispatcher.obtainMessage(1006, 0, 0,
-						null));
-				Log.d("DataSourceHandler", "Not find the music file...");
-			}
-		} else
+			mDispatcher
+					.sendMessage(mDispatcher.obtainMessage(1006, 0, 0, null));
+			Log.d("DataSourceHandler", "Not find the music file...");
+		} else if(i == -2)
 		{
-			mDispatcher.sendMessage(mDispatcher.obtainMessage(1005, 1, -100,
+			mDispatcher.sendMessage(mDispatcher.obtainMessage(
+					DispatcherEventEnum.PLAYER_EVENT_NETWORK_ERROR, 1, -100,
 					null));
 			logger.e("dolbymobile3 --> Download duby file complete faile");
 		}

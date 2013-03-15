@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@id/songname_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15.0dip"
+        android:layout_marginTop="15.0dip"
+        android:text=" "
+        android:textColor="@color/gray_eighty_percent"
+        android:textSize="14.0sp" />
+
+    <TextView
+        android:id="@id/information_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15.0dip"
+        android:layout_marginTop="5.0dip"
+        android:text=" "
+        android:textColor="@color/gray_eighty_percent"
+        android:textSize="14.0sp" />
+
+    <TextView
+        android:id="@id/prompt_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15.0dip"
+        android:layout_marginTop="5.0dip"
+        android:text=" "
+        android:textColor="@color/gray_eighty_percent"
+        android:textSize="14.0sp" />
+
+    <LinearLayout
+        android:id="@id/set_ring_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <CheckBox
+            android:id="@id/set_as_ring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/common_check_selector"
+            android:checked="true"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10.0dip"
+            android:text="@string/set_ring"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@id/btn_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15.0dip"
+        android:background="@drawable/btn_red_selector"
+        android:gravity="center"
+        android:text="@string/buy_business"
+        android:textColor="@color/white_color"
+        android:textSize="14.0sp" />
+
+</LinearLayout>

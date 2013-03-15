@@ -15,6 +15,8 @@ import org.ming.center.database.Playlist;
 import org.ming.center.database.Song;
 import org.ming.center.system.SystemEventListener;
 import org.ming.center.ui.UIGlobalSettingParameter;
+import org.ming.ui.activity.more.MobileMusicMoreActivity;
+import org.ming.ui.activity.more.TimingClosureActivity;
 import org.ming.ui.util.DialogUtil;
 import org.ming.util.MyLogger;
 import org.ming.util.Util;
@@ -39,6 +41,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LocalMusicActivity extends ListActivity implements
@@ -100,6 +103,8 @@ public class LocalMusicActivity extends ListActivity implements
 
 		View localView = getLayoutInflater().inflate(
 				R.layout.activity_local_music_layout_header, null);
+
+		// 搜索本地歌曲
 		this.mSearchBtn = (Button) localView
 				.findViewById(R.id.search_local_music);
 		this.mSearchBtn.setOnClickListener(new View.OnClickListener()
@@ -110,6 +115,7 @@ public class LocalMusicActivity extends ListActivity implements
 			{
 				if (!Environment.MEDIA_MOUNTED.equals(Environment
 						.getExternalStorageState()))
+				// 没有存储卡
 				{
 					Toast.makeText(LocalMusicActivity.this,
 							R.string.sdcard_missing_message_common,
@@ -118,7 +124,7 @@ public class LocalMusicActivity extends ListActivity implements
 				{
 					Intent localIntent = new Intent(LocalMusicActivity.this,
 							LocalMusicSearchActivity.class);
-					LocalMusicActivity.this.startActivity(localIntent);
+					startActivity(localIntent);
 				}
 			}
 		});
@@ -152,16 +158,22 @@ public class LocalMusicActivity extends ListActivity implements
 		logger.v("onCreate() ---> Exit");
 	}
 
+	/**
+	 * 创建播放列表
+	 */
 	private View.OnClickListener mCreatePlayListOnClickListener = new View.OnClickListener()
 	{
 		public void onClick(View paramAnonymousView)
 		{
-			LocalMusicActivity.logger.v("mLoadMoreOnClickListener() ---> Exit");
-			LocalMusicActivity.this.CreatePlayList();
-			LocalMusicActivity.logger.v("mLoadMoreOnClickListener() ---> Exit");
+			logger.v("mLoadMoreOnClickListener() ---> Exit");
+			CreatePlayList();
+			logger.v("mLoadMoreOnClickListener() ---> Exit");
 		}
 	};
 
+	/**
+	 * 在创建菜单目录前调用，动态地改变菜单目录
+	 */
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
 		MenuItem localMenuItem = menu.findItem(0);
@@ -177,6 +189,10 @@ public class LocalMusicActivity extends ListActivity implements
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	/**
+	 * 创建四个菜单目录
+	 */
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		menu.add(0, 0, 0, "").setIcon(R.drawable.menu_item_scan_selector);
@@ -184,6 +200,12 @@ public class LocalMusicActivity extends ListActivity implements
 		menu.add(3, 3, 0, "").setIcon(R.drawable.menu_item_time_close_selector);
 		menu.add(1, 1, 0, "").setIcon(R.drawable.menu_item_exit_selector);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
 	}
 
 	protected void onResume()
@@ -257,6 +279,7 @@ public class LocalMusicActivity extends ListActivity implements
 				mFolderNumber = UIGlobalSettingParameter.localmusic_folder_names.length;
 			}
 
+			// 提醒扫描出多少首歌
 			if (UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE)
 			{
 				num = new Integer[1];
@@ -264,17 +287,19 @@ public class LocalMusicActivity extends ListActivity implements
 				Toast.makeText(
 						this,
 						getString(R.string.local_music_after_scan,
-								(Object[]) num), 1).show();
+								(Object[]) num), Toast.LENGTH_SHORT).show();
 				UIGlobalSettingParameter.SHOW_SCAN_CONSEQUENSE = false;
 			}
 			localDBController1 = mDBController;
 			str = new String[1];
 			str[0] = GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR;
+			// 获得SD卡中所有有歌曲的目录总数
 			mDownloadFileNumber = localDBController1.getAllSongsCountByFolder(
 					str, UIGlobalSettingParameter.localmusic_scan_smallfile);
 			localDBController2 = mDBController;
 			str1 = new String[1];
 			str1[0] = GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR;
+			// 获得SD卡中所有有杜比音乐的目录总数
 			this.mDownloadDoblyFileNumber = localDBController2
 					.getAllSongsCountByFolder(str1,
 							UIGlobalSettingParameter.localmusic_scan_smallfile);
@@ -424,45 +449,40 @@ public class LocalMusicActivity extends ListActivity implements
 							Toast.makeText(
 									LocalMusicActivity.this,
 									R.string.duplicate_playlist_edit_playlist_activity,
-									1).show();
+									0).show();
 						} else if (LocalMusicActivity.this.mDBController
 								.getPlaylistByName(str, 1) != null)
 						{
 							Toast.makeText(
 									LocalMusicActivity.this,
 									R.string.duplicate_playlist_edit_playlist_activity,
-									1).show();
+									0).show();
 						} else
 						{
-							LocalMusicActivity.this.mDBController
-									.createPlaylist(str, 1);
-							LocalMusicActivity.this.refreshUI();
-							if (LocalMusicActivity.this.mCurrentDialog != null)
+							mDBController.createPlaylist(str, 1);
+							refreshUI();
+							if (mCurrentDialog != null)
 							{
-								LocalMusicActivity.this.mCurrentDialog
-										.dismiss();
-								LocalMusicActivity.this.mCurrentDialog = null;
+								mCurrentDialog.dismiss();
+								mCurrentDialog = null;
 							}
 							Toast.makeText(
 									LocalMusicActivity.this,
-									LocalMusicActivity.this
-											.getString(
-													R.string.create_playlist_successfully_edit_playlist_activity,
-													new Object[] { str }), 1)
-									.show();
+									getString(
+											R.string.create_playlist_successfully_edit_playlist_activity,
+											new Object[] { str }), 1).show();
 						}
 					}
 				}, new View.OnClickListener()
 				{
 					public void onClick(View paramAnonymousView)
 					{
-						((ListView) LocalMusicActivity.this
-								.findViewById(android.R.id.list))
+						((ListView) findViewById(android.R.id.list))
 								.setVerticalScrollBarEnabled(true);
-						if (LocalMusicActivity.this.mCurrentDialog != null)
+						if (mCurrentDialog != null)
 						{
-							LocalMusicActivity.this.mCurrentDialog.dismiss();
-							LocalMusicActivity.this.mCurrentDialog = null;
+							mCurrentDialog.dismiss();
+							mCurrentDialog = null;
 						}
 					}
 				});
@@ -490,10 +510,10 @@ public class LocalMusicActivity extends ListActivity implements
 			exitApplication();
 			break;
 		case MENU_ITEM_SET:
-			// startActivity(new Intent(this, MobileMusicMoreActivity.class));
+			startActivity(new Intent(this, MobileMusicMoreActivity.class));
 			break;
 		case MENU_ITEM_TIME_CLOSE:
-			// startActivity(new Intent(this, TimingClosureActivity.class));
+			startActivity(new Intent(this, TimingClosureActivity.class));
 			break;
 		}
 
@@ -577,41 +597,38 @@ public class LocalMusicActivity extends ListActivity implements
 			switch ((int) l)
 			{
 			default:
-				// if (i < listview.getCount())
-				// {
-				// itemId = l;
-				// TextView textview = (TextView) view
-				// .findViewById(R.id.text2);
-				// if (textview != null && textview.getText() != null
-				// && '0' == textview.getText().charAt(0))
-				// {
-				// intent = new Intent(
-				// this,
-				// org.ming.ui.activity.local.LocalAddMusicMainActivity);
-				// intent.putExtra(
-				// "playlistid",
-				// ((Playlist) mLocalPlayList.get(-1
-				// + (-4 + (int) itemId))).mExternalId);
-				// } else
-				// {
-				// intent = new Intent(
-				// this,
-				// org.ming.ui.activity.local.LocalSongListActivity);
-				// intent.putExtra(
-				// "title",
-				// ((Playlist) mLocalPlayList.get(-1
-				// + (-4 + (int) itemId))).mName);
-				// intent.putExtra("type", 4);
-				// intent.putExtra(
-				// "playlistid",
-				// ((Playlist) mLocalPlayList.get(-1
-				// + (-4 + (int) itemId))).mExternalId);
-				// }
-				// startActivity(intent);
-				// }
+				if (i < listview.getCount())
+				{
+					itemId = l;
+					TextView textview = (TextView) view
+							.findViewById(R.id.text2);
+					if (textview != null && textview.getText() != null
+							&& '0' == textview.getText().charAt(0))
+					{
+						intent = new Intent(this,
+								LocalAddMusicMainActivity.class);
+						intent.putExtra(
+								"playlistid",
+								((Playlist) mLocalPlayList.get(-1
+										+ (-4 + (int) itemId))).mExternalId);
+					} else
+					{
+						intent = new Intent(this, LocalSongListActivity.class);
+						intent.putExtra(
+								"title",
+								((Playlist) mLocalPlayList.get(-1
+										+ (-4 + (int) itemId))).mName);
+						intent.putExtra("type", 4);
+						intent.putExtra(
+								"playlistid",
+								((Playlist) mLocalPlayList.get(-1
+										+ (-4 + (int) itemId))).mExternalId);
+					}
+					startActivity(intent);
+				}
 				break;
 
-			case LIST_ITEM_ID_ALL_SONG: // '\0'
+			case LIST_ITEM_ID_ALL_SONG: // '\0' 全部歌曲浏览
 				intent = new Intent(this, LocalSongListActivity.class);
 				intent.putExtra("title", getText(R.string.local_music_all_song)
 						.toString());
@@ -619,48 +636,45 @@ public class LocalMusicActivity extends ListActivity implements
 				startActivity(intent);
 				break;
 
-			// case LIST_ITEM_ID_BROWSE_BY_SINGER: // '\001'
-			// intent = new Intent(this,
-			// org.ming.ui.activity.local.LocalColumnActivity);
-			// intent.putExtra("title",
-			// getText(R.string.local_music_browse_by_singer)
-			// .toString());
-			// intent.putExtra("TYPE", 1);
-			// startActivity(intent);
-			// break;
-			//
-			// case LIST_ITEM_ID_BROWSE_BY_CATALOG: // '\002'
-			// intent = new Intent(this,
-			// org.ming.ui.activity.local.LocalColumnActivity);
-			// intent.putExtra("title",
-			// getText(R.string.local_music_browse_by_catalog)
-			// .toString());
-			// intent.putExtra("TYPE", 2);
-			// startActivity(intent);
-			// break;
-			//
-			// case LIST_ITEM_ID_DWONLOAD_MUSIC: // '\003'
-			// intent = new Intent(this,
-			// org.ming.ui.activity.local.LocalSongListActivity);
-			// intent.putExtra("title",
-			// getText(R.string.local_music_download_music).toString());
-			// intent.putExtra("type", 3);
-			// intent.putExtra("folderpath",
-			// GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR);
-			// startActivity(intent);
-			// break;
-			//
-			// case LIST_ITEM_ID_DOWNLOAD_DOLBY_MUSIC: // '\004'
-			// intent = new Intent(this,
-			// org.ming.ui.activity.local.LocalSongListActivity);
-			// intent.putExtra("title", getText(R.string.dobly_song_number)
-			// .toString());
-			// intent.putExtra("type", 3);
-			// intent.putExtra(
-			// "folderpath",
-			// GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR);
-			// startActivity(intent);
-			// break;
+			case LIST_ITEM_ID_BROWSE_BY_SINGER: // '\001' 按歌手浏览
+				intent = new Intent(LocalMusicActivity.this,
+						LocalColumnActivity.class);
+				intent.putExtra("title",
+						getText(R.string.local_music_browse_by_singer)
+								.toString());
+				intent.putExtra("TYPE", 1);
+				startActivity(intent);
+				break;
+
+			case LIST_ITEM_ID_BROWSE_BY_CATALOG: // '\002' 按目录浏览
+				intent = new Intent(this, LocalColumnActivity.class);
+				intent.putExtra("title",
+						getText(R.string.local_music_browse_by_catalog)
+								.toString());
+				intent.putExtra("TYPE", 2);
+				startActivity(intent);
+				break;
+
+			case LIST_ITEM_ID_DWONLOAD_MUSIC: // '\003' 按已付费下载的音乐浏览
+				intent = new Intent(this, LocalSongListActivity.class);
+				intent.putExtra("title",
+						getText(R.string.local_music_download_music).toString());
+				intent.putExtra("type", 3);
+				intent.putExtra("folderpath",
+						GlobalSettingParameter.LOCAL_PARAM_MUSIC_STORE_SD_DIR);
+				startActivity(intent);
+				break;
+
+			case LIST_ITEM_ID_DOWNLOAD_DOLBY_MUSIC: // '\004' 按杜比音乐浏览
+				intent = new Intent(this, LocalSongListActivity.class);
+				intent.putExtra("title", getText(R.string.dobly_song_number)
+						.toString());
+				intent.putExtra("type", 3);
+				intent.putExtra(
+						"folderpath",
+						GlobalSettingParameter.LOCAL_PARAM_DOBLY_MUSIC_STORE_SD_DIR);
+				startActivity(intent);
+				break;
 			}
 		} else
 		{

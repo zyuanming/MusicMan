@@ -19,6 +19,8 @@ import org.ming.util.MyLogger;
 import org.ming.util.NetUtil;
 import org.ming.util.Util;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -94,9 +96,9 @@ public class MobileMusicMainActivity extends TabActivity implements
 				requestRoot = true;
 				if (s.equalsIgnoreCase("TAB_MIGU"))
 				{
-//					if (OnlineMusicActivity.mListButtonClickListener != null)
-//						OnlineMusicActivity.mListButtonClickListener
-//								.closePopupWindow();
+					// if (OnlineMusicActivity.mListButtonClickListener != null)
+					// OnlineMusicActivity.mListButtonClickListener
+					// .closePopupWindow();
 					if (GlobalSettingParameter.useraccount == null)
 					{
 						mTurnMiGu = true;
@@ -452,7 +454,7 @@ public class MobileMusicMainActivity extends TabActivity implements
 			// && (OnlineMusicActivity.mListButtonClickListener == null ||
 			// !OnlineMusicActivity.mListButtonClickListener
 			// .closePopupWindow()))
-			if(keyevent.getAction() == KeyEvent.ACTION_DOWN)
+			if (keyevent.getAction() == KeyEvent.ACTION_DOWN)
 			{
 				List list = ((ActivityManager) getSystemService("activity"))
 						.getRunningTasks(2);
@@ -526,6 +528,8 @@ public class MobileMusicMainActivity extends TabActivity implements
 	protected void onResume()
 	{
 		logger.v("onResume() ---> Enter");
+		super.onResume();
+		MobclickAgent.onResume(this);
 		this.requestRoot = true;
 		if ((this.mTurnMiGu) && (GlobalSettingParameter.useraccount != null))
 		{
@@ -541,13 +545,13 @@ public class MobileMusicMainActivity extends TabActivity implements
 				this.mTabHost.setCurrentTab(0);
 		}
 		refreshUI();
-		super.onResume();
 		logger.v("onResume() ---> Exit");
 	}
 
 	protected void onPause()
 	{
 		super.onPause();
+		MobclickAgent.onPause(this);
 		this.mPlayerStatusBar.unRegistEventListener();
 	}
 

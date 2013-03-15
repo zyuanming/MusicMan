@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0"
+        android:orientation="vertical" >
+
+        <ListView
+            android:id="@android:id/list"
+            style="?android:attr/listViewWhiteStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/control_panel"
+            android:layout_alignParentTop="true"
+            android:cacheColorHint="#00000000"
+            android:drawSelectorOnTop="false"
+            android:fadingEdgeLength="16.0dip"
+            android:fastScrollEnabled="true"
+            android:listSelector="@android:color/transparent"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarStyle="insideOverlay"
+            android:smoothScrollbar="true" />
+
+        <ImageView
+            android:id="@android:id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
+    </LinearLayout>
+
+    <ExpandableListView
+        android:id="@id/group_list"
+        style="@style/listview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0"
+        android:divider="@null"
+        android:dividerHeight="0.0dip"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_btn_layout_nor"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@id/btn_select_contacts_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_download_cancel_selector"
+            android:text="@string/download_unselect_all"
+            android:textColor="@drawable/text_red_selector"
+            android:textSize="14.0sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@id/btn_select_contacts_checkall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_download_selectall_selector"
+            android:text="@string/download_select_all"
+            android:textColor="@drawable/text_red_selector"
+            android:textSize="14.0sp" />
+
+        <Button
+            android:id="@id/btn_select_contacts_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_download_sure_selector"
+            android:text="@string/reset_common"
+            android:textColor="@drawable/text_red_selector"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+</LinearLayout>

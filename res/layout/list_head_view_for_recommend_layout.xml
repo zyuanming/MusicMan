@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/advertsing_linearLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ad_banner"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.AdView
+        android:id="@id/adView"
+        android:layout_width="fill_parent"
+        android:layout_height="108.0dip" />
+
+</LinearLayout>

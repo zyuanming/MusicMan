@@ -254,18 +254,15 @@ public class SystemControllerImpl implements SystemController
 			{
 			default:
 			case 1:
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(1));
+				break;
 			case 2:
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(2));
+				break;
 			case 0:
+				mDispatcher.sendMessage(mDispatcher.obtainMessage(3));
+				break;
 			}
-			SystemControllerImpl.this.mDispatcher
-					.sendMessage(SystemControllerImpl.this.mDispatcher
-							.obtainMessage(1));
-			SystemControllerImpl.this.mDispatcher
-					.sendMessage(SystemControllerImpl.this.mDispatcher
-							.obtainMessage(2));
-			SystemControllerImpl.this.mDispatcher
-					.sendMessage(SystemControllerImpl.this.mDispatcher
-							.obtainMessage(3));
 		}
 	}
 }

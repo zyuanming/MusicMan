@@ -6,6 +6,8 @@ import org.ming.ui.view.PageControlView;
 import org.ming.util.MyLogger;
 import org.ming.util.Util;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -87,5 +89,19 @@ public class UserLeadActivity extends Activity implements
 			}
 
 		}
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

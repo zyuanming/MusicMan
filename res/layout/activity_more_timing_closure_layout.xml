@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.TitleBarView
+        android:id="@id/title_view_timing"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_migu_list_timing_bg_selector"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_wu_minutes_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:checked="true"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lead_divider"
+        android:clickable="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_ten_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_ten_minutes_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_ten_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lead_divider"
+        android:clickable="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_twenty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_twenty_minutes_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_twenty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lead_divider"
+        android:clickable="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_thirty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_thirty_minutes_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_thirty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lead_divider"
+        android:clickable="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_forty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_forty_minutes_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_forty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lead_divider"
+        android:clickable="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_fifty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_fifty_minutes_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_fifty_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lead_divider"
+        android:clickable="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@id/time_text_noe_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:paddingLeft="27.0dip"
+            android:paddingTop="20.0dip"
+            android:text="@string/timing_one_hours_close"
+            android:textColor="@color/gray_eighty_percent" />
+
+        <CheckBox
+            android:id="@id/time_noe_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_view_layout"
+            android:layout_marginLeft="120.0dip"
+            android:layout_marginTop="2.0dip"
+            android:button="@drawable/common_check_selector"
+            android:clickable="true"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@android:id/list"
+        style="@style/listview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/operation_button_layout"
+        android:layout_below="@id/title_view"
+        android:descendantFocusability="blocksDescendants"
+        android:divider="#ffffcc00"
+        android:dividerHeight="-1.0dip"
+        android:fadingEdge="none"
+        android:scrollingCache="false" />
+
+    <ImageView
+        android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        />
+
+    <LinearLayout
+        android:id="@id/operation_button_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_btn_layout_nor"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@id/clear_allsong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_clear_all_selector"
+            android:gravity="center"
+            android:text="@string/song__clear_all"
+            android:textColor="@drawable/text_red_selector" />
+    </LinearLayout>
+
+</RelativeLayout>

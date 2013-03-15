@@ -3,6 +3,8 @@ package org.ming.ui.activity.mymigu;
 import org.ming.R;
 import org.ming.util.MyLogger;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Dialog;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -76,6 +78,17 @@ public class MyMiGuActivity extends TabActivity
 			// ((TextView) localView.findViewById(2131034455))
 			// .setText(this.mTabTitleID[i]);
 		}
+	}
 
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
 	}
 }

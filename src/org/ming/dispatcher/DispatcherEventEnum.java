@@ -119,6 +119,7 @@ public class DispatcherEventEnum
 	public static final int Http_UpdateData_Begin = 3300;
 	public static final int Http_UpdateData_Fail = 3301;
 	public static final int Http_UpdateData_Sucess = 3302;
+	public static final int Http_GetSongUrl_Sucess = 3303;
 
 	public static String getString(int paramInt)
 	{

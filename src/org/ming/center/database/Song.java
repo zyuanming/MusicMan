@@ -41,6 +41,8 @@ public class Song implements Parcelable
 	public String mUrl = "<unknown>";
 	public String mUrl2 = "<unknown>";
 	public String mUrl3 = "<unknown>";
+	public String ringSongPrice = "0";
+	public String crbtValidity = "";
 
 	public Song()
 	{}
@@ -69,6 +71,8 @@ public class Song implements Parcelable
 		this.mPoint = paramParcel.readInt();
 		this.limit2 = paramParcel.readInt();
 		this.limit3 = paramParcel.readInt();
+		this.crbtValidity = paramParcel.readString();
+		this.ringSongPrice = paramParcel.readString();
 		paramParcel.readBooleanArray(arrayOfBoolean);
 		this.isDolby = arrayOfBoolean[0];
 	}
@@ -145,6 +149,8 @@ public class Song implements Parcelable
 		paramParcel.writeInt(this.mPoint);
 		paramParcel.writeInt(this.limit2);
 		paramParcel.writeInt(this.limit3);
+		paramParcel.writeString(this.crbtValidity);
+		paramParcel.writeString(this.ringSongPrice);
 		arrayOfBoolean[0] = this.isDolby;
 		paramParcel.writeBooleanArray(arrayOfBoolean);
 	}

@@ -7,6 +7,8 @@ import org.ming.center.MobileMusicApplication;
 import org.ming.center.system.SystemEventListener;
 import org.ming.util.MyLogger;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
@@ -52,6 +54,8 @@ public class PreSplashActivity extends Activity implements SystemEventListener
 
 	protected void onResume()
 	{
+		super.onResume();
+		MobclickAgent.onResume(this);
 		List<ActivityManager.RunningTaskInfo> localList = ((ActivityManager) getSystemService("activity"))
 				.getRunningTasks(1);
 		if ((localList.size() > 0) && (!islog))
@@ -65,7 +69,6 @@ public class PreSplashActivity extends Activity implements SystemEventListener
 				startActivity(new Intent(this, SplashActivity.class));
 		}
 		islog = false;
-		super.onResume();
 	}
 
 	@Override
@@ -79,5 +82,12 @@ public class PreSplashActivity extends Activity implements SystemEventListener
 		}
 		logger.v("handleSystemEvent() ---> Exit");
 		finish();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }

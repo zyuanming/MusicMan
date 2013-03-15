@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ming.R;
 import org.ming.center.lyric.Lyric;
 import org.ming.util.Util;
 
@@ -112,11 +113,14 @@ public class LyricsView extends View
 		mBreakedLines = new HashMap();
 		mDestLines = new ArrayList();
 		mNeedUpdateMetrics = true;
-		mFocusLineColor = getResources().getColor(0x7f060001);
-		mOtherLineColor = getResources().getColor(0x7f060002);
+		mFocusLineColor = getResources().getColor(
+				R.color.lyric_current_line_color);
+		mOtherLineColor = getResources().getColor(
+				R.color.lyric_other_line_color);
 		mPaint = new TextPaint();
 		mPaint.setAntiAlias(true);
-		mPaint.setTextSize(getResources().getDimension(0x7f080000));
+		mPaint.setTextSize(getResources()
+				.getDimension(R.dimen.lyrics_font_size));
 	}
 
 	public int getFocusLineColor()

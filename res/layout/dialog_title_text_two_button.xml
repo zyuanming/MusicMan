@@ -14,7 +14,7 @@
         android:paddingRight="20.0dip"
         android:paddingTop="20.0dip"
         android:text="1111111111"
-        android:textColor="#ffffffff"
+        android:textColor="#ff000000"
         android:textSize="15.0sp"
         android:textStyle="normal" />
 
@@ -32,7 +32,7 @@
         android:gravity="left"
         android:padding="20.0dip"
         android:text="1111111111"
-        android:textColor="#ffffffff"
+        android:textColor="#ff000000"
         android:textSize="15.0sp"
         android:textStyle="normal" />
 
@@ -66,7 +66,7 @@
             android:layout_weight="1.0"
             android:background="@drawable/btn_dialog_selector"
             android:gravity="center"
-            android:text="@string/ok"
+            android:text="^_^嗯嗯"
             android:textColor="@android:color/white"
             android:textSize="14.0sp" />
     </LinearLayout>

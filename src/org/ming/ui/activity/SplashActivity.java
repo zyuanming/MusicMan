@@ -19,6 +19,8 @@ import org.ming.util.MyLogger;
 import org.ming.util.NetUtil;
 import org.ming.util.Util;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -128,7 +130,7 @@ public class SplashActivity extends Activity implements MMHttpEventListener
 		NetUtil.netState = NetUtil.getNetWorkState(this);
 		if (!NetUtil.isConnection())
 		{
-			Toast.makeText(this, R.string.no_network_login, 1).show();
+			Toast.makeText(this, R.string.no_network_login, 0).show();
 			mTabIndex = 0;
 			NetUtil.netState = 8;
 			enterMonbileMusicMainActivty();
@@ -250,6 +252,7 @@ public class SplashActivity extends Activity implements MMHttpEventListener
 	{
 		logger.v("onPause() ---> Enter");
 		super.onPause();
+		MobclickAgent.onPause(this);
 		logger.v("onPause() ---> Exit");
 	}
 
@@ -258,6 +261,7 @@ public class SplashActivity extends Activity implements MMHttpEventListener
 	{
 		logger.v("onResume() ---> Enter");
 		super.onResume();
+		MobclickAgent.onResume(this);
 		logger.v("onResume() ---> Exit");
 	}
 

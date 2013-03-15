@@ -649,11 +649,46 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public int getAllSongsCountByFolderAndSinger(String[] paramArrayOfString,
-			int paramInt, boolean paramBoolean)
+	public int getAllSongsCountByFolderAndSinger(String as[], int i,
+			boolean flag)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		String s = "";
+		int j = as.length;
+		int k = 0;
+		do
+		{
+			if (k >= j)
+			{
+				if (s.length() > 0)
+				{
+					String s3 = (new StringBuilder(String.valueOf(s.substring(
+							0, s.lastIndexOf("or"))))).append(")").toString();
+					s = (new StringBuilder(String.valueOf("("))).append(s3)
+							.toString();
+				}
+				if (i > 0)
+					s = (new StringBuilder(String.valueOf(s)))
+							.append(" and artist_id = ").append(i).toString();
+				if (flag)
+					s = (new StringBuilder(String.valueOf(s))).append(
+							" and duration > 10000").toString();
+				String s2 = (new StringBuilder(String.valueOf(s))).append(
+						" and is_music = 1").toString();
+				Cursor cursor = query(
+						android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+						null, s2, null, null);
+				int l = cursor.getCount();
+				cursor.close();
+				logger.v("getAllSongs(Projection) ---> Exit");
+				return l;
+			}
+			String s1 = editTheFolder(as[k]);
+			s = (new StringBuilder(String.valueOf(s))).append("_data like '")
+					.append(s1).append("%' and ").append("_data")
+					.append(" not like '").append(s1).append("/%/%' or ")
+					.toString();
+			k++;
+		} while (true);
 	}
 
 	@Override
@@ -713,10 +748,65 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public Cursor getArtistsByCursor(String[] paramArrayOfString)
+	public Cursor getArtistsByCursor(String as[])
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.v("getArtistsByCursor() ---> Enter");
+		Cursor cursor = null;
+		if (as != null && as.length != 0)
+		{
+			String s = "";
+			HashSet hashset = new HashSet();
+			for (int j = 0; j < as.length; j++)
+			{
+				String s1 = editTheFolder(as[j]);
+				s = (new StringBuilder(String.valueOf(s)))
+						.append("_data like '").append(s1).append("%' and ")
+						.append("_data").append(" not like '").append(s1)
+						.append("/%/%' or ").toString();
+			}
+			Cursor cursor1 = null;
+			String s2 = "";
+			if (s.length() > 0)
+			{
+				s = s.substring(0, s.lastIndexOf("or"));
+				cursor1 = query(
+						android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+						new String[] { "artist_id" }, s, null, "title_key");
+			}
+			if (cursor1 == null || cursor1.getCount() <= 0)
+			{
+				if (cursor1 != null && !cursor1.isClosed())
+					cursor1.close();
+				logger.v("getArtistsByCursor(Projection) ---> Exit");
+				return cursor;
+			} else
+			{
+				logger.d((new StringBuilder("There are "))
+						.append(cursor1.getCount())
+						.append(" songs in external DB!").toString());
+				cursor1.moveToFirst();
+				do
+				{
+					int k = cursor1.getInt(cursor1
+							.getColumnIndexOrThrow("artist_id"));
+					logger.d("the artist_id is " + k);
+					if (!hashset.contains(Integer.valueOf(k)))
+					{
+						s2 = (new StringBuilder(String.valueOf(s2)))
+								.append("_id='").append(k).append("' or ")
+								.toString();
+						hashset.add(Integer.valueOf(k));
+					}
+				} while (cursor1.moveToNext());
+				if (cursor1.isAfterLast())
+					s2 = s2.substring(0, s2.lastIndexOf("or"));
+				cursor = query(
+						android.provider.MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+						null, s2, null, "artist_key");
+				logger.v("getArtistsByCursor() ---> Exit");
+			}
+		}
+		return cursor;
 	}
 
 	@Override
@@ -820,10 +910,11 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public String getDisplayedArtistName(String paramString)
+	public String getDisplayedArtistName(String s)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if (s == null || s.equalsIgnoreCase("<unknown>"))
+			s = null;
+		return s;
 	}
 
 	@Override
@@ -1004,35 +1095,74 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public Cursor getSongsCursorByFolderAndSinger(String[] paramArrayOfString,
-			int paramInt, boolean paramBoolean)
+	public Cursor getSongsCursorByFolderAndSinger(String as[], int i,
+			boolean flag)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.v("getSongsCursorByFolderAndSinger(Projection) ---> Enter");
+		(new ArrayList()).clear();
+		String s = "";
+		int j = as.length;
+		int k = 0;
+		do
+		{
+			if (k >= j)
+			{
+				if (s.length() > 0)
+				{
+					String s3 = (new StringBuilder(String.valueOf(s.substring(
+							0, s.lastIndexOf("or"))))).append(")").toString();
+					s = (new StringBuilder(String.valueOf("("))).append(s3)
+							.toString();
+				}
+				if (i > 0)
+					s = (new StringBuilder(String.valueOf(s)))
+							.append(" and artist_id = ").append(i).toString();
+				if (flag)
+					s = (new StringBuilder(String.valueOf(s))).append(
+							" and duration > 10000").toString();
+				String s2 = (new StringBuilder(String.valueOf(s))).append(
+						" and is_music = 1").toString();
+				Cursor cursor = query(
+						android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+						null, s2, null, "title_key");
+				if (cursor != null && cursor.getCount() > 0)
+					logger.d((new StringBuilder("There are "))
+							.append(cursor.getCount())
+							.append(" songs in external DB!").toString());
+				logger.v("getSongsCursorByFolderAndSinger(Projection) ---> Exit");
+				return cursor;
+			}
+			String s1 = editTheFolder(as[k]);
+			s = (new StringBuilder(String.valueOf(s))).append("_data like '")
+					.append(s1).append("%' and ").append("_data")
+					.append(" not like '").append(s1).append("/%/%' or ")
+					.toString();
+			k++;
+		} while (true);
 	}
 
 	@Override
-	public Cursor getSongsFromAlbum(Uri paramUri, long paramLong,
-			String[] paramArrayOfString)
+	public Cursor getSongsFromAlbum(Uri uri, long l, String as[])
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return query(uri, as, (new StringBuilder("album_id=")).append(l)
+				.toString(), null, "title");
 	}
 
 	@Override
-	public Cursor getSongsFromArtist(Uri paramUri, long paramLong,
-			String[] paramArrayOfString)
+	public Cursor getSongsFromArtist(Uri uri, long l, String as[])
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return query(
+				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				as, (new StringBuilder("artist_id=")).append(l).toString(),
+				null, "title");
 	}
 
 	@Override
-	public Cursor getSongsFromGenre(String paramString, long paramLong,
-			String[] paramArrayOfString)
+	public Cursor getSongsFromGenre(String s, long l, String as[])
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return query(
+				android.provider.MediaStore.Audio.Genres.Members.getContentUri(
+						s, l), as, null, null, null);
 	}
 
 	@Override
@@ -1052,8 +1182,9 @@ public class DBControllerImpl implements DBController
 	@Override
 	public boolean getTensileShows()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return mApp.getSharedPreferences(
+				"cmccwm.mobilemusic.database.peference", 0).getBoolean(
+				"cmccwm.mobilemusic.database.usermore_tensile_shows", false);
 	}
 
 	@Override
@@ -1071,10 +1202,16 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public boolean isDefaultLocalPlaylist(String paramString)
+	public boolean isDefaultLocalPlaylist(String s)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		boolean flag;
+		if (s.equalsIgnoreCase("cmccwm.mobilemusic.database.default.local.playlist.recent.download")
+				|| s.equalsIgnoreCase("cmccwm.mobilemusic.database.default.local.playlist.recent.play")
+				|| s.equalsIgnoreCase("cmccwm.mobilemusic.database.default.local.playlist.favorite"))
+			flag = true;
+		else
+			flag = false;
+		return flag;
 	}
 
 	@Override
@@ -1133,18 +1270,52 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public boolean isSongInPlaylist(long paramLong1, long paramLong2,
-			int paramInt)
+	public boolean isSongInPlaylist(long l, long l1, int i)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		logger.v("isSongInPlaylist() ---> Enter");
+		boolean flag = true;
+		Cursor cursor = mDb
+				.query(getPlaylistMapDB(i),
+						null,
+						(new StringBuilder("audio_id=")).append(l1)
+								.append(" AND ").append("playlist_id")
+								.append("=").append(l).toString(), null, null,
+						null, null);
+		if (cursor.getCount() == 0)
+			flag = false;
+		cursor.close();
+		logger.v("isSongInPlaylist() ---> Exit");
+		return flag;
 	}
 
 	@Override
-	public long[] isSongInPlaylist(long paramLong, int paramInt)
+	public long[] isSongInPlaylist(long l, int i)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		long al[];
+		Cursor cursor;
+		logger.v("isSongInPlaylist() ---> Enter");
+		al = (long[]) null;
+		cursor = mDb.query(getPlaylistMapDB(i), null, (new StringBuilder(
+				"audio_id=")).append(l).toString(), null, null, null, null);
+		if (cursor.getCount() != 0)
+		{
+			int j;
+			int k;
+			al = new long[cursor.getCount()];
+			j = 0;
+			k = cursor.getColumnIndexOrThrow("playlist_id");
+			cursor.moveToFirst();
+			if (!cursor.isAfterLast())
+			{
+				int i1 = j + 1;
+				al[j] = cursor.getLong(k);
+				cursor.moveToNext();
+				j = i1;
+			}
+		}
+		cursor.close();
+		logger.v("isSongInPlaylist() ---> Exit");
+		return al;
 	}
 
 	@Override
@@ -1243,10 +1414,18 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public void renameLocalSong(long paramLong, String paramString)
+	public void renameLocalSong(long l, String s)
 	{
-		// TODO Auto-generated method stub
-
+		ContentResolver contentresolver = mApp.getContentResolver();
+		if (contentresolver != null)
+		{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put("title", s);
+			contentresolver
+					.update(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+							contentvalues, (new StringBuilder("_id="))
+									.append(l).toString(), null);
+		}
 	}
 
 	@Override
@@ -1493,10 +1672,77 @@ public class DBControllerImpl implements DBController
 	}
 
 	@Override
-	public List<Song> getSongsFromCursor(Cursor paramCursor, int paramInt)
+	public List getSongsFromCursor(Cursor cursor, int i)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList arraylist;
+		arraylist = new ArrayList();
+		arraylist.clear();
+		if (cursor == null || cursor.getCount() <= 0)
+		{
+			return arraylist;
+		} else
+		{
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast())
+			{
+				Song song;
+				song = new Song();
+				song.mAlbum = cursor.getString(cursor
+						.getColumnIndexOrThrow("album"));
+				song.mAlbumId = cursor.getInt(cursor
+						.getColumnIndexOrThrow("album_id"));
+				song.mArtist = cursor.getString(cursor
+						.getColumnIndexOrThrow("artist"));
+				song.mDuration = cursor.getInt(cursor
+						.getColumnIndexOrThrow("duration"));
+				if (i == 0)
+				{
+					song.mContentId = cursor.getString(cursor
+							.getColumnIndexOrThrow("contentid"));
+					song.mGroupCode = cursor.getString(cursor
+							.getColumnIndexOrThrow("groupcode"));
+					song.mMusicType = MusicType.ONLINEMUSIC.ordinal();
+					song.mUrl = cursor.getString(cursor
+							.getColumnIndexOrThrow("_data"));
+					song.mUrl2 = cursor.getString(cursor
+							.getColumnIndexOrThrow("url2"));
+					song.mUrl3 = cursor.getString(cursor
+							.getColumnIndexOrThrow("url3"));
+					song.mSize2 = cursor.getLong(cursor
+							.getColumnIndexOrThrow("filesize2"));
+					song.mSize3 = cursor.getLong(cursor
+							.getColumnIndexOrThrow("filesize3"));
+					song.mPoint = cursor.getInt(cursor
+							.getColumnIndexOrThrow("point"));
+					song.mArtUrl = cursor.getString(cursor
+							.getColumnIndexOrThrow("img"));
+
+					boolean flag;
+					if (cursor.getInt(cursor.getColumnIndexOrThrow("isdolby")) == 1)
+						flag = true;
+					else
+						flag = false;
+					song.isDolby = flag;
+				} else
+				{
+					song.mUrl = cursor.getString(cursor
+							.getColumnIndexOrThrow("_data"));
+					song.mContentId = queryContentId(song.mUrl);
+					song.mMusicType = MusicType.LOCALMUSIC.ordinal();
+					if (song.mUrl.toLowerCase().endsWith(".mp4"))
+						song.isDolby = true;
+				}
+				song.mId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+				song.mLyric = null;
+				song.mTrack = cursor.getString(cursor
+						.getColumnIndexOrThrow("title"));
+				song.mSize = cursor.getLong(cursor
+						.getColumnIndexOrThrow("_size"));
+				arraylist.add(song);
+				cursor.moveToNext();
+			}
+		}
+		return arraylist;
 	}
 
 	@Override
@@ -2153,5 +2399,61 @@ public class DBControllerImpl implements DBController
 		cursor.close();
 		logger.v("isOnlineMusicInDB() ---> Exit");
 		return i;
+	}
+
+	@Override
+	public List<Song> getSongByKey(String s)
+	{
+		Object obj = null;
+		if (s != null && !s.equals(""))
+		{
+			Cursor cursor;
+			obj = new ArrayList();
+			String s1 = editTheFolder(s);
+			String s2 = (new StringBuilder(String.valueOf((new StringBuilder(
+					String.valueOf(""))).append("(artist like '%").append(s1)
+					.append("%' or ").append("title").append(" like '%")
+					.append(s1).append("%')").toString()))).append(
+					" and is_music = 1").toString();
+			cursor = query(
+					android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+					null, s2, null, "title_key");
+			if (cursor != null && cursor.getCount() > 0)
+			{
+				logger.d((new StringBuilder("There are "))
+						.append(cursor.getCount())
+						.append(" songs in external DB!").toString());
+				cursor.moveToFirst();
+				do
+				{
+					Song song = new Song();
+					song.mAlbum = cursor.getString(cursor
+							.getColumnIndexOrThrow("album"));
+					song.mAlbumId = cursor.getInt(cursor
+							.getColumnIndexOrThrow("album_id"));
+					song.mArtist = cursor.getString(cursor
+							.getColumnIndexOrThrow("artist"));
+					song.mUrl = cursor.getString(cursor
+							.getColumnIndexOrThrow("_data"));
+					song.mContentId = queryContentId(song.mUrl);
+					song.mDuration = cursor.getInt(cursor
+							.getColumnIndexOrThrow("duration"));
+					song.mId = cursor.getInt(cursor
+							.getColumnIndexOrThrow("_id"));
+					song.mMusicType = MusicType.LOCALMUSIC.ordinal();
+					song.mLyric = null;
+					song.mTrack = cursor.getString(cursor
+							.getColumnIndexOrThrow("title"));
+					song.mSize = cursor.getLong(cursor
+							.getColumnIndexOrThrow("_size"));
+					if (song.mUrl.toLowerCase().endsWith(".mp4"))
+						song.isDolby = true;
+					((List) (obj)).add(song);
+				} while (cursor.moveToNext());
+				if (cursor.isAfterLast())
+					cursor.close();
+			}
+		}
+		return ((List) (obj));
 	}
 }

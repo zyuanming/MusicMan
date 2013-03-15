@@ -35,6 +35,7 @@ public class SongListItem implements Parcelable
 	public String url1;
 	public String url2;
 	public String url3;
+	
 	public String musicid;
 	public String count;
 	public String crbtValidity;

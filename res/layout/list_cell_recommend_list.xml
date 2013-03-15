@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_cell_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@id/ablum_img"
+            android:layout_width="55.0dip"
+            android:layout_height="55.0dip"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="1.0dip"
+            android:background="@drawable/image_default_ablum_for_list"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@id/dobly_img_for_list_cell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="@drawable/image_dobly_for_list_cell" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@id/play_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5.0dip"
+        android:src="@drawable/imageview_list_cell_play"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@id/song_info_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10.0dip"
+        android:layout_toRightOf="@id/ablum_img"
+        android:layout_weight="2.0"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@id/song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="111111111111111111111111111111"
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="16.0sp" />
+
+        <TextView
+            android:id="@id/songer_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="蔡依林"
+            android:textColor="@*android:color/darker_gray"
+            android:textSize="12.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13.0dip"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@id/song_ratingbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10.0dip" />
+
+        <CheckBox
+            android:id="@id/btn_select_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7.0dip"
+            android:layout_marginRight="5.0dip"
+            android:button="@drawable/common_check_selector"
+            android:focusable="false"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@id/btn_recommend_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7.0dip"
+            android:background="@null"
+            android:focusable="false"
+            android:paddingBottom="5.0dip"
+            android:paddingLeft="5.0dip"
+            android:paddingRight="10.0dip"
+            android:paddingTop="5.0dip"
+            android:src="@drawable/list_cell_more_button_selector" />
+    </LinearLayout>
+
+</LinearLayout>

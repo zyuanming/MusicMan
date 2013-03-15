@@ -18,9 +18,12 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name="org.ming.center.MobileMusicApplication"
+        android:debuggable="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/launch" >
@@ -29,6 +32,15 @@
         <meta-data
             android:name="appid"
             android:value="appid:008122551771936451" />
+        <!-- 友盟开发者 -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5133ff405270155b380000bd" >
+        </meta-data>
+        <!-- 应用渠道号 -->
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Channel ID" />
 
         <activity
             android:name=".ui.activity.PreSplashActivity"
@@ -77,7 +89,32 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.activity.MusicPlayerActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="MusicPlayerActivity"
+                    android:scheme="founderapp" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ui.activity.local.LocalMusicSearchActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.local.LocalAddMusicSongListActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.local.LocalAddMusicMainActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
@@ -90,15 +127,23 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.local.LocalAddMusicColumnActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.local.LocalSongListActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.local.LocalColumnActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <!--
         <activity
             android:name=".ui.activity.online.OnlineMusicActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" />
         -->
         <activity
             android:name=".ui.activity.online.MingOnlineMusic"
@@ -124,11 +169,67 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.online.MusicOnlineSetRingToneActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.online.MusicOnlinePlaylistActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.mymigu.MyMiGuActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.online.MusicOnlineRecommendFriend"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.activity.online.ContactsAllActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.more.MobileMusicAboutActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.more.MobileMusicMoreActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
 
-        <service android:name="com.redclound.lib.MobileMusicService" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="MobileMusicMoreActivity"
+                    android:scheme="founderapp" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.activity.more.MobileMusicFeedBackActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.activity.more.TimingClosureActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:screenOrientation="portrait" />
+
+        <service android:name="org.ming.center.MobileMusicService" />
+        <service android:name="org.ming.center.download.DownloadService" />
+        <service android:name="org.ming.center.download.DownLoadService2" />
     </application>
 
 </manifest>

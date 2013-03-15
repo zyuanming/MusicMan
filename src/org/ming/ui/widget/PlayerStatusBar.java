@@ -289,7 +289,7 @@ public class PlayerStatusBar extends RelativeLayout implements
 			}
 		});
 
-		// 暂停按钮
+		// 暂停,播放按钮
 		this.mPlayPauseBtn = ((ImageButton) findViewById(R.id.statusbar_play_and_pause_button));
 		this.mPlayPauseBtn.setOnClickListener(new View.OnClickListener()
 		{

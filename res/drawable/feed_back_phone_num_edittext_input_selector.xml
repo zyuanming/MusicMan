@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/feed_back_phone_num_edittext_input_hl" android:state_focused="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/feed_back_phone_num_edittext_input_nor" android:state_focused="false" android:state_pressed="true"/>
+    <item android:drawable="@drawable/feed_back_phone_num_edittext_input_hl" android:state_focused="true"/>
+    <item android:drawable="@drawable/feed_back_phone_num_edittext_input_nor" android:state_focused="false"/>
+
+</selector>

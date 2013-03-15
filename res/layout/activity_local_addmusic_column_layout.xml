@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@drawable/bg_main" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <cmccwm.mobilemusic.ui.view.TitleBarView android:id="@id/title_view" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <ListView android:id="@*android:id/list" android:fadingEdge="none" android:descendantFocusability="blocksDescendants" android:layout_width="fill_parent" android:layout_height="wrap_content" android:scrollingCache="false" android:divider="#ffffcc00" android:dividerHeight="-1.0dip" android:layout_weight="1.0" style="@style/listview" />
-    <cmccwm.mobilemusic.ui.widget.PlayerStatusBar android:id="@id/playerStatusBar" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@android:id/list"
+        style="@style/listview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:descendantFocusability="blocksDescendants"
+        android:divider="#ffffcc00"
+        android:dividerHeight="-1.0dip"
+        android:fadingEdge="none"
+        android:scrollingCache="false" />
+
+    <org.ming.ui.widget.PlayerStatusBar
+        android:id="@id/playerStatusBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

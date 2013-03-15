@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OMPClient>
+	<Settings
+		GlobalTerRegisterUrl="/wapServer/1.0/ompregistrationrequest"
+		GlobalGetSeedUrl="/wapServer/1.1/SeedRequest11"
+		GlobalProductSubUrl="/wapServer/1.0/terminalsubscription"
+		GlobalProductSubUrl2="/wapServer/1.1/terminalsubscription11"
+		GlobalEnablerCallingUrl="/opServer/1.0/ompregistrationrequest"            
+		GlobalProductQueryUrl="/wapServer/1.0/queryproductlist"
+		GlobalProductUnsubUrl="/wapServer/1.0/terminalunscriptionreq"
+		GlobalTerProductSubQuery="/wapServer/1.0/terproductsubquery"
+		GlobalGetSubVerificationUrl="/wapServer/1.1/requestsubverificationurl"
+		HttpPort="90"
+		HttpsPort="443"
+		AppType="1"
+		TestMode="0"
+		InAppBilling="0"
+		SMSInitCode="10658436"
+	/>
+</OMPClient>

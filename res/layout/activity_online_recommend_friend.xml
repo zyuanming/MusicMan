@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_main"
+    android:orientation="vertical" >
+
+    <org.ming.ui.view.TitleBarView
+        android:id="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_main_column_navigation"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@id/phone_num_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5.0dip"
+            android:layout_marginRight="10.0dip"
+            android:layout_weight="1.0"
+            android:background="@drawable/login_edittext_input_selector"
+            android:ellipsize="end"
+            android:hint="@string/recommend_friend_edittext_hint"
+            android:inputType="phone"
+            android:maxLength="6000"
+            android:paddingLeft="5.0dip"
+            android:paddingRight="20.0dip"
+            android:singleLine="true"
+            android:textSize="14.0sp" />
+
+        <Button
+            android:id="@id/btn_contacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_recommend_contacts_selector" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@id/nothing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="140.0dip"
+        android:background="@drawable/image_nothing" />
+
+    <LinearLayout
+        android:id="@id/refresh_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50.0dip"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/refresh_image" />
+
+        <Button
+            android:id="@id/refresh_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_refresh_selector" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15.0dip"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@id/hint_txt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5.0dip"
+            android:gravity="center"
+            android:text=" "
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="14.0sp" />
+
+        <TextView
+            android:id="@id/songname_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5.0dip"
+            android:text=" "
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="14.0sp" />
+
+        <TextView
+            android:id="@id/singer_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5.0dip"
+            android:text=" "
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="14.0sp" />
+
+        <TextView
+            android:id="@id/copyright_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5.0dip"
+            android:text=" "
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="14.0sp" />
+
+        <TextView
+            android:id="@id/prompt_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5.0dip"
+            android:text=" "
+            android:textColor="@color/gray_eighty_percent"
+            android:textSize="14.0sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@id/friend_name_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10.0dip"
+            android:text="@string/gif_friend_textview"
+            android:textColor="@color/gray_fifty_percent"
+            android:textSize="14.0sp" />
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@id/friend_name_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5.0dip"
+                android:text=""
+                android:textColor="@color/gray_eighty_percent"
+                android:textSize="14.0sp" />
+        </ScrollView>
+    </LinearLayout>
+
+    <Button
+        android:id="@id/btn_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10.0dip"
+        android:layout_marginTop="5.0dip"
+        android:background="@drawable/btn_red_selector"
+        android:gravity="center"
+        android:text="@string/button_present_song"
+        android:textColor="@color/white_color"
+        android:textSize="14.0sp" />
+
+    <org.ming.ui.widget.PlayerStatusBar
+        android:id="@id/playerStatusBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

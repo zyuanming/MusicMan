@@ -190,7 +190,7 @@
             android:textSize="12.0sp" />
 
         <SeekBar
-            android:id="@*android:id/progress"
+            android:id="@id/progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
