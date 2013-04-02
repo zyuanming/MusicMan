@@ -126,38 +126,37 @@ public class XMLParser
 			int i = nodelist.getLength();
 			try
 			{
-			for (int j = 0; j < i; j++)
-			{
-				Object obj = class1.newInstance();
-				Element element = (Element) nodelist.item(j);
-				Field afield[];
-				afield = class1.getDeclaredFields();
-				String s2 = null;
-				for (int k = 0; k < afield.length; k++)
+				for (int j = 0; j < i; j++)
 				{
-					Field field;
-					Node node1;
-					field = afield[k];
-					if (Modifier.isFinal(field.getModifiers()))
+					Object obj = class1.newInstance();
+					Element element = (Element) nodelist.item(j);
+					Field afield[];
+					afield = class1.getDeclaredFields();
+					String s2 = null;
+					for (int k = 0; k < afield.length; k++)
 					{
-						Node node = element.getElementsByTagName(
-								field.getName()).item(0);
-						if (node != null)
+						Field field;
+						Node node1;
+						field = afield[k];
+						if (Modifier.isFinal(field.getModifiers()))
 						{
-							node1 = node.getFirstChild();
-							if (node1 != null)
+							Node node = element.getElementsByTagName(
+									field.getName()).item(0);
+							if (node != null)
 							{
-								String s1 = node1.getNodeValue();
-								s2 = s1;
+								node1 = node.getFirstChild();
+								if (node1 != null)
+								{
+									String s1 = node1.getNodeValue();
+									s2 = s1;
+								}
 							}
 						}
+						field.set(obj, s2);
 					}
-					field.set(obj, s2);
+					arraylist.add(obj);
 				}
-				arraylist.add(obj);
-			}
-			}
-			catch(Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -589,14 +588,11 @@ public class XMLParser
 		if (localElement != null)
 		{
 			NodeList nodelist = root.getElementsByTagName(s);
-			s1 = null;
 			if (nodelist != null)
 			{
 				int i = nodelist.getLength();
-				s1 = null;
 				if (i != 0)
 				{
-					s1 = "";
 					NodeList nodelist1 = nodelist.item(0).getChildNodes();
 					int j = 0;
 					while (j < nodelist1.getLength())

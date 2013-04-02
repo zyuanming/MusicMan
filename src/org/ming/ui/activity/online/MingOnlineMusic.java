@@ -98,6 +98,7 @@ public class MingOnlineMusic extends Activity implements UIEventListener,
 	private LinearLayout mRetryLayout;
 	private View mLoadMoreView;
 	private ProgressBar mReqMoreProgress;
+	private Button mSearchBtn;
 	private ArrayList<MusicListColumnItem> mColumnItemData = new ArrayList();
 
 	private int curBangType = RING_SONG_WEEK_BANG;
@@ -174,6 +175,19 @@ public class MingOnlineMusic extends Activity implements UIEventListener,
 		mRetryLayout = ((LinearLayout) findViewById(R.id.refresh_temp_layout));
 		mEmpty = ((ImageView) findViewById(R.id.empty_temp));
 		mRecommendContentListView = ((ListView) findViewById(R.id.recommned_list_temp));
+
+		// 在线搜索
+		mSearchBtn = ((Button) findViewById(R.id.search_button));
+		mSearchBtn.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View paramAnonymousView)
+			{
+				Intent localIntent = new Intent(MingOnlineMusic.this,
+						MusicOnlineMusicSearchActivity.class);
+				startActivity(localIntent);
+			}
+		});
+
 		// mRecommendContentListView.addHeaderView(mHeadView);
 		// mRecommendContentListView
 		// .setOnItemClickListener(mListItemClickListener);

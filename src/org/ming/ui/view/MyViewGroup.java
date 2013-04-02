@@ -1,19 +1,14 @@
 ﻿package org.ming.ui.view;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.ming.util.MyLogger;
-
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
+import android.view.*;
 import android.view.GestureDetector.OnGestureListener;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.widget.Scroller;
+import org.ming.util.MyLogger;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MyViewGroup extends ViewGroup
 {

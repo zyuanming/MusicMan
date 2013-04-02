@@ -275,29 +275,35 @@ public class DBControllerImpl implements DBController
 		return mDb.insert("T_APPINFO", null, contentvalues);
 	}
 
+	/**
+	 * 存储缓存数据
+	 */
 	@Override
 	public long addCacheData(String s, String s1, String s2, String s3)
 	{
 		if (s == null)
 			throw new NullPointerException("null downloadItem");
-		String s4 = s.replaceAll("'", "'");
-		long l;
-		if (isCacheDataExist(s4))
+		else
 		{
-			l = updateCacheData(s4, s2, s3);
-		} else
-		{
-			ContentValues contentvalues = new ContentValues();
-			contentvalues.put(CACHEDATA_COLUMNS[0], s4);
-			if (s1 == null || "".equals(s1.trim()))
-				s1 = "-1";
-			contentvalues.put(CACHEDATA_COLUMNS[1], s1);
-			if (s2 != null)
-				contentvalues.put(CACHEDATA_COLUMNS[2], s2);
-			contentvalues.put(CACHEDATA_COLUMNS[3], s3);
-			l = mDb.insert("T_CACHEDATA", null, contentvalues);
+			String s4 = s.replaceAll("'", "'");
+			long l;
+			if (isCacheDataExist(s4))
+			{
+				l = updateCacheData(s4, s2, s3);
+			} else
+			{
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(CACHEDATA_COLUMNS[0], s4);
+				if (s1 == null || "".equals(s1.trim()))
+					s1 = "-1";
+				contentvalues.put(CACHEDATA_COLUMNS[1], s1);
+				if (s2 != null)
+					contentvalues.put(CACHEDATA_COLUMNS[2], s2);
+				contentvalues.put(CACHEDATA_COLUMNS[3], s3);
+				l = mDb.insert("T_CACHEDATA", null, contentvalues);
+			}
+			return l;
 		}
-		return l;
 	}
 
 	@Override

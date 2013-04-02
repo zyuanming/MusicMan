@@ -963,16 +963,22 @@ public class Util
 	 */
 	public static DefaultHttpClient createNetworkClient(boolean flag)
 	{
-		DefaultHttpClient defaulthttpclient1;
+		DefaultHttpClient defaulthttpclient;
 		if (NetUtil.netState == 8)
-			defaulthttpclient1 = null;
+			defaulthttpclient = null;
 		else if (!NetUtil.isNetStateWap() && !flag)
 		{
 			logger.v("createNetworkClient() ---> !WlanUtils.isNetStateWap() && !isHttpReqIfWlan");
 			if (NetUtil.netState != 1 && NetUtil.netState != 6)
 			{
 				logger.d("Wlan has been closed.");
-				defaulthttpclient1 = null;
+				defaulthttpclient = null;
+				return defaulthttpclient;
+			} else
+			{
+				if (mHttpsClient == null)
+					mHttpsClient = createHttpsClient();
+				defaulthttpclient = mHttpsClient;
 			}
 		} else
 		{
@@ -985,29 +991,27 @@ public class Util
 							.checkWapStatus())
 			{
 				logger.d("WAP has been closed.");
-				defaulthttpclient1 = null;
+				defaulthttpclient = null;
+				return defaulthttpclient;
+			} else
+			{
+				if (mHttpClient == null)
+					mHttpClient = createHttpClient();
+				defaulthttpclient = mHttpClient;
+				if (NetUtil.netState == 3)
+				{
+					HttpHost httphost = new HttpHost(
+							MusicBusinessDefine_WAP.CMCC_WAP_PROXY_HOST,
+							MusicBusinessDefine_WAP.CMCC_WAP_PROXY_PORT);
+					if (defaulthttpclient == null)
+						defaulthttpclient = createHttpsClient();
+					defaulthttpclient.getParams().setParameter(
+							"http.route.default-proxy", httphost);
+				}
 			}
 		}
-
-		if (mHttpsClient == null)
-			mHttpsClient = createHttpsClient();
-		DefaultHttpClient defaulthttpclient = mHttpsClient;
-		if (NetUtil.netState == 3)
-		{
-			HttpHost httphost = new HttpHost(
-					MusicBusinessDefine_WAP.CMCC_WAP_PROXY_HOST,
-					MusicBusinessDefine_WAP.CMCC_WAP_PROXY_PORT);
-			if (defaulthttpclient == null)
-				defaulthttpclient = createHttpsClient();
-			defaulthttpclient.getParams().setParameter(
-					"http.route.default-proxy", httphost);
-		}
 		logger.v("createNetworkClient() ---> Exit");
-		defaulthttpclient1 = defaulthttpclient;
-		if (mHttpClient == null)
-			mHttpClient = createHttpClient();
-		defaulthttpclient = mHttpClient;
-		return defaulthttpclient1;
+		return defaulthttpclient;
 	}
 
 	public static Bitmap createBitmap(byte abyte0[])

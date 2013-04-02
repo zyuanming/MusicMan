@@ -57,13 +57,9 @@ public class AdView extends View implements GestureDetector.OnGestureListener
 			switch (paramAnonymousMessage.what)
 			{
 			case 2:
-				return;
 			case 3:
-				return;
 			case 6:
-				return;
 			case 7:
-				return;
 			default:
 				return;
 			case 1:
@@ -79,33 +75,33 @@ public class AdView extends View implements GestureDetector.OnGestureListener
 				break;
 			case 4:
 				ALLOW_DRAW = false;
-				AdView.this.draw_type = 4;
-				AdView.this.invalidate();
+				draw_type = 4;
+				invalidate();
 				break;
 			case 5:
-				AdView.this.draw_type = 5;
-				AdView.this.invalidate();
+				draw_type = 5;
+				invalidate();
 				break;
 			case 8:
-				AdView.this.draw_type = 8;
-				AdView.this.handler.removeMessages(8);
-				AdView.this.invalidate();
+				draw_type = 8;
+				handler.removeMessages(8);
+				invalidate();
 				break;
 			case 9:
-				if (AdView.this.bmpDownLoadMap.size() < AdView.this.mTotalPage)
-					AdView.this.checkImage();
-				AdView.this.draw_type = 0;
-				AdView.this.handler.removeMessages(9);
-				if ((AdView.this.ALLOW_DRAW)
-						&& (AdView.this.touchEventType == 0))
+				if (bmpDownLoadMap.size() < mTotalPage)
+					checkImage();
+				draw_type = 0;
+				handler.removeMessages(9);
+				if ((ALLOW_DRAW) && (touchEventType == 0))
 				{
-					AdView.this.stepByPc = 0;
-					AdView.this.handler.removeMessages(8);
-					AdView.this.handler.sendEmptyMessageDelayed(8, 3000L);
+					stepByPc = 0;
+					handler.removeMessages(8);
+					handler.sendEmptyMessageDelayed(8, 3000L);
 				} else
 				{
-					AdView.this.handler.sendEmptyMessageDelayed(9, 3000L);
+					handler.sendEmptyMessageDelayed(9, 3000L);
 				}
+				break;
 			}
 		}
 	};

@@ -72,19 +72,15 @@ public class TitleBarView extends RelativeLayout
 		switch (paramInt)
 		{
 		default:
-			if (this.mLeftOnclick != null)
-				this.mImgBtnLeft.setOnClickListener(this.mLeftOnclick);
 			break;
 		case 0:
 			this.mImgBtnRight.setVisibility(View.INVISIBLE);
 			break;
 		case 1:
-			if (this.mRightOnclick != null)
-			{
-				this.mImgBtnRight.setOnClickListener(this.mRightOnclick);
-				break;
-			}
-			this.mImgBtnRight.setOnClickListener(this.rigetbtn_onclick);
+			if (mRightOnclick != null)
+				mImgBtnRight.setOnClickListener(mRightOnclick);
+			else
+				mImgBtnRight.setOnClickListener(rigetbtn_onclick);
 			break;
 		case 2:
 			this.mBtnRight.setVisibility(0);
@@ -92,13 +88,17 @@ public class TitleBarView extends RelativeLayout
 			break;
 		}
 
-		this.mImgBtnLeft.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View paramAnonymousView)
-			{
-				TitleBarView.this.mCurrentActivity.finish();
-			}
-		});
+		if (mLeftOnclick != null)
+			mImgBtnLeft.setOnClickListener(mLeftOnclick);
+		else
+			mImgBtnLeft
+					.setOnClickListener(new android.view.View.OnClickListener()
+					{
+						public void onClick(View view)
+						{
+							mCurrentActivity.finish();
+						}
+					});
 	}
 
 	public void setCurrentActivity(Activity paramActivity)

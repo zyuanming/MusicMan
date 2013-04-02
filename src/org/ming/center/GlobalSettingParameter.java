@@ -3,6 +3,8 @@ package org.ming.center;
 import java.util.List;
 
 import org.ming.center.database.UserAccount;
+import org.ming.center.http.item.OrderInfoItem;
+import org.ming.util.XMLParser;
 
 import android.os.Environment;
 
@@ -87,12 +89,57 @@ public class GlobalSettingParameter
 
 	public static boolean initLoginParam(byte abyte0[])
 	{
-		return false;
+		boolean flag = true;
+		if (abyte0 != null)
+		{
+			XMLParser xmlparser = new XMLParser(abyte0);
+			SERVER_INIT_PARAM_MDN = xmlparser.getValueByTag("mdn");
+			SERVER_INIT_RANDOMSESSIONKEY = xmlparser
+					.getValueByTag("randomsessionkey");
+			SERVER_INIT_PARAM_QQORDER = xmlparser.getValueByTag("qqorder");
+			SERVER_INIT_PARAM_ONLINE_MUSIC_ORDER_STATUS = xmlparser
+					.getValueByTag("order");
+			SERVER_INIT_PARAM_MEMBER = xmlparser.getValueByTag("member");
+			qqInfoItemList = xmlparser.getListForOrderInfo("qqinfo", "item",
+					OrderInfoItem.class);
+			orderInfoItemList = xmlparser.getListForOrderInfo("orderinfo",
+					"item", OrderInfoItem.class);
+			memberInfoItemList = xmlparser.getListForOrderInfo("memberinfo",
+					"item", OrderInfoItem.class);
+			LOGIN_PARAM_FOR_COLOR_TONE = xmlparser.getValueByTag("crbtuser");
+			LOGIN_PARAM_FOR_COLOR_TONE_INFO = xmlparser
+					.getValueByTag("crbtinfo");
+			LOGIN_PARAM_FOR_COLOR_TONE_CANCEL = xmlparser
+					.getValueByTag("crbtcancel");
+			SERVER_INIT_IS_SICHUAN_MEMBER = xmlparser.getValueByTag("flag");
+			if (SERVER_INIT_PARAM_ONLINE_MUSIC_ORDER_STATUS.equals("1")
+					|| SERVER_INIT_PARAM_MEMBER != null
+					&& SERVER_INIT_PARAM_MEMBER.equals(String.valueOf(3))
+					|| SERVER_INIT_PARAM_MEMBER != null
+					&& SERVER_INIT_PARAM_MEMBER.equals(String.valueOf(2)))
+				show_dobly_toast = flag;
+		} else
+		{
+			flag = false;
+		}
+		return flag;
 	}
 
 	public static boolean initServerParam(byte abyte0[])
 	{
-		return false;
+		boolean flag;
+		if (abyte0 == null)
+		{
+			flag = false;
+		} else
+		{
+			XMLParser xmlparser = new XMLParser(abyte0);
+			SERVER_INIT_PARAM_SEARCH_INFO = xmlparser
+					.getValueByTag("searchinfo");
+			SERVER_INIT_PARAM_ITEM_COUNT = xmlparser.getValueByTag("itemcount");
+			flag = true;
+		}
+		return flag;
 	}
 
 	static

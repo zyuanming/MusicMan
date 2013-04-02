@@ -3,6 +3,7 @@ package org.ming.center.http;
 import org.ming.center.BindingContainer;
 import org.ming.center.MobileMusicApplication;
 import org.ming.dispatcher.Dispatcher;
+import org.ming.dispatcher.DispatcherEventEnum;
 import org.ming.util.MyLogger;
 
 import android.net.ConnectivityManager;
@@ -73,8 +74,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 	public void taskCanceled(MMHttpTask paramMMHttpTask)
 	{
 		logger.v("taskCancelled() ---> Enter");
-		Message localMessage = this.mDispatcher.obtainMessage(3005,
-				paramMMHttpTask);
+		Message localMessage = this.mDispatcher.obtainMessage(
+				DispatcherEventEnum.HTTP_EVENT_TASK_CANCELED, paramMMHttpTask);
 		this.mDispatcher.sendMessage(localMessage);
 		logger.v("taskCancelled() ---> Exit");
 	}
@@ -84,8 +85,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 		logger.v("taskWapClosed() ---> Enter");
 		if (BindingContainer.getInstance().hasMMHttpTask(paramMMHttpTask))
 		{
-			Message localMessage = this.mDispatcher.obtainMessage(3007,
-					paramMMHttpTask);
+			Message localMessage = this.mDispatcher.obtainMessage(
+					DispatcherEventEnum.HTTP_EVENT_WAP_CLOSED, paramMMHttpTask);
 			this.mDispatcher.sendMessage(localMessage);
 			BindingContainer.getInstance().removeMMHttpTask(paramMMHttpTask);
 		}
@@ -97,7 +98,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 		logger.v("taskCompleted() ---> Enter");
 		if (BindingContainer.getInstance().hasMMHttpTask(paramMMHttpTask))
 		{
-			Message localMessage = this.mDispatcher.obtainMessage(3003,
+			Message localMessage = this.mDispatcher.obtainMessage(
+					DispatcherEventEnum.HTTP_EVENT_TASK_COMPLETE,
 					paramMMHttpTask);
 			this.mDispatcher.sendMessage(localMessage);
 			BindingContainer.getInstance().removeMMHttpTask(paramMMHttpTask);
@@ -116,8 +118,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 		logger.v("taskFailed() ---> Enter");
 		if (BindingContainer.getInstance().hasMMHttpTask(paramMMHttpTask))
 		{
-			Message localMessage = this.mDispatcher.obtainMessage(3004,
-					paramMMHttpTask);
+			Message localMessage = this.mDispatcher.obtainMessage(
+					DispatcherEventEnum.HTTP_EVENT_TASK_FAIL, paramMMHttpTask);
 			this.mDispatcher.sendMessage(localMessage);
 			BindingContainer.getInstance().removeMMHttpTask(paramMMHttpTask);
 		}
@@ -129,8 +131,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 		logger.v("taskStarted() ---> Enter");
 		if (BindingContainer.getInstance().hasMMHttpTask(paramMMHttpTask))
 		{
-			Message localMessage = this.mDispatcher.obtainMessage(3002,
-					paramMMHttpTask);
+			Message localMessage = this.mDispatcher.obtainMessage(
+					DispatcherEventEnum.HTTP_EVENT_TASK_START, paramMMHttpTask);
 			this.mDispatcher.sendMessage(localMessage);
 		}
 		logger.v("taskStarted() ---> Exit");
@@ -141,7 +143,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 		logger.v("taskTimeOut() ---> Enter");
 		if (BindingContainer.getInstance().hasMMHttpTask(paramMMHttpTask))
 		{
-			Message localMessage = this.mDispatcher.obtainMessage(3006,
+			Message localMessage = this.mDispatcher.obtainMessage(
+					DispatcherEventEnum.HTTP_EVENT_TASK_TIMEOUT,
 					paramMMHttpTask);
 			this.mDispatcher.sendMessage(localMessage);
 			BindingContainer.getInstance().removeMMHttpTask(paramMMHttpTask);
@@ -154,8 +157,8 @@ public class HttpControllerImpl implements HttpController, MMHttpTaskListener
 		logger.v("taskWapClosed() ---> Enter");
 		if (BindingContainer.getInstance().hasMMHttpTask(paramMMHttpTask))
 		{
-			Message localMessage = this.mDispatcher.obtainMessage(3008,
-					paramMMHttpTask);
+			Message localMessage = this.mDispatcher.obtainMessage(
+					DispatcherEventEnum.WLAN_EVENT_WLAN_CLOSE, paramMMHttpTask);
 			this.mDispatcher.sendMessage(localMessage);
 			BindingContainer.getInstance().removeMMHttpTask(paramMMHttpTask);
 		}

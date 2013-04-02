@@ -1,9 +1,19 @@
 package org.ming.ui.activity.online;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.*;
+import com.umeng.analytics.MobclickAgent;
 import org.ming.R;
 import org.ming.center.Controller;
 import org.ming.center.GlobalSettingParameter;
@@ -13,17 +23,8 @@ import org.ming.center.business.MusicBusinessDefine_Net;
 import org.ming.center.business.MusicBusinessDefine_WAP;
 import org.ming.center.database.MusicType;
 import org.ming.center.database.Song;
-import org.ming.center.http.HttpController;
-import org.ming.center.http.MMHttpEventListener;
-import org.ming.center.http.MMHttpRequest;
-import org.ming.center.http.MMHttpRequestBuilder;
-import org.ming.center.http.MMHttpTask;
-import org.ming.center.http.item.AdListItem;
-import org.ming.center.http.item.ContentItem;
-import org.ming.center.http.item.MusicListColumnItem;
-import org.ming.center.http.item.SongItem;
-import org.ming.center.http.item.SongListItem;
-import org.ming.center.http.item.TabItem;
+import org.ming.center.http.*;
+import org.ming.center.http.item.*;
 import org.ming.center.player.PlayerController;
 import org.ming.center.player.PlayerEventListener;
 import org.ming.center.system.SystemEventListener;
@@ -31,6 +32,9 @@ import org.ming.center.ui.ListButtonClickListener;
 import org.ming.center.ui.UIEventListener;
 import org.ming.dispatcher.DispatcherEventEnum;
 import org.ming.ui.activity.MusicPlayerActivity;
+import org.ming.ui.activity.more.MobileMusicFeedBackActivity;
+import org.ming.ui.activity.more.MobileMusicMoreActivity;
+import org.ming.ui.activity.more.TimingClosureActivity;
 import org.ming.ui.adapter.MobileMusicAlbumListItemAdapter;
 import org.ming.ui.adapter.MobileMusicColumnListItemAdapter;
 import org.ming.ui.adapter.MobileMusicContentListItemAdapter;
@@ -43,30 +47,9 @@ import org.ming.util.NetUtil;
 import org.ming.util.Util;
 import org.ming.util.XMLParser;
 
-import com.umeng.analytics.MobclickAgent;
-
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Message;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class OnlineMusicActivity extends Activity implements
 		MMHttpEventListener, SystemEventListener, UIEventListener,
@@ -426,9 +409,9 @@ public class OnlineMusicActivity extends Activity implements
 			String s1;
 			String s2;
 			if (NetUtil.isNetStateWap())
-				c = '\u03EA';
+				c = '\u03EA'; // 1002 HTTP_REQ_TYPE_MUSICINFO
 			else
-				c = '\u138D';
+				c = '\u138D'; // 5005 HTTPS_REQ_TYPE_MUSICINFO
 			mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
 			if (mCurrentDialog != null)
 			{
@@ -705,6 +688,7 @@ public class OnlineMusicActivity extends Activity implements
 		logger.v("onHttpResponse() ---> Enter");
 		int i = mmhttptask.getRequest().getReqType();
 		byte[] arrayOfByte = mmhttptask.getResponseBody();
+		Log.d("mingming1", new String(arrayOfByte).toString());
 		XMLParser xmlparser = new XMLParser(arrayOfByte);
 		if ((xmlparser.getRoot() == null)
 				|| (xmlparser.getValueByTag("code") == null))
@@ -741,21 +725,20 @@ public class OnlineMusicActivity extends Activity implements
 						{
 							mCurrentDialog.dismiss();
 						}
-
 					});
 		}
 
 		switch (i)
 		{
-		case 1002:
-		case 5005:
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_MUSICINFO:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_MUSICINFO:
 		default:
 		{
 			logger.v("onHttpResponse() ---> Exit");
 		}
 			break;
-		case 1000:
-		case 5004:
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_INIT_SERVICE:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_INIT_SERVICE:
 		{
 			logger.v("init service");
 			GlobalSettingParameter.initServerParam(arrayOfByte);
@@ -803,8 +786,8 @@ public class OnlineMusicActivity extends Activity implements
 			mIsInital = true;
 		}
 			break;
-		case 1006:
-		case 5009:
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_GET_CONTENT_LIST:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_GET_CONTENT_LIST:
 		{
 			if (mCurrentDialog != null)
 			{
@@ -820,11 +803,10 @@ public class OnlineMusicActivity extends Activity implements
 			LOAD_MORE = true;
 		}
 			break;
-		case 1003:
-		case 1004:
-		case 5006:
-		case 5007:
-		{
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_GROUP:
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_GET_RADIO:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_GROUP:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_GET_RADIO:
 			if (((TabItem) tabInfoList.get(mButtonPosition)).category_type
 					.equals("4"))
 				refreshAlbumContentUI(xmlparser);
@@ -832,19 +814,14 @@ public class OnlineMusicActivity extends Activity implements
 				refreshColumnContentUI(xmlparser);
 			mInital = true;
 			LOAD_MORE = true;
-		}
 			break;
-		case 1007:
-		case 5010:
-		{
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_NEWSINFO:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_NEWSINFO:
 			refreshNewsInfoUI(mmhttptask);
-		}
 			break;
-		case 1005:
-		case 5008:
-		{
+		case MusicBusinessDefine_WAP.HTTP_REQ_TYPE_GET_SONG_LIST:
+		case MusicBusinessDefine_Net.HTTPS_REQ_TYPE_GET_SONG_LIST:
 			onRadioSongsResponse(mmhttptask);
-		}
 			break;
 		}
 	}
@@ -1255,9 +1232,9 @@ public class OnlineMusicActivity extends Activity implements
 			String s1;
 			String s2;
 			if (NetUtil.isNetStateWap())
-				c = '\u03EB';
+				c = '\u03EB'; // 1003 HTTP_REQ_TYPE_GROUP
 			else
-				c = '\u138E';
+				c = '\u138E'; // 5006 HTTPS_REQ_TYPE_GROUP
 			mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
 			mmhttprequest.addUrlParams("itemcount",
 					GlobalSettingParameter.SERVER_INIT_PARAM_ITEM_COUNT);
@@ -1290,9 +1267,9 @@ public class OnlineMusicActivity extends Activity implements
 			String s1;
 			String s2;
 			if (NetUtil.isNetStateWap())
-				c = '\u03EB';
+				c = '\u03EB'; // 1003 HTTP_REQ_TYPE_GROUP
 			else
-				c = '\u138E';
+				c = '\u138E'; // 5006 HTTPS_REQ_TYPE_GROUP
 			mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
 			s1 = s.substring(s.indexOf("rdp2"));
 			if (NetUtil.isNetStateWap())
@@ -1322,9 +1299,9 @@ public class OnlineMusicActivity extends Activity implements
 			String s1;
 			String s2;
 			if (NetUtil.isNetStateWap())
-				c = '\u03EE';
+				c = '\u03EE'; // 1006 HTTP_REQ_TYPE_GET_CONTENT_LIST
 			else
-				c = '\u1391';
+				c = '\u1391'; // 5009 HTTPS_REQ_TYPE_GET_CONTENT_LIST
 			mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
 			s1 = s.substring(s.indexOf("rdp2"));
 			if (NetUtil.isNetStateWap())
@@ -1353,9 +1330,9 @@ public class OnlineMusicActivity extends Activity implements
 		String s1;
 		String s2;
 		if (NetUtil.isNetStateWap())
-			c = '\u03ED';
+			c = '\u03ED'; // 1005 HTTP_REQ_TYPE_GET_SONG_LIST
 		else
-			c = '\u1390';
+			c = '\u1390'; // 5008 HTTPS_REQ_TYPE_GET_SONG_LIST
 		mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
 		s = ((MusicListColumnItem) mColumnItemData.get(i)).url;
 		s1 = s.substring(s.indexOf("rdp2"));
@@ -1400,9 +1377,9 @@ public class OnlineMusicActivity extends Activity implements
 		String s1;
 		String s2;
 		if (NetUtil.isNetStateWap())
-			c = '\u03EE';
+			c = '\u03EE'; // 1006 HTTP_REQ_TYPE_GET_CONTENT_LIST
 		else
-			c = '\u1391';
+			c = '\u1391'; // 5009 HTTPS_REQ_TYPE_GET_CONTENT_LIST
 		mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
 		s1 = s.substring(s.indexOf("rdp2"));
 		if (NetUtil.isNetStateWap())
@@ -1422,7 +1399,7 @@ public class OnlineMusicActivity extends Activity implements
 	}
 
 	/**
-	 * 请求服务
+	 * 请求服务,获取搜索关键词，标签列表信息
 	 */
 	private void requestService()
 	{
@@ -1430,13 +1407,13 @@ public class OnlineMusicActivity extends Activity implements
 		CancelPreviousReq();
 		if (mPageTotalCount == -1)
 			showInitingDialog();
-		char c;
+		int i;
 		MMHttpRequest mmhttprequest;
 		if (NetUtil.isNetStateWap())
-			c = '\u03E8';
+			i = MusicBusinessDefine_WAP.CMWAP_REQ_START_CODE; // 1000
 		else
-			c = '\u138C';
-		mmhttprequest = MMHttpRequestBuilder.buildRequest(c);
+			i = MusicBusinessDefine_Net.HTTPS_REQ_TYPE_INIT_SERVICE; // 5004
+		mmhttprequest = MMHttpRequestBuilder.buildRequest(i);
 		mCurrentTask = mHttpController.sendRequest(mmhttprequest, true);
 		logger.v("requestService() ---> Exit");
 	}
@@ -1641,6 +1618,7 @@ public class OnlineMusicActivity extends Activity implements
 						.getTransId()))
 		{
 			logger.v("Thus http message is not for this activity");
+			return;
 		} else
 		{
 			if ((this.mRetryLayout != null)
@@ -1667,84 +1645,42 @@ public class OnlineMusicActivity extends Activity implements
 				}
 				break;
 			case DispatcherEventEnum.HTTP_EVENT_TASK_COMPLETE:
-			{
-				Activity activity;
-				if (getParent() == null)
-				{
-					activity = this;
-				} else
-				{
-					activity = getParent();
-				}
-				Uiutil.ifSwitchToWapDialog((Context) activity);
-				this.LOAD_MORE = true;
-				if (((i == 1000) || (i == 5004) || (i == 1036) || (i == 5039))
-						&& ((paramMessage.what == DispatcherEventEnum.HTTP_EVENT_TASK_FAIL) || (paramMessage.what == DispatcherEventEnum.HTTP_EVENT_TASK_TIMEOUT)))
-				{
-					this.mRetryLayout.setVisibility(0);
-					this.mEmpty.setVisibility(8);
-					((Button) this.mRetryLayout
-							.findViewById(R.id.refresh_temp_btn))
-							.setOnClickListener(new View.OnClickListener()
-							{
-								public void onClick(View paramAnonymousView)
-								{
-									mRetryLayout.setVisibility(8);
-									requestService();
-								}
-							});
-				}
-				mCurShortClickSelectedItem = -1;
-				logger.v("handleMMHttpEvent() ---> Exit");
-			}
+				onHttpResponse(localMMHttpTask);
 				break;
 			case DispatcherEventEnum.HTTP_EVENT_TASK_FAIL:
 				onSendHttpRequestFail(localMMHttpTask);
-				if (((i == 1000) || (i == 5004) || (i == 1036) || (i == 5039))
-						&& ((paramMessage.what == 3004) || (paramMessage.what == 3006)))
-				{
-					this.mRetryLayout.setVisibility(0);
-					this.mEmpty.setVisibility(8);
-					((Button) this.mRetryLayout
-							.findViewById(R.id.refresh_temp_btn))
-							.setOnClickListener(new View.OnClickListener()
-							{
-								public void onClick(View paramAnonymousView)
-								{
-									mRetryLayout.setVisibility(8);
-									requestService();
-								}
-							});
-				}
-				this.mCurShortClickSelectedItem = -1;
-				logger.v("handleMMHttpEvent() ---> Exit");
 			case DispatcherEventEnum.HTTP_EVENT_TASK_TIMEOUT:
-			{
 				onSendHttpRequestTimeOut(localMMHttpTask);
-				if (((i == 1000) || (i == 5004) || (i == 1036) || (i == 5039))
-						&& ((paramMessage.what == 3004) || (paramMessage.what == 3006)))
-				{
-					this.mRetryLayout.setVisibility(0);
-					this.mEmpty.setVisibility(8);
-					((Button) this.mRetryLayout
-							.findViewById(R.id.refresh_temp_btn))
-							.setOnClickListener(new View.OnClickListener()
-							{
-								public void onClick(View paramAnonymousView)
-								{
-									mRetryLayout.setVisibility(8);
-									requestService();
-								}
-							});
-				}
-				mCurShortClickSelectedItem = -1;
-				logger.v("handleMMHttpEvent() ---> Exit");
-			}
 				break;
 			case DispatcherEventEnum.HTTP_EVENT_WAP_CLOSED:
 			case DispatcherEventEnum.WLAN_EVENT_WLAN_CLOSE:
+				Object obj;
+				if (getParent() == null)
+					obj = this;
+				else
+					obj = getParent();
+				Uiutil.ifSwitchToWapDialog(((android.content.Context) (obj)));
+				LOAD_MORE = true;
 				break;
 			}
+
+			if (((i == 1000) || (i == 5004) || (i == 1036) || (i == 5039))
+					&& ((paramMessage.what == DispatcherEventEnum.HTTP_EVENT_TASK_FAIL) || (paramMessage.what == DispatcherEventEnum.HTTP_EVENT_TASK_TIMEOUT)))
+			{
+				this.mRetryLayout.setVisibility(0);
+				this.mEmpty.setVisibility(8);
+				((Button) this.mRetryLayout.findViewById(R.id.refresh_temp_btn))
+						.setOnClickListener(new View.OnClickListener()
+						{
+							public void onClick(View paramAnonymousView)
+							{
+								mRetryLayout.setVisibility(8);
+								requestService();
+							}
+						});
+			}
+			mCurShortClickSelectedItem = -1;
+			logger.v("handleMMHttpEvent() ---> Exit");
 		}
 	}
 
@@ -1978,17 +1914,17 @@ public class OnlineMusicActivity extends Activity implements
 			logger.v("onOptionsItemSelected() ---> Exit");
 			bool = super.onOptionsItemSelected(paramMenuItem);
 		case R.id.menu_item_set:
-			// startActivity(new Intent(this, MobileMusicUpdateActivity.class));
+			startActivity(new Intent(this, MobileMusicMoreActivity.class));
 			break;
 		case R.id.menu_item_time_close:
-			// startActivity(new Intent(this, MobileMusicMoreActivity.class));
+			startActivity(new Intent(this, TimingClosureActivity.class));
 			break;
 		case R.id.menu_item_update:
-			// startActivity(new Intent(this,
-			// MobileMusicFeedBackActivity.class));
+			// startActivity(new Intent(this, MobileMusicUpdateActivity.class));
 			break;
 		case R.id.menu_item_feed_back:
-			// startActivity(new Intent(this, TimingClosureActivity.class));
+			//
+			startActivity(new Intent(this, MobileMusicFeedBackActivity.class));
 			break;
 		case R.id.menu_item_exit:
 			exitApplication();

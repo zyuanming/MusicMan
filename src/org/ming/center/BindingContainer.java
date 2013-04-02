@@ -145,12 +145,13 @@ public class BindingContainer
 		{
 			Iterator localIterator = this.mDownloadTaskList.iterator();
 			do
+			{
 				if (!localIterator.hasNext())
 				{
 					bool = false;
 					break;
 				}
-			while (!((DownloadTask) localIterator.next()).getDownloadItem()
+			} while (!((DownloadTask) localIterator.next()).getDownloadItem()
 					.getUrl().equalsIgnoreCase(paramString));
 			bool = true;
 		}

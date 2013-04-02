@@ -55,8 +55,6 @@ public class TimingClosureActivity extends Activity
 			case R.id.time_text_fifty_minutes:
 			case R.id.time_text_noe_hours:
 			default:
-				mCloseTime.edit().putString("CLOSETIME", closeTime).commit();
-				return;
 			case R.id.time_cancel:
 				closeAlarm();
 				mTimeCancel.setChecked(true);
@@ -135,6 +133,8 @@ public class TimingClosureActivity extends Activity
 				closeTime = mTimeTextNoeHours.getText().toString();
 				break;
 			}
+			mCloseTime.edit().putString(CLOSETIME, closeTime).commit();
+			return;
 		}
 
 		public void onClick(View view)

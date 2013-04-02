@@ -1,10 +1,15 @@
 ﻿package org.ming.ui.activity.local;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import android.app.Dialog;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import com.umeng.analytics.MobclickAgent;
 import org.ming.R;
 import org.ming.center.Controller;
 import org.ming.center.MobileMusicApplication;
@@ -16,22 +21,10 @@ import org.ming.ui.util.DialogUtil;
 import org.ming.ui.view.TitleBarView;
 import org.ming.util.MyLogger;
 
-import com.umeng.analytics.MobclickAgent;
-
-import android.app.Dialog;
-import android.app.ListActivity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Message;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ListView;
-import android.widget.TextView;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class LocalScanMusicActivity extends ListActivity implements
 		View.OnClickListener, SystemEventListener

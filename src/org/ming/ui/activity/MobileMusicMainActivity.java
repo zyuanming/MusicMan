@@ -188,8 +188,8 @@ public class MobileMusicMainActivity extends TabActivity implements
 		this.mInflater = LayoutInflater.from(this);
 		this.mTabHost = ((TabHost) findViewById(android.R.id.tabhost));
 		this.mTabHost.setup(getLocalActivityManager());
-		// Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
-		Intent localIntent1 = new Intent(this, MingOnlineMusic.class);
+		Intent localIntent1 = new Intent(this, OnlineMusicActivity.class);
+		// Intent localIntent1 = new Intent(this, MingOnlineMusic.class);
 		this.mTabHost.addTab(createTabSpec("TAB_ONLINE",
 				R.layout.tab_online_music_layout, localIntent1));
 		Intent localIntent2 = new Intent(this, LocalMusicActivity.class);
@@ -397,12 +397,15 @@ public class MobileMusicMainActivity extends TabActivity implements
 				default:
 					Toast.makeText(MobileMusicApplication.getInstance(),
 							R.string.set_vibrate_failed, 1).show();
+					break;
 				case 0:
 					Toast.makeText(MobileMusicApplication.getInstance(),
 							R.string.set_vibrate_successed, 1).show();
+					break;
 				case -1:
 					Toast.makeText(MobileMusicApplication.getInstance(),
 							R.string.set_vibrate_failed_in_some_mode, 1).show();
+					break;
 				}
 				super.handleMessage(paramAnonymousMessage);
 			}
@@ -450,29 +453,28 @@ public class MobileMusicMainActivity extends TabActivity implements
 		boolean flag = true;
 		if (keyevent.getKeyCode() == KeyEvent.KEYCODE_BACK)
 		{
-			// if (keyevent.getAction() == KeyEvent.ACTION_DOWN
-			// && (OnlineMusicActivity.mListButtonClickListener == null ||
-			// !OnlineMusicActivity.mListButtonClickListener
-			// .closePopupWindow()))
-			if (keyevent.getAction() == KeyEvent.ACTION_DOWN)
-			{
-				List list = ((ActivityManager) getSystemService("activity"))
-						.getRunningTasks(2);
-				if (list.size() > 1)
+			if (keyevent.getAction() == KeyEvent.ACTION_DOWN
+					&& (OnlineMusicActivity.mListButtonClickListener == null || !OnlineMusicActivity.mListButtonClickListener
+							.closePopupWindow()))
+				if (keyevent.getAction() == KeyEvent.ACTION_DOWN)
 				{
-					android.app.ActivityManager.RunningTaskInfo runningtaskinfo = (android.app.ActivityManager.RunningTaskInfo) list
-							.get(1);
-					Intent intent1 = new Intent();
-					intent1.setComponent(runningtaskinfo.topActivity);
-					startActivity(intent1);
-				} else
-				{
-					Intent intent = new Intent("android.intent.action.MAIN");
-					intent.setFlags(0x10000000);
-					intent.addCategory("android.intent.category.HOME");
-					startActivity(intent);
+					List list = ((ActivityManager) getSystemService("activity"))
+							.getRunningTasks(2);
+					if (list.size() > 1)
+					{
+						android.app.ActivityManager.RunningTaskInfo runningtaskinfo = (android.app.ActivityManager.RunningTaskInfo) list
+								.get(1);
+						Intent intent1 = new Intent();
+						intent1.setComponent(runningtaskinfo.topActivity);
+						startActivity(intent1);
+					} else
+					{
+						Intent intent = new Intent("android.intent.action.MAIN");
+						intent.setFlags(0x10000000);
+						intent.addCategory("android.intent.category.HOME");
+						startActivity(intent);
+					}
 				}
-			}
 		} else
 		{
 			if (requestRoot)

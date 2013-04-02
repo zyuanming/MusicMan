@@ -136,7 +136,7 @@ public class DialogActivity extends Activity implements SystemEventListener,
 	{
 		public void onClick(View paramAnonymousView)
 		{
-			DialogActivity.this.reqMemberButton("tj");
+			reqMemberButton("tj");
 		}
 	};
 	private int mTitleResId = 0;

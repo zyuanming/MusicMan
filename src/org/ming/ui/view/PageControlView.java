@@ -1,13 +1,12 @@
 ﻿package org.ming.ui.view;
 
-import org.ming.R;
-import org.ming.ui.view.MyViewGroup.ScrollToScreenCallback;
-import org.ming.util.MyLogger;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import org.ming.R;
+import org.ming.ui.view.MyViewGroup.ScrollToScreenCallback;
+import org.ming.util.MyLogger;
 
 public class PageControlView extends LinearLayout implements
 		ScrollToScreenCallback

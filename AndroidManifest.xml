@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name="org.ming.center.MobileMusicApplication"
@@ -139,14 +140,8 @@
             android:name=".ui.activity.local.LocalColumnActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
-        <!--
         <activity
             android:name=".ui.activity.online.OnlineMusicActivity"
-            android:configChanges="keyboardHidden|navigation|orientation"
-            android:screenOrientation="portrait" />
-        -->
-        <activity
-            android:name=".ui.activity.online.MingOnlineMusic"
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
         <activity
@@ -164,6 +159,12 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:launchMode="standard"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.online.MusicOnlineMusicSearchActivity"
+            android:configChanges="keyboardHidden|navigation|orientation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.activity.online.MusicOnlineMusicColumnDetailActivity"
             android:configChanges="keyboardHidden|navigation|orientation"
@@ -227,9 +228,23 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:screenOrientation="portrait" />
 
+        <receiver android:name="org.ming.util.MediaButtonReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="org.ming.util.AlarmReceiver" />
+        <receiver android:name="org.ming.util.BootBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service android:name="org.ming.center.MobileMusicService" />
         <service android:name="org.ming.center.download.DownloadService" />
         <service android:name="org.ming.center.download.DownLoadService2" />
+        <service android:name="org.ming.ui.util.AlarmService" />
+        <service android:name="org.ming.ui.util.NotificationService" />
     </application>
 
 </manifest>

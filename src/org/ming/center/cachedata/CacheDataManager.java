@@ -16,6 +16,12 @@ public class CacheDataManager
 		return sInstance;
 	}
 
+	private CacheDataManager()
+	{
+		mApp = MobileMusicApplication.getInstance();
+		mDBController = mApp.getController().getDBController();
+	}
+
 	public String getCacheData(String paramString)
 	{
 		return this.mDBController.queryCacheData(paramString);
@@ -26,14 +32,23 @@ public class CacheDataManager
 		return this.mDBController.isCacheDataExist(paramString);
 	}
 
-	public long saveCacheData(String paramString1, String paramString2,
-			String paramString3, String paramString4)
+	/**
+	 * 保存缓存数据在数据库中
+	 * 
+	 * @param content_key
+	 * @param group_code
+	 * @param time_stamp
+	 * @param data
+	 * @return
+	 */
+	public long saveCacheData(String content_key, String group_code,
+			String time_stamp, String data)
 	{
 		long l = 0;
 		try
 		{
-			l = this.mDBController.addCacheData(paramString1, paramString2,
-					paramString3, paramString4);
+			l = this.mDBController.addCacheData(content_key, group_code,
+					time_stamp, data);
 			return l;
 		} catch (Exception ex)
 		{
