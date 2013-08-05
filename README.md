@@ -1,4 +1,4 @@
 MusicMan
 ========
 
-just an android project for study！！！！I will be the best..
+这个学习项目是基于反编译的移动咪咕音乐来完成的。。仅仅是为了学习。这个源代码不能用于商业行为。
